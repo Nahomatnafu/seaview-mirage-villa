@@ -17,13 +17,16 @@ export default function Hero({ onBookNow }) {
 
   return (
     <section id="hero" style={{ position: 'relative', height: '100vh', minHeight: '700px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      {/* Background */}
-      <div ref={parallaxRef} style={{
+      {/* Background. This 4:3 frame crops to the villa's balconies on a tall
+          phone screen. Portrait alternatives were tried and read worse — one was
+          mostly foreground planting, another put balustrades straight behind the
+          headline — so the landscape frame is used at every width. */}
+      <div ref={parallaxRef} className="hero-bg" style={{
         position: 'absolute',
         inset: '-10%',
-        backgroundImage: `url('/assets/villa-exterior.jpg')`,
+        backgroundImage: `url('/assets/villa/exterior-08.jpg')`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center 30%',
+        backgroundPosition: 'center 55%',
         willChange: 'transform',
       }} />
 
