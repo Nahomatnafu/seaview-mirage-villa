@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { X, ZoomIn } from 'lucide-react'
 
 const photos = [
@@ -13,6 +13,19 @@ const photos = [
 
 export default function Gallery() {
   const [lightbox, setLightbox] = useState(null)
+
+  // Keep the page from scrolling behind the open lightbox, and allow Esc to close.
+  useEffect(() => {
+    if (!lightbox) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKey = e => { if (e.key === 'Escape') setLightbox(null) }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = prev
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [lightbox])
 
   return (
     <section id="gallery" style={{ background: 'var(--dark)', padding: '100px 0' }}>

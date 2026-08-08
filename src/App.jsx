@@ -6,9 +6,14 @@ import Amenities from './components/Amenities'
 import Gallery from './components/Gallery'
 import Rooms from './components/Rooms'
 import Services from './components/Services'
+import Rates from './components/Rates'
+import Menu from './components/Menu'
 import Events from './components/Events'
 import BookingFlow from './components/BookingFlow'
-import Testimonials from './components/Testimonials'
+// Testimonials are still placeholder/invented text — the section stays out of
+// the page until the client sends real guest reviews. Re-add <Testimonials />
+// below Events once Testimonials.jsx holds genuine quotes.
+// import Testimonials from './components/Testimonials'
 import Location from './components/Location'
 import Footer from './components/Footer'
 
@@ -30,8 +35,9 @@ function App() {
       <Rooms />
       <Gallery />
       <Services onBookNow={openBooking} />
+      <Rates onBookNow={openBooking} />
+      <Menu />
       <Events onBookNow={openBooking} />
-      <Testimonials />
       <Location />
       <Footer onBookNow={() => openBooking()} />
       {bookingOpen && (

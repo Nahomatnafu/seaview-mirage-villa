@@ -1,5 +1,5 @@
 import React from 'react'
-import { Waves, Utensils, Martini, Tv, UtensilsCrossed, Wifi, Wind, Shirt, Car, Bike, Camera, Accessibility, Clock, CalendarDays, Coffee, Shield, CigaretteOff } from 'lucide-react'
+import { Waves, Utensils, Martini, Tv, UtensilsCrossed, Wifi, Wind, Shirt, Car, ShieldCheck, Umbrella, Camera, Clock, CalendarDays, ChefHat, Shield, CigaretteOff } from 'lucide-react'
 import { AMENITIES, GOOD_TO_KNOW } from '../content'
 
 const AMENITY_ICONS = {
@@ -12,15 +12,15 @@ const AMENITY_ICONS = {
   air: <Wind size={22} />,
   laundry: <Shirt size={22} />,
   parking: <Car size={22} />,
-  bikes: <Bike size={22} />,
+  gated: <ShieldCheck size={22} />,
+  beach: <Umbrella size={22} />,
   views: <Camera size={22} />,
-  access: <Accessibility size={22} />,
 }
 
 const POLICY_ICONS = {
   checkin: <Clock size={16} />,
   minstay: <CalendarDays size={16} />,
-  breakfast: <Coffee size={16} />,
+  meals: <ChefHat size={16} />,
   security: <Shield size={16} />,
   smoking: <CigaretteOff size={16} />,
 }
@@ -42,7 +42,8 @@ export default function Amenities() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+          // 150px keeps phones at two columns instead of one very long stack
+          gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
           gap: '2px',
         }}>
           {AMENITIES.map(a => (

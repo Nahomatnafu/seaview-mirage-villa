@@ -1,45 +1,45 @@
 import React, { useState } from 'react'
 import { BedDouble, Bath, Users, DoorOpen, ChevronLeft, ChevronRight } from 'lucide-react'
-import { VILLA } from '../content'
+import { VILLA, BED_CONFIG } from '../content'
 
 // Photo tour of the villa's spaces. The client has not provided per-room
-// names/details yet — if they do, this can become a room-by-room carousel.
+// names/photos yet — if they do, this can become a room-by-room carousel.
 const spaces = [
   {
     name: 'Bedrooms & Suites',
     tag: 'Sleep',
-    desc: 'Seven beautifully appointed bedrooms, each with its own en-suite bathroom and private balcony framing panoramic views of the Caribbean Sea. Cool, quiet, and made for deep island rest.',
+    desc: 'Seven beautifully appointed bedrooms — three with king beds, including the master suite, and four with queens. Each has its own en-suite bathroom and private balcony framing panoramic views of the Caribbean Sea.',
     image: '/assets/bedroom.jpg',
-    features: ['En-suite Bathrooms', 'Private Balconies', 'Sea Views', 'Central Air'],
+    features: ['3 King · 4 Queen', 'En-suite Bathrooms', 'Private Balconies', 'Central Air'],
   },
   {
     name: 'Kitchens & Dining',
     tag: 'Dine',
-    desc: 'Two full kitchens keep large groups effortless. Your private chef prepares breakfast every morning — included with your stay — and cooks lunch and dinner to order in true Jamaican style.',
+    desc: 'Two full kitchens keep large groups effortless. Your villa chef plans the menu with you before you travel, shops before you land, and cooks all three meals in true Jamaican style.',
     image: '/assets/kitchen.jpg',
-    features: ['Two Full Kitchens', 'Breakfast Included', 'Private Chef', 'Dining Room'],
+    features: ['Two Full Kitchens', 'Private Chef', 'Full-Board Meal Plan', 'Dining Room'],
   },
   {
     name: 'Pool Deck, Bar & Gazebo',
     tag: 'Unwind',
-    desc: 'The heart of the villa: a sparkling pool wrapped by lounging areas, a bar, and a shaded gazebo — with two half baths right on the deck so nobody has to leave the sunshine.',
+    desc: 'The heart of the villa: a sparkling pool wrapped by lounging areas, a bar, and a shaded gazebo — with guest half baths close at hand so nobody has to leave the sunshine.',
     image: '/assets/pool-palm.jpg',
-    features: ['Swimming Pool', 'Bar & Gazebo', 'Lounging Areas', 'Pool-deck Baths'],
+    features: ['Swimming Pool', 'Bar & Gazebo', 'Lounging Areas', 'Guest Half Baths'],
   },
   {
     name: 'Living & Entertainment',
     tag: 'Gather',
     desc: 'Expansive living spaces and a dedicated entertainment area flow onto ocean-view balconies — room for all fourteen guests to gather, or to find a quiet corner of their own.',
     image: '/assets/dining-room.jpg',
-    features: ['Entertainment Space', 'Ocean-view Balconies', 'Free WiFi', 'Mountain Bikes'],
+    features: ['Entertainment Space', 'Ocean-view Balconies', 'Free WiFi', 'Central Air'],
   },
 ]
 
 const stats = [
-  { icon: <BedDouble size={18} />, num: VILLA.bedrooms, label: 'En-suite Bedrooms' },
+  { icon: <BedDouble size={18} />, num: VILLA.bedrooms, label: 'Bedrooms' },
   { icon: <Users size={18} />, num: VILLA.sleeps, label: 'Guests' },
-  { icon: <Bath size={18} />, num: VILLA.powderRooms, label: 'Powder Rooms' },
-  { icon: <DoorOpen size={18} />, num: VILLA.poolDeckBaths, label: 'Pool-deck Baths' },
+  { icon: <Bath size={18} />, num: VILLA.bathrooms, label: 'En-suite Baths' },
+  { icon: <DoorOpen size={18} />, num: VILLA.halfBaths, label: 'Guest Half Baths' },
 ]
 
 export default function Rooms() {
@@ -63,7 +63,7 @@ export default function Rooms() {
         {/* Stat band */}
         <div style={{
           display: 'flex', flexWrap: 'wrap', justifyContent: 'center',
-          gap: '18px 56px', marginBottom: '52px',
+          gap: '18px 56px', marginBottom: '22px',
         }}>
           {stats.map(s => (
             <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -71,6 +71,23 @@ export default function Rooms() {
               <span style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: '500', color: 'var(--charcoal)', lineHeight: 1 }}>{s.num}</span>
               <span style={{ color: 'var(--gray)', fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase' }}>{s.label}</span>
             </div>
+          ))}
+        </div>
+
+        {/* Bed breakdown */}
+        <div style={{
+          display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',
+          gap: '10px 20px', marginBottom: '52px',
+          color: 'var(--gray)', fontSize: '13px', letterSpacing: '0.04em',
+        }}>
+          {BED_CONFIG.map((b, i) => (
+            <React.Fragment key={b.id}>
+              {i > 0 && <span style={{ color: 'var(--gold)', opacity: 0.5 }}>·</span>}
+              <span>
+                <strong style={{ color: 'var(--charcoal)', fontWeight: '500' }}>{b.count}</strong> {b.label}
+                <span style={{ opacity: 0.75 }}> — {b.note.toLowerCase()}</span>
+              </span>
+            </React.Fragment>
           ))}
         </div>
 
@@ -135,18 +152,27 @@ export default function Rooms() {
               ))}
             </div>
 
-            {/* Dots */}
-            <div style={{ display: 'flex', gap: '8px' }}>
+            {/* Dots. The visible bar is 2px tall, so each button carries vertical
+                padding to stay a usable tap target on touch screens. */}
+            <div style={{ display: 'flex', gap: '8px', margin: '-15px 0' }}>
               {spaces.map((_, i) => (
-                <button key={i} onClick={() => setActive(i)} style={{
-                  width: i === active ? '28px' : '8px',
-                  height: '2px',
-                  background: i === active ? 'var(--gold)' : 'var(--light-gray)',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  padding: 0,
-                }} />
+                <button
+                  key={i}
+                  onClick={() => setActive(i)}
+                  aria-label={`Show ${spaces[i].name}`}
+                  style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    padding: '15px 0', display: 'flex', alignItems: 'center',
+                  }}
+                >
+                  <span style={{
+                    display: 'block',
+                    width: i === active ? '28px' : '8px',
+                    height: '2px',
+                    background: i === active ? 'var(--gold)' : 'var(--light-gray)',
+                    transition: 'all 0.3s ease',
+                  }} />
+                </button>
               ))}
             </div>
           </div>

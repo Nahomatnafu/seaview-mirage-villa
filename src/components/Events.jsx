@@ -3,10 +3,10 @@ import { Heart, ConciergeBell, ChefHat, Users } from 'lucide-react'
 import { VILLA } from '../content'
 
 const highlights = [
+  { icon: <Users size={16} />, label: `Up to ${VILLA.eventCapacity} guests for your celebration` },
   { icon: <Heart size={16} />, label: 'Ocean-view ceremony spaces' },
   { icon: <ConciergeBell size={16} />, label: 'Concierge on-site for your event' },
-  { icon: <ChefHat size={16} />, label: 'Chef & wait staff at your service' },
-  { icon: <Users size={16} />, label: `Sleeps ${VILLA.sleeps} for your wedding party` },
+  { icon: <ChefHat size={16} />, label: `Chef & wait staff, with ${VILLA.sleeps} sleeping on-site` },
 ]
 
 export default function Events({ onBookNow }) {
@@ -36,7 +36,7 @@ export default function Events({ onBookNow }) {
             </h2>
 
             <p style={{ color: 'rgba(255,255,255,0.65)', lineHeight: '1.85', marginBottom: '32px', fontSize: '15px' }}>
-              Celebrate your special day with breathtaking ocean views, elegant spaces, and a private luxury setting made for intimate weddings, milestone birthdays, and family celebrations. Your concierge is on-site throughout the event, and the villa's chef and wait staff take care of every detail.
+              Celebrate your special day with breathtaking ocean views, elegant spaces, and a private luxury setting made for weddings, milestone birthdays, and family celebrations of up to {VILLA.eventCapacity} guests. Your concierge is on-site throughout the event, and the villa's chef and wait staff take care of every detail.
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '40px' }}>
