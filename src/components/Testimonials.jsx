@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react'
 
-// PLACEHOLDER REVIEWS — not real guests. Replace with genuine reviews
-// from the client before launch.
+// NOT RENDERED. This component is deliberately unmounted in App.jsx because
+// the reviews below are invented placeholders, not real guests — publishing
+// them as genuine would be deceptive and is prohibited by the FTC's 2024 rule
+// on fake consumer reviews. Replace the array with real, attributable guest
+// reviews, then un-comment <Testimonials /> in App.jsx.
 const testimonials = [
   {
     name: 'Marcus & Priya Thompson',

@@ -11,11 +11,21 @@ export default function Navbar({ onBookNow }) {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Stop the page behind the overlay from scrolling on touch devices.
+  useEffect(() => {
+    if (!menuOpen) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = prev }
+  }, [menuOpen])
+
   const links = [
     { label: 'About', href: '#about' },
     { label: 'Villa', href: '#rooms' },
     { label: 'Gallery', href: '#gallery' },
     { label: 'Services', href: '#services' },
+    { label: 'Rates', href: '#rates' },
+    { label: 'Menu', href: '#menu' },
     { label: 'Events', href: '#events' },
     { label: 'Location', href: '#location' },
   ]
@@ -44,7 +54,7 @@ export default function Navbar({ onBookNow }) {
           <ul style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '36px',
+            gap: '26px',
             listStyle: 'none',
           }} className="desktop-nav">
             {links.map(link => (
@@ -86,63 +96,90 @@ export default function Navbar({ onBookNow }) {
             </li>
           </ul>
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile Menu Toggle. The overlay sits above the navbar and carries its
+              own close button, so this only ever needs to show the open icon. */}
           <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            style={{ background: 'none', border: 'none', color: 'white', display: 'none' }}
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+            style={{
+              background: 'none', border: 'none', color: 'white', display: 'none',
+              padding: '9px', margin: '-9px', // 44px tap target without shifting layout
+            }}
             className="mobile-toggle"
           >
-            {menuOpen ? <X size={26} /> : <Menu size={26} />}
+            <Menu size={26} />
           </button>
         </div>
       </nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu — sits ABOVE the navbar (which would otherwise show a second
+          logo and close icon through it) and scrolls if the links outgrow a short
+          screen, e.g. iPhone SE at 667px tall. */}
       {menuOpen && (
         <div style={{
           position: 'fixed',
           top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(10,10,10,0.98)',
-          zIndex: 999,
+          background: '#0a0a0a',
+          zIndex: 1100,
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '32px',
+          padding: '76px 24px 36px',
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
         }}>
-          <button onClick={() => setMenuOpen(false)} style={{ position: 'absolute', top: '22px', right: '24px', background: 'none', border: 'none', color: 'white' }}>
+          <button
+            onClick={() => setMenuOpen(false)}
+            aria-label="Close menu"
+            style={{
+              position: 'fixed', top: '16px', right: '16px',
+              background: 'none', border: 'none', color: 'white',
+              padding: '10px', zIndex: 1,
+            }}
+          >
             <X size={28} />
           </button>
-          <img src="/assets/logo.png" alt="logo" style={{ height: '80px', marginBottom: '16px' }} />
-          {links.map(link => (
-            <a key={link.label} href={link.href} onClick={() => setMenuOpen(false)} style={{
-              color: 'white',
-              fontSize: '22px',
-              fontFamily: 'var(--font-heading)',
-              letterSpacing: '0.08em',
-              fontWeight: '300',
-            }}>
-              {link.label}
-            </a>
-          ))}
-          <button onClick={() => { onBookNow(); setMenuOpen(false) }} style={{
-            background: 'linear-gradient(135deg, #c9a84c, #e8c96a)',
-            color: '#0e0e0e',
-            border: 'none',
-            padding: '14px 40px',
-            fontSize: '13px',
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            fontWeight: '600',
-            marginTop: '16px',
+
+          {/* `margin: auto` centres this block but, unlike justify-content:center,
+              never puts overflow out of scroll reach on short screens. */}
+          <div style={{
+            margin: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '18px',
           }}>
-            Book Now
-          </button>
+            <img src="/assets/logo.png" alt="Sea View Mirage Villa" style={{ height: '64px', marginBottom: '2px' }} />
+            {links.map(link => (
+              <a key={link.label} href={link.href} onClick={() => setMenuOpen(false)} style={{
+                color: 'white',
+                fontSize: '20px',
+                fontFamily: 'var(--font-heading)',
+                letterSpacing: '0.08em',
+                fontWeight: '300',
+                padding: '3px 10px',
+              }}>
+                {link.label}
+              </a>
+            ))}
+            <button onClick={() => { onBookNow(); setMenuOpen(false) }} style={{
+              background: 'linear-gradient(135deg, #c9a84c, #e8c96a)',
+              color: '#0e0e0e',
+              border: 'none',
+              padding: '15px 40px',
+              fontSize: '13px',
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              fontWeight: '600',
+              marginTop: '8px',
+            }}>
+              Book Now
+            </button>
+          </div>
         </div>
       )}
 
       <style>{`
-        @media (max-width: 900px) {
+        /* 8 links + CTA stop fitting well below this width */
+        @media (max-width: 1080px) {
           .desktop-nav { display: none !important; }
           .mobile-toggle { display: block !important; }
         }

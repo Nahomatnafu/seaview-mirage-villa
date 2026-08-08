@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
-import { X, ChevronRight, ChevronLeft, Check, Calendar, Users, ChefHat, ShoppingBasket, Car, Leaf, Waves, PartyPopper, Star, LoaderCircle } from 'lucide-react'
-import { VILLA, BOOKING_SERVICES, INQUIRY_ENDPOINT } from '../content'
+import React, { useState, useEffect } from 'react'
+import { X, ChevronRight, ChevronLeft, Check, Calendar, Users, ChefHat, Car, Leaf, Waves, PartyPopper, Star, LoaderCircle, Wallet } from 'lucide-react'
+import { VILLA, BOOKING_SERVICES, PAYMENT_TERMS, INQUIRY_ENDPOINT } from '../content'
 
 const SERVICE_ICONS = {
-  chefmeals: <ChefHat size={24} />,
-  stocking: <ShoppingBasket size={24} />,
+  mealplan: <ChefHat size={24} />,
   transfer: <Car size={24} />,
   spa: <Leaf size={24} />,
   watersports: <Waves size={24} />,
@@ -27,6 +26,13 @@ function diffDays(a, b) {
 }
 
 export default function BookingFlow({ onClose, initialService = null }) {
+  // Lock the page behind the modal so touch scrolling stays inside it.
+  useEffect(() => {
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = prev }
+  }, [])
+
   const [step, setStep] = useState(1) // 1: guests, 2: services, 3: dates, 4: review
   const [guests, setGuests] = useState(null)
   const [selected, setSelected] = useState(() => initialService ? { [initialService]: true } : {})
@@ -106,7 +112,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
       animation: 'fadeIn 0.3s ease',
       backdropFilter: 'blur(6px)',
     }}>
-      <div style={{
+      <div className="bf-card" style={{
         background: 'white',
         width: '100%',
         maxWidth: submitted ? '560px' : '820px',
@@ -117,14 +123,20 @@ export default function BookingFlow({ onClose, initialService = null }) {
       }}>
 
         {/* Close */}
-        <button onClick={onClose} style={{
-          position: 'absolute', top: '20px', right: '20px',
-          background: 'none', border: 'none', cursor: 'pointer',
-          zIndex: 10, color: 'var(--gray)',
-          transition: 'color 0.2s',
-        }}
-        onMouseEnter={e => e.currentTarget.style.color = 'var(--charcoal)'}
-        onMouseLeave={e => e.currentTarget.style.color = 'var(--gray)'}
+        {/* Sits over the dark header while the wizard is open, and over white
+            once submitted — so the resting colour has to follow. */}
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          style={{
+            position: 'absolute', top: '14px', right: '14px',
+            background: 'none', border: 'none', cursor: 'pointer',
+            zIndex: 10, padding: '10px',
+            color: submitted ? 'var(--gray)' : 'rgba(255,255,255,0.75)',
+            transition: 'color 0.2s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.color = submitted ? 'var(--charcoal)' : 'white'}
+          onMouseLeave={e => e.currentTarget.style.color = submitted ? 'var(--gray)' : 'rgba(255,255,255,0.75)'}
         >
           <X size={22} />
         </button>
@@ -147,7 +159,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
               Thank you for choosing {VILLA.name}. Our team will reply to <strong>{contact.email}</strong> within 24 hours with availability and full pricing for your stay.
             </p>
             <div style={{ background: 'var(--cream)', padding: '24px', marginBottom: '32px', textAlign: 'left' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
                 <div>
                   <div style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>Check-in</div>
                   <div style={{ fontWeight: '500', fontSize: '15px' }}>{formatDate(checkIn)}</div>
@@ -179,7 +191,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
         ) : (
           <>
             {/* Header */}
-            <div style={{ background: 'var(--charcoal)', padding: '32px 40px' }}>
+            <div className="bf-header" style={{ background: 'var(--charcoal)', padding: '32px 40px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
                 <img src="/assets/logo.png" alt="logo" style={{ height: '44px' }} />
                 <div>
@@ -224,7 +236,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
             </div>
 
             {/* Body */}
-            <div style={{ padding: '40px' }}>
+            <div className="bf-body" style={{ padding: '40px' }}>
 
               {/* STEP 1: Guests */}
               {step === 1 && (
@@ -262,7 +274,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                   <div style={{ marginTop: '28px', padding: '16px 20px', background: 'var(--cream)', borderLeft: '3px solid var(--gold)', display: 'flex', gap: '12px', alignItems: 'center' }}>
                     <Star size={16} style={{ color: 'var(--gold)', flexShrink: 0 }} />
                     <p style={{ fontSize: '13px', color: 'var(--gray)', lineHeight: 1.6 }}>
-                      Planning a wedding or event, or a group over {VILLA.sleeps}? Mention it in your special requests and our team will make custom arrangements.
+                      Planning a wedding or event? The villa hosts up to {VILLA.eventCapacity} guests for celebrations, with {VILLA.sleeps} sleeping on-site. Mention it in your special requests and our team will make custom arrangements.
                     </p>
                   </div>
                 </div>
@@ -275,7 +287,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '400', color: 'var(--charcoal)', marginBottom: '8px' }}>
                       Anything we can arrange?
                     </h3>
-                    <p style={{ color: 'var(--gray)', fontSize: '14px' }}>Your chef, butler, housekeeping, and concierge are already included. Select any extras you're interested in and we'll include them in your quote.</p>
+                    <p style={{ color: 'var(--gray)', fontSize: '14px' }}>Your chef, butler, housekeeping, concierge, and security are already part of the villa. Select anything else you'd like and we'll price it into your quote.</p>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -335,7 +347,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     <p style={{ color: 'var(--gray)', fontSize: '14px' }}>Minimum stay of {VILLA.minNights} nights. Check-in {VILLA.checkIn} · Check-out {VILLA.checkOut}.</p>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '28px' }}>
+                  <div className="bf-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '28px' }}>
                     <div>
                       <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '10px', fontWeight: '500' }}>
                         Check-in Date
@@ -442,11 +454,29 @@ export default function BookingFlow({ onClose, initialService = null }) {
                           ))}
                         </div>
                       ) : (
-                        <p style={{ color: 'var(--gray)', fontSize: '13px' }}>None — your included chef, butler, and housekeeping are always part of your stay.</p>
+                        <p style={{ color: 'var(--gray)', fontSize: '13px' }}>None — your chef, butler, housekeeping, concierge, and security are always part of your stay.</p>
                       )}
                       <p style={{ color: 'var(--gray)', fontSize: '11px', marginTop: '14px' }}>
                         * This is a quote request, not a confirmed booking. Rates depend on dates, group size, and services.
                       </p>
+                    </div>
+                  </div>
+
+                  {/* Payment terms */}
+                  <div style={{ border: '1px solid rgba(201,168,76,0.25)', padding: '20px 22px', marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                      <Wallet size={15} style={{ color: 'var(--gold)' }} />
+                      <span style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--charcoal)', fontWeight: '500' }}>Payment Terms</span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {PAYMENT_TERMS.map(t => (
+                        <div key={t.id} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                          <Check size={13} style={{ color: 'var(--gold-dark)', flexShrink: 0, marginTop: '4px' }} />
+                          <p style={{ fontSize: '12.5px', color: 'var(--gray)', lineHeight: 1.6 }}>
+                            <strong style={{ color: 'var(--charcoal)', fontWeight: '500' }}>{t.label}</strong> — {t.desc}
+                          </p>
+                        </div>
+                      ))}
                     </div>
                   </div>
 
@@ -455,7 +485,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: '500', color: 'var(--charcoal)', marginBottom: '20px' }}>
                       Your Contact Details
                     </h4>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                    <div className="bf-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                       {[
                         { field: 'firstName', label: 'First Name *', ph: 'John', type: 'text' },
                         { field: 'lastName', label: 'Last Name *', ph: 'Smith', type: 'text' },
@@ -480,7 +510,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                           />
                         </div>
                       ))}
-                      <div style={{ gridColumn: '1 / 3' }}>
+                      <div style={{ gridColumn: '1 / -1' }}>
                         <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '8px' }}>Special Requests</label>
                         <textarea
                           placeholder="Dietary requirements, celebrations, wedding plans, or any other requests..."
@@ -578,6 +608,12 @@ export default function BookingFlow({ onClose, initialService = null }) {
         @keyframes spin {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
+        }
+        @media (max-width: 620px) {
+          .bf-header { padding: 26px 20px !important; }
+          .bf-body { padding: 24px 20px !important; }
+          /* Side-by-side fields get too narrow to type in on a phone */
+          .bf-2col { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </div>

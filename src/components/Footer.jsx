@@ -8,6 +8,8 @@ const exploreLinks = [
   { label: 'Amenities', href: '#amenities' },
   { label: 'Gallery', href: '#gallery' },
   { label: 'Services', href: '#services' },
+  { label: 'Rates & Booking', href: '#rates' },
+  { label: "Chef's Menu", href: '#menu' },
   { label: 'Events & Weddings', href: '#events' },
   { label: 'Location', href: '#location' },
 ]
@@ -18,6 +20,7 @@ const serviceItems = [
   'Housekeeping',
   'Concierge',
   'Airport Transfer',
+  'Island Excursions',
   'Spa Services',
 ]
 
@@ -38,10 +41,10 @@ export default function Footer({ onBookNow }) {
           {/* Quick Links */}
           <div>
             <h4 style={{ color: 'white', fontSize: '12px', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: '24px', fontWeight: '500' }}>Explore</h4>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '4px' }}>
               {exploreLinks.map(l => (
                 <li key={l.label}>
-                  <a href={l.href} style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', transition: 'color 0.3s' }}
+                  <a href={l.href} style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', transition: 'color 0.3s', display: 'inline-block', padding: '7px 0' }}
                   onMouseEnter={e => e.target.style.color = 'var(--gold)'}
                   onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.5)'}
                   >{l.label}</a>
@@ -67,14 +70,15 @@ export default function Footer({ onBookNow }) {
             <h4 style={{ color: 'white', fontSize: '12px', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: '24px', fontWeight: '500' }}>Contact</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {[
-                { icon: <Phone size={14} />, text: VILLA.phone, href: VILLA.phoneHref },
+                { icon: <Phone size={14} />, text: `${VILLA.phoneUS} · US`, href: VILLA.phoneUSHref },
+                { icon: <Phone size={14} />, text: `${VILLA.phoneJA} · Jamaica`, href: VILLA.phoneJAHref },
                 { icon: <Mail size={14} />, text: VILLA.email, href: `mailto:${VILLA.email}` },
                 { icon: <MapPin size={14} />, text: VILLA.fullAddress },
               ].map((c, i) => (
                 <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
                   <span style={{ color: 'var(--gold)', marginTop: '2px', flexShrink: 0 }}>{c.icon}</span>
                   {c.href ? (
-                    <a href={c.href} style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', transition: 'color 0.3s', wordBreak: 'break-word' }}
+                    <a href={c.href} style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', transition: 'color 0.3s', wordBreak: 'break-word', display: 'inline-block', padding: '6px 0' }}
                     onMouseEnter={e => e.target.style.color = 'var(--gold)'}
                     onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.55)'}
                     >{c.text}</a>

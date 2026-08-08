@@ -27,7 +27,7 @@ export default function Location() {
             </h2>
 
             <p style={{ color: 'rgba(255,255,255,0.65)', lineHeight: '1.85', marginBottom: '40px', fontSize: '15px' }}>
-              Sea View Mirage Villa sits in the hills above Discovery Bay on Jamaica's north coast, with commanding views of the Caribbean Sea. The island's favorite attractions are minutes away, and the airport is a scenic 45-minute drive — with private pickup and drop-off available.
+              Sea View Mirage Villa sits in the hills above Discovery Bay on Jamaica's north coast, with commanding views of the Caribbean Sea. The island's favorite attractions are minutes away, and Montego Bay airport is a scenic 45-minute drive — the villa collects you from there at no charge. Guests use nearby Puerto Seco Beach on villa guest passes.
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
