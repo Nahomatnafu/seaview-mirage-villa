@@ -16,8 +16,8 @@ export default function About() {
             }}>
               <div style={{ gridColumn: '1 / 3', height: '340px', overflow: 'hidden', borderRadius: '2px' }}>
                 <img
-                  src="/assets/alfresco-dining.jpg"
-                  alt="Alfresco dining on the pool deck with Caribbean Sea views"
+                  src="/assets/villa/exterior-09.jpg"
+                  alt="Sea View Mirage Villa and its pool, framed by palms"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s ease' }}
                   onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
                   onMouseLeave={e => e.target.style.transform = 'scale(1)'}
@@ -25,8 +25,8 @@ export default function About() {
               </div>
               <div style={{ height: '220px', overflow: 'hidden', borderRadius: '2px' }}>
                 <img
-                  src="/assets/balcony-view.jpg"
-                  alt="Balcony view over the pool and sea"
+                  src="/assets/villa/balcony-06.jpg"
+                  alt="The Caribbean Sea seen from a villa balcony"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s ease' }}
                   onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
                   onMouseLeave={e => e.target.style.transform = 'scale(1)'}
@@ -34,8 +34,8 @@ export default function About() {
               </div>
               <div style={{ height: '220px', overflow: 'hidden', borderRadius: '2px' }}>
                 <img
-                  src="/assets/villa-night.jpg"
-                  alt="The villa lit up at night"
+                  src="/assets/villa/exterior-13.jpg"
+                  alt="The villa lit up at night above the pool"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s ease' }}
                   onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
                   onMouseLeave={e => e.target.style.transform = 'scale(1)'}

@@ -5,3 +5,6 @@ dist/
 .DS_Store
 .orchids/
 .vercel/
+
+# Original phone photos - kept locally, not deployed (optimised copies are in public/assets/villa/)
+source-photos/

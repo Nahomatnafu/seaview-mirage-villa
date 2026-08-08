@@ -17,8 +17,8 @@ export default function Events({ onBookNow }) {
           {/* Image */}
           <div style={{ position: 'relative', height: '460px', overflow: 'hidden', borderRadius: '2px' }}>
             <img
-              src="/assets/wedding.jpg"
-              alt="Wedding ceremony setup at the villa overlooking the Caribbean Sea"
+              src="/assets/villa/pool-08.jpg"
+              alt="The pool deck and grounds, looking out over Discovery Bay"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(14,14,14,0.35), transparent 50%)' }} />
