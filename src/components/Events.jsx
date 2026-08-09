@@ -31,7 +31,7 @@ export default function Events({ onBookNow }) {
               <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Weddings & Celebrations</span>
             </div>
 
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '300', color: 'white', marginBottom: '24px', lineHeight: 1.15 }}>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '600', color: 'white', marginBottom: '24px', lineHeight: 1.15 }}>
               Your dream wedding<br /><em style={{ fontStyle: 'italic', color: 'var(--gold-light)' }}>in paradise</em>
             </h2>
 

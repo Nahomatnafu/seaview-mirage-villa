@@ -32,6 +32,9 @@ export default function Navbar({ onBookNow }) {
 
   return (
     <>
+      {/* Light bar at every scroll position. The nav links are near-black for
+          legibility, which only works over a light background — a transparent
+          bar would put dark text straight onto the hero photo. */}
       <nav style={{
         position: 'fixed',
         top: 0,
@@ -39,15 +42,16 @@ export default function Navbar({ onBookNow }) {
         right: 0,
         zIndex: 1000,
         transition: 'all 0.4s ease',
-        background: scrolled ? 'rgba(10,10,10,0.97)' : 'transparent',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        borderBottom: scrolled ? '1px solid rgba(201,168,76,0.15)' : 'none',
-        padding: scrolled ? '14px 0' : '22px 0',
+        background: scrolled ? 'rgba(255,255,255,0.98)' : 'rgba(255,255,255,0.92)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: scrolled ? '1px solid rgba(26,26,26,0.12)' : '1px solid rgba(26,26,26,0.06)',
+        boxShadow: scrolled ? '0 2px 18px rgba(0,0,0,0.10)' : 'none',
+        padding: scrolled ? '12px 0' : '18px 0',
       }}>
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Logo */}
           <a href="#hero" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <img src="/assets/logo.png" alt="Sea View Mirage Villa" style={{ height: scrolled ? '52px' : '68px', transition: 'height 0.4s ease', filter: 'drop-shadow(0 2px 8px rgba(201,168,76,0.3))' }} />
+            <img src="/assets/logo.png" alt="Sea View Mirage Villa" style={{ height: scrolled ? '50px' : '64px', transition: 'height 0.4s ease' }} />
           </a>
 
           {/* Desktop Nav */}
@@ -60,16 +64,16 @@ export default function Navbar({ onBookNow }) {
             {links.map(link => (
               <li key={link.label}>
                 <a href={link.href} style={{
-                  color: 'rgba(255,255,255,0.88)',
+                  color: '#141414',
                   fontSize: '13px',
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
-                  fontWeight: '400',
+                  fontWeight: '600',
                   transition: 'color 0.3s',
                   position: 'relative',
                 }}
-                onMouseEnter={e => e.target.style.color = '#c9a84c'}
-                onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.88)'}
+                onMouseEnter={e => e.target.style.color = 'var(--gold-dark)'}
+                onMouseLeave={e => e.target.style.color = '#141414'}
                 >
                   {link.label}
                 </a>
@@ -102,7 +106,7 @@ export default function Navbar({ onBookNow }) {
             onClick={() => setMenuOpen(true)}
             aria-label="Open menu"
             style={{
-              background: 'none', border: 'none', color: 'white', display: 'none',
+              background: 'none', border: 'none', color: '#141414', display: 'none',
               padding: '9px', margin: '-9px', // 44px tap target without shifting layout
             }}
             className="mobile-toggle"
@@ -154,7 +158,7 @@ export default function Navbar({ onBookNow }) {
                 fontSize: '20px',
                 fontFamily: 'var(--font-heading)',
                 letterSpacing: '0.08em',
-                fontWeight: '300',
+                fontWeight: '600',
                 padding: '3px 10px',
               }}>
                 {link.label}

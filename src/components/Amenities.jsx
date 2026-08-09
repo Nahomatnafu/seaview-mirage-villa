@@ -35,7 +35,7 @@ export default function Amenities() {
             <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase' }}>What's Included</span>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
           </div>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: '300', color: 'white' }}>
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: '600', color: 'white' }}>
             Villa <em style={{ fontStyle: 'italic', color: 'var(--gold-light)' }}>Amenities</em>
           </h2>
         </div>

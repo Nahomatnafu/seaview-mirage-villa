@@ -22,7 +22,7 @@ export default function Location() {
               <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Getting Here</span>
             </div>
 
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '300', color: 'white', marginBottom: '24px' }}>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '600', color: 'white', marginBottom: '24px' }}>
               Discovery Bay<br /><em style={{ fontStyle: 'italic', color: 'var(--gold-light)' }}>St. Ann, Jamaica</em>
             </h2>
 

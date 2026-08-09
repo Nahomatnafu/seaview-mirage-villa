@@ -32,7 +32,7 @@ function Course({ course, open, onToggle }) {
         }}
       >
         <span style={{
-          fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: '500',
+          fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: '600',
           color: 'var(--charcoal)', letterSpacing: '0.01em',
         }}>
           {course.name}
@@ -126,7 +126,7 @@ function PriceTable({ title, rows }) {
               </td>
               <td style={{
                 padding: '9px 0 9px 12px', textAlign: 'right', whiteSpace: 'nowrap',
-                fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: '500', color: 'var(--gold-dark)',
+                fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: '600', color: 'var(--gold-dark)',
               }}>
                 {price}
               </td>
@@ -162,7 +162,7 @@ export default function Menu() {
             <SectionEyebrow>The Chef's Menu</SectionEyebrow>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
           </div>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '300', color: 'var(--charcoal)', marginBottom: '16px' }}>
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '16px' }}>
             Cooked for you, <em style={{ fontStyle: 'italic', color: 'var(--gold-dark)' }}>every day</em>
           </h2>
           <p style={{ color: 'var(--gray)', maxWidth: '600px', margin: '0 auto', fontSize: '15px', lineHeight: 1.75 }}>
@@ -212,7 +212,7 @@ export default function Menu() {
               <SectionEyebrow>Collection {panel.number}</SectionEyebrow>
               <h3 style={{
                 fontFamily: 'var(--font-heading)', fontSize: 'clamp(28px, 3.4vw, 40px)',
-                fontWeight: '400', color: 'var(--charcoal)', margin: '12px 0 10px', lineHeight: 1.15,
+                fontWeight: '600', color: 'var(--charcoal)', margin: '12px 0 10px', lineHeight: 1.15,
               }}>
                 {panel.name}
               </h3>
@@ -295,7 +295,7 @@ export default function Menu() {
 
         {/* How to order */}
         <div style={{ textAlign: 'center', marginBottom: '38px' }}>
-          <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(24px, 3vw, 34px)', fontWeight: '300', color: 'var(--charcoal)' }}>
+          <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(24px, 3vw, 34px)', fontWeight: '600', color: 'var(--charcoal)' }}>
             How to <em style={{ fontStyle: 'italic', color: 'var(--gold-dark)' }}>order</em>
           </h3>
         </div>
@@ -310,7 +310,7 @@ export default function Menu() {
               border: '1px solid rgba(201,168,76,0.14)', position: 'relative',
             }}>
               <div style={{
-                fontFamily: 'var(--font-heading)', fontSize: '30px', fontWeight: '400',
+                fontFamily: 'var(--font-heading)', fontSize: '30px', fontWeight: '600',
                 color: 'rgba(201,168,76,0.28)', lineHeight: 1, marginBottom: '12px',
               }}>
                 {String(i + 1).padStart(2, '0')}

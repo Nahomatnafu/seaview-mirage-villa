@@ -114,7 +114,7 @@ export default function Gallery() {
             <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Photography</span>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
           </div>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '300', color: 'white', marginBottom: '14px' }}>
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '600', color: 'white', marginBottom: '14px' }}>
             <em style={{ fontStyle: 'italic', color: 'var(--gold-light)' }}>Life</em> at the Villa
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '14px' }}>

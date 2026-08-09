@@ -18,7 +18,7 @@ const SERVICE_ICONS = {
 function GroupHeading({ children, note }) {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '8px 16px', margin: '0 0 24px' }}>
-      <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: '500', color: 'var(--charcoal)' }}>{children}</h3>
+      <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: '600', color: 'var(--charcoal)' }}>{children}</h3>
       <div style={{ flex: 1, minWidth: '40px', height: '1px', background: 'rgba(201,168,76,0.25)' }} />
       {note && <span style={{ color: 'var(--gray)', fontSize: '12px', letterSpacing: '0.06em' }}>{note}</span>}
     </div>
@@ -35,7 +35,7 @@ export default function Services({ onBookNow }) {
             <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Full-Service Luxury</span>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
           </div>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '300', color: 'var(--charcoal)', marginBottom: '16px' }}>
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '16px' }}>
             Your Villa <em style={{ fontStyle: 'italic', color: 'var(--gold-dark)' }}>Staff & Services</em>
           </h2>
           <p style={{ color: 'var(--gray)', maxWidth: '520px', margin: '0 auto', fontSize: '15px', lineHeight: 1.7 }}>
@@ -70,7 +70,7 @@ export default function Services({ onBookNow }) {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px' }}>
                 <div style={{ color: 'var(--gold)', display: 'flex' }}>{SERVICE_ICONS[s.id]}</div>
-                <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '21px', fontWeight: '500', color: 'var(--charcoal)' }}>{s.title}</h4>
+                <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '21px', fontWeight: '600', color: 'var(--charcoal)' }}>{s.title}</h4>
               </div>
               <p style={{ color: 'var(--gray)', fontSize: '14px', lineHeight: '1.75' }}>{s.desc}</p>
             </div>
@@ -106,7 +106,7 @@ export default function Services({ onBookNow }) {
               }}
             >
               <div style={{ color: 'var(--gold)', marginBottom: '16px' }}>{SERVICE_ICONS[s.id]}</div>
-              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '21px', fontWeight: '500', color: 'var(--charcoal)', marginBottom: '12px' }}>{s.title}</h4>
+              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '21px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '12px' }}>{s.title}</h4>
               <p style={{ color: 'var(--gray)', fontSize: '14px', lineHeight: '1.75' }}>{s.desc}</p>
               <div style={{ marginTop: '20px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--gold-dark)', fontSize: '12px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                 <span>Add to inquiry</span>
