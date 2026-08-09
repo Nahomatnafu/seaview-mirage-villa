@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { ChevronDown } from 'lucide-react'
 
 export default function Hero({ onBookNow }) {
@@ -39,12 +40,13 @@ export default function Hero({ onBookNow }) {
         background: 'radial-gradient(ellipse at 50% 40%, rgba(201,168,76,0.06) 0%, transparent 70%)',
       }} />
 
-      {/* Content */}
-      <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 24px', maxWidth: '900px', margin: '0 auto' }}>
+      {/* Content. Padded clear of the fixed navbar so the eyebrow is never
+          tucked underneath it once the type scales up on phones. */}
+      <div className="hero-content" style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '96px 24px 0', maxWidth: '900px', margin: '0 auto' }}>
         {/* Ornament line */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '28px', opacity: 0, animation: 'fadeInUp 0.8s ease 0.2s forwards' }}>
           <div style={{ width: '60px', height: '1px', background: 'linear-gradient(90deg, transparent, var(--gold))' }} />
-          <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', fontFamily: 'var(--font-body)', fontWeight: '400' }}>Discovery Bay · St. Ann · Jamaica</span>
+          <span style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.25em', textTransform: 'uppercase', fontFamily: 'var(--font-body)', fontWeight: '400' }}>Discovery Bay · St. Ann · Jamaica</span>
           <div style={{ width: '60px', height: '1px', background: 'linear-gradient(90deg, var(--gold), transparent)' }} />
         </div>
 
@@ -64,9 +66,9 @@ export default function Hero({ onBookNow }) {
         </h1>
 
         <p style={{
-          color: 'rgba(255,255,255,0.8)',
-          fontSize: 'clamp(15px, 2vw, 18px)',
-          fontWeight: '300',
+          color: 'rgba(255,255,255,0.88)',
+          fontSize: 'clamp(16px, 2vw, 18px)',
+          fontWeight: '400',
           letterSpacing: '0.05em',
           maxWidth: '540px',
           margin: '0 auto 40px',
@@ -82,7 +84,7 @@ export default function Hero({ onBookNow }) {
             color: '#0e0e0e',
             border: 'none',
             padding: '16px 44px',
-            fontSize: '12px',
+            fontSize: '0.75rem',
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
             fontWeight: '600',
@@ -95,28 +97,28 @@ export default function Hero({ onBookNow }) {
           >
             Reserve Your Stay
           </button>
-          <a href="#about" style={{
+          <Link to="/villa" style={{
             color: 'white',
             border: '1px solid rgba(255,255,255,0.35)',
             padding: '16px 44px',
-            fontSize: '12px',
+            fontSize: '0.75rem',
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            fontWeight: '400',
+            fontWeight: '500',
             cursor: 'pointer',
             transition: 'all 0.3s ease',
             display: 'inline-block',
           }}
-          onMouseEnter={e => { e.target.style.borderColor = 'var(--gold)'; e.target.style.color = 'var(--gold)' }}
-          onMouseLeave={e => { e.target.style.borderColor = 'rgba(255,255,255,0.35)'; e.target.style.color = 'white' }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.color = 'var(--gold)' }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.35)'; e.currentTarget.style.color = 'white' }}
           >
             Explore Villa
-          </a>
+          </Link>
         </div>
 
         {/* Stat pills */}
-        <div style={{
-          display: 'flex', flexWrap: 'wrap', gap: '24px 40px', justifyContent: 'center', marginTop: '64px',
+        <div className="hero-stats" style={{
+          display: 'flex', flexWrap: 'wrap', gap: '20px 40px', justifyContent: 'center', marginTop: '56px',
           opacity: 0, animation: 'fadeInUp 0.9s ease 1s forwards'
         }}>
           {[
@@ -126,7 +128,7 @@ export default function Hero({ onBookNow }) {
           ].map(stat => (
             <div key={stat.label} style={{ textAlign: 'center' }}>
               <div style={{ color: 'var(--gold-light)', fontSize: '28px', fontFamily: 'var(--font-heading)', fontWeight: '600' }}>{stat.num}</div>
-              <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: '4px' }}>{stat.label}</div>
+              <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.6875rem', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: '4px' }}>{stat.label}</div>
             </div>
           ))}
         </div>
@@ -137,8 +139,8 @@ export default function Hero({ onBookNow }) {
         position: 'absolute', bottom: '36px', left: '50%', transform: 'translateX(-50%)',
         zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
         animation: 'fadeIn 1s ease 1.4s forwards', opacity: 0,
-      }}>
-        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Scroll</span>
+      }} className="hero-scroll">
+        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.625rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Scroll</span>
         <div style={{ animation: 'bounce 2s ease infinite' }}>
           <ChevronDown size={18} color="rgba(255,255,255,0.5)" />
         </div>
@@ -148,6 +150,25 @@ export default function Hero({ onBookNow }) {
         @keyframes bounce {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(6px); }
+        }
+        @media (max-width: 760px) {
+          /* Larger phone type makes the stack taller; tighten it and drop the
+             decorative scroll cue, which the wrapped stats would collide with. */
+          #hero .hero-content { padding-top: 104px !important; }
+          #hero .hero-stats { margin-top: 34px !important; gap: 16px 28px !important; }
+          #hero .hero-scroll { display: none !important; }
+        }
+        /* Small, short handsets (iPhone SE and similar): the 52px headline plus
+           the stat row is taller than the screen, so step the whole stack down. */
+        @media (max-width: 400px), (max-height: 700px) {
+          /* Vertical centring is what tucks the eyebrow under the fixed navbar
+             once the stack is taller than the screen — anchor to the top and let
+             the section scroll instead. */
+          #hero { min-height: 100svh !important; align-items: flex-start !important; }
+          #hero h1 { font-size: 42px !important; }
+          #hero .hero-content { padding-top: 118px !important; padding-bottom: 44px !important; }
+          #hero .hero-content > p { margin-bottom: 26px !important; }
+          #hero .hero-stats { margin-top: 24px !important; gap: 12px 24px !important; }
         }
       `}</style>
     </section>

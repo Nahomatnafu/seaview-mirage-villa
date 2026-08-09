@@ -48,7 +48,7 @@ export default function Testimonials() {
         <div style={{ textAlign: 'center', marginBottom: '60px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '16px' }}>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
-            <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Guest Stories</span>
+            <span style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Guest Stories</span>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
           </div>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '600', color: 'var(--charcoal)' }}>
@@ -78,8 +78,8 @@ export default function Testimonials() {
               ))}
             </div>
 
-            <div style={{ fontWeight: '500', fontSize: '15px', color: 'var(--charcoal)', letterSpacing: '0.05em' }}>{testimonials[active].name}</div>
-            <div style={{ color: 'var(--gray)', fontSize: '12px', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '4px' }}>
+            <div style={{ fontWeight: '500', fontSize: '0.9375rem', color: 'var(--charcoal)', letterSpacing: '0.05em' }}>{testimonials[active].name}</div>
+            <div style={{ color: 'var(--gray)', fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '4px' }}>
               {testimonials[active].origin} · {testimonials[active].trip}
             </div>
           </div>

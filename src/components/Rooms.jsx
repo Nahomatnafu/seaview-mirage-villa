@@ -52,7 +52,7 @@ export default function Rooms() {
         <div style={{ textAlign: 'center', marginBottom: '44px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '16px' }}>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
-            <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Accommodations</span>
+            <span style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Accommodations</span>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
           </div>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '600', color: 'var(--charcoal)' }}>
@@ -69,7 +69,7 @@ export default function Rooms() {
             <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <span style={{ color: 'var(--gold)', display: 'flex' }}>{s.icon}</span>
               <span style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: '600', color: 'var(--charcoal)', lineHeight: 1 }}>{s.num}</span>
-              <span style={{ color: 'var(--gray)', fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase' }}>{s.label}</span>
+              <span style={{ color: 'var(--gray)', fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase' }}>{s.label}</span>
             </div>
           ))}
         </div>
@@ -78,7 +78,7 @@ export default function Rooms() {
         <div style={{
           display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',
           gap: '10px 20px', marginBottom: '52px',
-          color: 'var(--gray)', fontSize: '13px', letterSpacing: '0.04em',
+          color: 'var(--gray)', fontSize: '0.8125rem', letterSpacing: '0.04em',
         }}>
           {BED_CONFIG.map((b, i) => (
             <React.Fragment key={b.id}>
@@ -91,17 +91,20 @@ export default function Rooms() {
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0', minHeight: '560px', overflow: 'hidden', borderRadius: '2px', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
-          {/* Image */}
-          <div style={{ position: 'relative', overflow: 'hidden' }}>
+        <div className="rooms-panel" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0', height: '560px', overflow: 'hidden', borderRadius: '2px', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
+          {/* Image. The photos are a mix of portrait and landscape, so the image
+              is taken out of flow and absolutely fills a fixed-size cell —
+              otherwise each one sizes the row to its own aspect ratio and the
+              panel jumps height every time you press next. */}
+          <div className="rooms-media" style={{ position: 'relative', overflow: 'hidden' }}>
             <img
               key={active}
               src={space.image}
               alt={space.name}
               style={{
+                position: 'absolute', inset: 0,
                 width: '100%', height: '100%', objectFit: 'cover',
                 animation: 'fadeIn 0.5s ease',
-                minHeight: '460px',
               }}
             />
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, transparent 60%, rgba(250,247,242,0.3))' }} />
@@ -132,23 +135,41 @@ export default function Rooms() {
           </div>
 
           {/* Details */}
-          <div style={{ background: 'white', padding: '52px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '12px', display: 'block' }}>{space.tag}</span>
-            <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '20px', lineHeight: 1.2 }}>
-              {space.name}
-            </h3>
-            <p style={{ color: 'var(--gray)', lineHeight: '1.8', marginBottom: '32px', fontSize: '14px' }}>{space.desc}</p>
+          <div className="rooms-copy" style={{ background: 'white', padding: '52px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            {/* All four descriptions occupy the same grid cell, so the panel is
+                always as tall as the longest one and never resizes between
+                slides — the copy lengths differ enough to shift it otherwise. */}
+            <div style={{ display: 'grid' }}>
+              {spaces.map((s, i) => (
+                <div
+                  key={s.name}
+                  aria-hidden={i !== active}
+                  style={{
+                    gridArea: '1 / 1',
+                    opacity: i === active ? 1 : 0,
+                    visibility: i === active ? 'visible' : 'hidden',
+                    transition: 'opacity 0.4s ease',
+                  }}
+                >
+                  <span style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '12px', display: 'block' }}>{s.tag}</span>
+                  <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '20px', lineHeight: 1.2 }}>
+                    {s.name}
+                  </h3>
+                  <p style={{ color: 'var(--gray)', lineHeight: '1.8', marginBottom: '32px', fontSize: '0.875rem' }}>{s.desc}</p>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '36px' }}>
-              {space.features.map(f => (
-                <span key={f} style={{
-                  background: 'var(--cream)',
-                  border: '1px solid rgba(201,168,76,0.2)',
-                  color: 'var(--charcoal)',
-                  padding: '6px 14px',
-                  fontSize: '11px',
-                  letterSpacing: '0.08em',
-                }}>{f}</span>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '36px' }}>
+                    {s.features.map(f => (
+                      <span key={f} style={{
+                        background: 'var(--cream)',
+                        border: '1px solid rgba(201,168,76,0.2)',
+                        color: 'var(--charcoal)',
+                        padding: '6px 14px',
+                        fontSize: '0.6875rem',
+                        letterSpacing: '0.08em',
+                      }}>{f}</span>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
 
@@ -181,9 +202,14 @@ export default function Rooms() {
 
       <style>{`
         @media (max-width: 800px) {
-          #rooms .container > div:last-child {
+          /* Stacked: the media cell needs its own height, since the image is
+             absolutely positioned and contributes none. */
+          #rooms .rooms-panel {
             grid-template-columns: 1fr !important;
+            grid-template-rows: 300px auto;
+            height: auto !important;
           }
+          #rooms .rooms-copy { padding: 34px 24px !important; }
         }
       `}</style>
     </section>

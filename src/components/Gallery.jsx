@@ -64,7 +64,7 @@ function PhotoCard({ photo, index, onOpen }) {
         gap: '10px', padding: '16px',
       }}>
         <span style={{
-          color: 'white', fontSize: '12px', letterSpacing: '0.12em',
+          color: 'white', fontSize: '0.75rem', letterSpacing: '0.12em',
           textTransform: 'uppercase', lineHeight: 1.4,
         }}>{photo.caption}</span>
         <Expand size={16} style={{ color: 'var(--gold-light)', flexShrink: 0 }} />
@@ -111,13 +111,13 @@ export default function Gallery() {
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '16px' }}>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
-            <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Photography</span>
+            <span style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Photography</span>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
           </div>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '600', color: 'white', marginBottom: '14px' }}>
             <em style={{ fontStyle: 'italic', color: 'var(--gold-light)' }}>Life</em> at the Villa
           </h2>
-          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '14px' }}>
+          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.875rem' }}>
             {GALLERY.length} photographs of the villa, the grounds, and the island around it.
           </p>
         </div>
@@ -137,7 +137,7 @@ export default function Gallery() {
                   background: on ? 'var(--gold)' : 'transparent',
                   color: on ? '#0e0e0e' : 'rgba(255,255,255,0.7)',
                   border: on ? '1px solid var(--gold)' : '1px solid rgba(255,255,255,0.16)',
-                  fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase',
+                  fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase',
                   fontWeight: on ? '600' : '400',
                   transition: 'all 0.25s ease',
                 }}
@@ -165,7 +165,7 @@ export default function Gallery() {
               style={{
                 background: 'transparent', color: 'var(--gold-light)',
                 border: '1px solid rgba(201,168,76,0.5)',
-                padding: '14px 38px', fontSize: '12px',
+                padding: '14px 38px', fontSize: '0.75rem',
                 letterSpacing: '0.16em', textTransform: 'uppercase',
                 transition: 'all 0.3s ease',
               }}
@@ -229,7 +229,7 @@ export default function Gallery() {
           <div style={{
             position: 'absolute', bottom: '20px', left: 0, right: 0,
             textAlign: 'center', color: 'rgba(255,255,255,0.6)',
-            fontSize: '12px', letterSpacing: '0.12em', textTransform: 'uppercase',
+            fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase',
             pointerEvents: 'none', padding: '0 70px',
           }}>
             {current.caption} · {lightbox + 1} / {filtered.length}

@@ -19,25 +19,25 @@ export default function Location() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
               <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
-              <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Getting Here</span>
+              <span style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Getting Here</span>
             </div>
 
             <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '600', color: 'white', marginBottom: '24px' }}>
               Discovery Bay<br /><em style={{ fontStyle: 'italic', color: 'var(--gold-light)' }}>St. Ann, Jamaica</em>
             </h2>
 
-            <p style={{ color: 'rgba(255,255,255,0.65)', lineHeight: '1.85', marginBottom: '40px', fontSize: '15px' }}>
+            <p style={{ color: 'rgba(255,255,255,0.65)', lineHeight: '1.85', marginBottom: '40px', fontSize: '0.9375rem' }}>
               Sea View Mirage Villa sits in the hills above Discovery Bay on Jamaica's north coast, with commanding views of the Caribbean Sea. The island's favorite attractions are minutes away, and Montego Bay airport is a scenic 45-minute drive — the villa collects you from there at no charge. Guests use nearby Puerto Seco Beach on villa guest passes.
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
               {NEARBY.map(n => (
                 <div key={n.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '18px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'rgba(255,255,255,0.85)', fontSize: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'rgba(255,255,255,0.85)', fontSize: '0.875rem' }}>
                     <span style={{ color: 'var(--gold)' }}>{NEARBY_ICONS[n.id]}</span>
                     {n.place}
                   </div>
-                  <span style={{ color: 'var(--gold)', fontSize: '12px', letterSpacing: '0.08em' }}>{n.distance}</span>
+                  <span style={{ color: 'var(--gold)', fontSize: '0.75rem', letterSpacing: '0.08em' }}>{n.distance}</span>
                 </div>
               ))}
             </div>
@@ -64,8 +64,8 @@ export default function Location() {
             }}>
               <MapPin size={18} style={{ color: 'var(--gold)', flexShrink: 0 }} />
               <div>
-                <div style={{ color: 'white', fontSize: '13px', fontWeight: '500' }}>{VILLA.name}</div>
-                <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', marginTop: '2px' }}>{VILLA.addressLine} · {VILLA.parish}</div>
+                <div style={{ color: 'white', fontSize: '0.8125rem', fontWeight: '500' }}>{VILLA.name}</div>
+                <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.6875rem', marginTop: '2px' }}>{VILLA.addressLine} · {VILLA.parish}</div>
               </div>
             </div>
           </div>

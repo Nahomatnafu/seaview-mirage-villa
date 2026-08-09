@@ -28,14 +28,14 @@ export default function Events({ onBookNow }) {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
               <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
-              <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Weddings & Celebrations</span>
+              <span style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Weddings & Celebrations</span>
             </div>
 
             <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '600', color: 'white', marginBottom: '24px', lineHeight: 1.15 }}>
               Your dream wedding<br /><em style={{ fontStyle: 'italic', color: 'var(--gold-light)' }}>in paradise</em>
             </h2>
 
-            <p style={{ color: 'rgba(255,255,255,0.65)', lineHeight: '1.85', marginBottom: '32px', fontSize: '15px' }}>
+            <p style={{ color: 'rgba(255,255,255,0.65)', lineHeight: '1.85', marginBottom: '32px', fontSize: '0.9375rem' }}>
               Celebrate your special day with breathtaking ocean views, elegant spaces, and a private luxury setting made for weddings, milestone birthdays, and family celebrations of up to {VILLA.eventCapacity} guests. Your concierge is on-site throughout the event, and the villa's chef and wait staff take care of every detail.
             </p>
 
@@ -43,7 +43,7 @@ export default function Events({ onBookNow }) {
               {highlights.map(h => (
                 <div key={h.label} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <span style={{ color: 'var(--gold)', display: 'flex' }}>{h.icon}</span>
-                  <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px', letterSpacing: '0.03em' }}>{h.label}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.875rem', letterSpacing: '0.03em' }}>{h.label}</span>
                 </div>
               ))}
             </div>
@@ -53,7 +53,7 @@ export default function Events({ onBookNow }) {
               color: '#0e0e0e',
               border: 'none',
               padding: '16px 44px',
-              fontSize: '12px',
+              fontSize: '0.75rem',
               letterSpacing: '0.18em',
               textTransform: 'uppercase',
               fontWeight: '600',

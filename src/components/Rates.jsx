@@ -54,13 +54,13 @@ export default function Rates({ onBookNow }) {
         <div style={{ textAlign: 'center', marginBottom: '56px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '16px' }}>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
-            <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Rates & Booking</span>
+            <span style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Rates & Booking</span>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
           </div>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '16px' }}>
             Clear pricing, <em style={{ fontStyle: 'italic', color: 'var(--gold-dark)' }}>no surprises</em>
           </h2>
-          <p style={{ color: 'var(--gray)', maxWidth: '560px', margin: '0 auto', fontSize: '15px', lineHeight: 1.7 }}>
+          <p style={{ color: 'var(--gray)', maxWidth: '560px', margin: '0 auto', fontSize: '0.9375rem', lineHeight: 1.7 }}>
             Everything you'll be asked to pay, published up front — with an itemized receipt for anything bought on your behalf.
           </p>
         </div>
@@ -92,7 +92,7 @@ export default function Rates({ onBookNow }) {
             >
               <div style={{ color: 'var(--gold)', marginBottom: '20px' }}>{c.icon}</div>
               <div style={{
-                fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase',
+                fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase',
                 color: c.featured ? 'rgba(255,255,255,0.6)' : 'var(--gray)', marginBottom: '14px',
               }}>{c.title}</div>
 
@@ -105,7 +105,7 @@ export default function Rates({ onBookNow }) {
                 marginBottom: '6px',
               }}>{c.price}</div>
               <div style={{
-                fontSize: '12px', letterSpacing: '0.06em',
+                fontSize: '0.75rem', letterSpacing: '0.06em',
                 color: c.featured ? 'rgba(255,255,255,0.5)' : 'var(--gray)',
                 marginBottom: '20px',
               }}>{c.unit}</div>
@@ -113,7 +113,7 @@ export default function Rates({ onBookNow }) {
               <div style={{ width: '32px', height: '1px', background: 'var(--gold)', opacity: 0.5, marginBottom: '20px' }} />
 
               <p style={{
-                fontSize: '13.5px', lineHeight: '1.75',
+                fontSize: '0.8438rem', lineHeight: '1.75',
                 color: c.featured ? 'rgba(255,255,255,0.65)' : 'var(--gray)',
               }}>{c.desc}</p>
             </div>
@@ -131,11 +131,11 @@ export default function Rates({ onBookNow }) {
         }}>
           {/* What's included */}
           <div style={{ padding: '44px 42px', borderRight: '1px solid rgba(201,168,76,0.16)' }}>
-            <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase' }}>The Meal Plan</span>
+            <span style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>The Meal Plan</span>
             <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(26px, 3vw, 34px)', fontWeight: '600', color: 'var(--charcoal)', margin: '14px 0 8px', lineHeight: 1.2 }}>
-              {MEAL_PLAN.price} <span style={{ fontSize: '16px', color: 'var(--gray)', fontFamily: 'var(--font-body)' }}>{MEAL_PLAN.unit}</span>
+              {MEAL_PLAN.price} <span style={{ fontSize: '1rem', color: 'var(--gray)', fontFamily: 'var(--font-body)' }}>{MEAL_PLAN.unit}</span>
             </h3>
-            <p style={{ color: 'var(--gray)', fontSize: '14px', lineHeight: 1.75, marginBottom: '28px' }}>
+            <p style={{ color: 'var(--gray)', fontSize: '0.875rem', lineHeight: 1.75, marginBottom: '28px' }}>
               Full board, cooked in the villa by your chef. Groceries are bought on your behalf and billed at cost with a detailed receipt.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '13px' }}>
@@ -147,7 +147,7 @@ export default function Rates({ onBookNow }) {
                   }}>
                     <Check size={11} style={{ color: 'var(--gold-dark)' }} />
                   </span>
-                  <span style={{ color: 'var(--charcoal)', fontSize: '14px', lineHeight: 1.55 }}>{item}</span>
+                  <span style={{ color: 'var(--charcoal)', fontSize: '0.875rem', lineHeight: 1.55 }}>{item}</span>
                 </div>
               ))}
             </div>
@@ -155,7 +155,7 @@ export default function Rates({ onBookNow }) {
 
           {/* How it works */}
           <div style={{ padding: '44px 42px', background: 'var(--warm-white)' }}>
-            <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase' }}>How It Works</span>
+            <span style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>How It Works</span>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px', marginTop: '24px' }}>
               {MEAL_PLAN.process.map((p, i) => (
                 <div key={p.step} style={{ display: 'flex', gap: '16px' }}>
@@ -168,8 +168,8 @@ export default function Rates({ onBookNow }) {
                     {PROCESS_ICONS[i]}
                   </div>
                   <div>
-                    <div style={{ fontSize: '14px', fontWeight: '500', color: 'var(--charcoal)', letterSpacing: '0.03em', marginBottom: '4px' }}>{p.step}</div>
-                    <p style={{ color: 'var(--gray)', fontSize: '13px', lineHeight: 1.65 }}>{p.desc}</p>
+                    <div style={{ fontSize: '0.875rem', fontWeight: '500', color: 'var(--charcoal)', letterSpacing: '0.03em', marginBottom: '4px' }}>{p.step}</div>
+                    <p style={{ color: 'var(--gray)', fontSize: '0.8125rem', lineHeight: 1.65 }}>{p.desc}</p>
                   </div>
                 </div>
               ))}
@@ -204,7 +204,7 @@ export default function Rates({ onBookNow }) {
               }}>{i + 1}</div>
               <div style={{ color: 'var(--gold)', marginBottom: '16px' }}>{PAYMENT_ICONS[t.id]}</div>
               <div style={{ fontFamily: 'var(--font-heading)', fontSize: '21px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '10px' }}>{t.label}</div>
-              <p style={{ color: 'var(--gray)', fontSize: '13.5px', lineHeight: 1.7 }}>{t.desc}</p>
+              <p style={{ color: 'var(--gray)', fontSize: '0.8438rem', lineHeight: 1.7 }}>{t.desc}</p>
             </div>
           ))}
         </div>
@@ -216,7 +216,7 @@ export default function Rates({ onBookNow }) {
             color: '#0e0e0e',
             border: 'none',
             padding: '16px 48px',
-            fontSize: '12px',
+            fontSize: '0.75rem',
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
             fontWeight: '600',
@@ -229,7 +229,7 @@ export default function Rates({ onBookNow }) {
           >
             Request a Quote
           </button>
-          <p style={{ color: 'var(--gray)', fontSize: '13px', marginTop: '18px', lineHeight: 2 }}>
+          <p style={{ color: 'var(--gray)', fontSize: '0.8125rem', marginTop: '18px', lineHeight: 2 }}>
             Or call us on{' '}
             <a href={VILLA.phoneUSHref} style={{ color: 'var(--gold-dark)', borderBottom: '1px solid rgba(166,135,78,0.4)', display: 'inline-block', padding: '6px 2px' }}>{VILLA.phoneUS}</a>{' '}
             (US) or{' '}
