@@ -85,6 +85,23 @@ button {
   }
 }
 
+/* Body copy is authored in rem (see components), so raising the root size is a
+   single lever that enlarges every label, paragraph and caption on phones —
+   where the desktop 11-15px scale reads too small. Display headings use clamp()
+   in px and are deliberately unaffected. */
+@media (max-width: 760px) {
+  :root {
+    font-size: 18px;
+  }
+}
+/* Only the genuinely narrow handsets step back down; 390-430px phones are
+   mainstream and keep the full bump. */
+@media (max-width: 355px) {
+  :root {
+    font-size: 17px;
+  }
+}
+
 /* Gold divider */
 .gold-divider {
   width: 60px;

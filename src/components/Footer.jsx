@@ -1,18 +1,10 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { Mail, Phone, MapPin } from 'lucide-react'
 import { VILLA } from '../content'
+import { PAGES } from '../site'
 
-const exploreLinks = [
-  { label: 'About', href: '#about' },
-  { label: 'The Villa', href: '#rooms' },
-  { label: 'Amenities', href: '#amenities' },
-  { label: 'Gallery', href: '#gallery' },
-  { label: 'Services', href: '#services' },
-  { label: 'Rates & Booking', href: '#rates' },
-  { label: "Chef's Menu", href: '#menu' },
-  { label: 'Events & Weddings', href: '#events' },
-  { label: 'Location', href: '#location' },
-]
+const exploreLinks = PAGES.map(p => ({ label: p.title || p.nav, to: p.path }))
 
 const serviceItems = [
   'Private Chef',
@@ -32,7 +24,7 @@ export default function Footer({ onBookNow }) {
           {/* Brand */}
           <div>
             <img src="/assets/logo.png" alt={VILLA.name} style={{ height: '80px', marginBottom: '24px', filter: 'drop-shadow(0 2px 8px rgba(201,168,76,0.2))' }} />
-            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', lineHeight: '1.8', maxWidth: '280px' }}>
+            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.875rem', lineHeight: '1.8', maxWidth: '280px' }}>
               A private full-service luxury villa in the hills of Discovery Bay, Jamaica — where timeless elegance, personalized service, and natural beauty come together.
             </p>
             {/* Social links intentionally omitted until the client provides real profile URLs */}
@@ -40,14 +32,14 @@ export default function Footer({ onBookNow }) {
 
           {/* Quick Links */}
           <div>
-            <h4 style={{ color: 'white', fontSize: '12px', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: '24px', fontWeight: '500' }}>Explore</h4>
+            <h4 style={{ color: 'white', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: '24px', fontWeight: '500' }}>Explore</h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '4px' }}>
               {exploreLinks.map(l => (
-                <li key={l.label}>
-                  <a href={l.href} style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', transition: 'color 0.3s', display: 'inline-block', padding: '7px 0' }}
-                  onMouseEnter={e => e.target.style.color = 'var(--gold)'}
-                  onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.5)'}
-                  >{l.label}</a>
+                <li key={l.to}>
+                  <Link to={l.to} style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.875rem', transition: 'color 0.3s', display: 'inline-block', padding: '7px 0' }}
+                  onMouseEnter={e => e.currentTarget.style.color = 'var(--gold)'}
+                  onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
+                  >{l.label}</Link>
                 </li>
               ))}
             </ul>
@@ -55,11 +47,11 @@ export default function Footer({ onBookNow }) {
 
           {/* Services */}
           <div>
-            <h4 style={{ color: 'white', fontSize: '12px', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: '24px', fontWeight: '500' }}>Services</h4>
+            <h4 style={{ color: 'white', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: '24px', fontWeight: '500' }}>Services</h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {serviceItems.map(l => (
                 <li key={l}>
-                  <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>{l}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.875rem' }}>{l}</span>
                 </li>
               ))}
             </ul>
@@ -67,7 +59,7 @@ export default function Footer({ onBookNow }) {
 
           {/* Contact */}
           <div>
-            <h4 style={{ color: 'white', fontSize: '12px', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: '24px', fontWeight: '500' }}>Contact</h4>
+            <h4 style={{ color: 'white', fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: '24px', fontWeight: '500' }}>Contact</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {[
                 { icon: <Phone size={14} />, text: `${VILLA.phoneUS} · US`, href: VILLA.phoneUSHref },
@@ -78,12 +70,12 @@ export default function Footer({ onBookNow }) {
                 <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
                   <span style={{ color: 'var(--gold)', marginTop: '2px', flexShrink: 0 }}>{c.icon}</span>
                   {c.href ? (
-                    <a href={c.href} style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', transition: 'color 0.3s', wordBreak: 'break-word', display: 'inline-block', padding: '6px 0' }}
+                    <a href={c.href} style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.8125rem', transition: 'color 0.3s', wordBreak: 'break-word', display: 'inline-block', padding: '6px 0' }}
                     onMouseEnter={e => e.target.style.color = 'var(--gold)'}
                     onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.55)'}
                     >{c.text}</a>
                   ) : (
-                    <span style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px' }}>{c.text}</span>
+                    <span style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.8125rem' }}>{c.text}</span>
                   )}
                 </div>
               ))}
@@ -95,7 +87,7 @@ export default function Footer({ onBookNow }) {
               color: '#0e0e0e',
               border: 'none',
               padding: '12px 28px',
-              fontSize: '11px',
+              fontSize: '0.6875rem',
               letterSpacing: '0.15em',
               textTransform: 'uppercase',
               fontWeight: '600',
@@ -121,10 +113,10 @@ export default function Footer({ onBookNow }) {
           flexWrap: 'wrap',
           gap: '16px',
         }}>
-          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px', letterSpacing: '0.05em' }}>
+          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.75rem', letterSpacing: '0.05em' }}>
             © {new Date().getFullYear()} {VILLA.name}. All rights reserved.
           </p>
-          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px', letterSpacing: '0.05em' }}>
+          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.75rem', letterSpacing: '0.05em' }}>
             {VILLA.addressLine} · {VILLA.parish}
           </p>
         </div>

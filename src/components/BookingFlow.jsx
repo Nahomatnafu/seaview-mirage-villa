@@ -155,33 +155,33 @@ export default function BookingFlow({ onClose, initialService = null }) {
             <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '36px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '12px' }}>
               Inquiry Sent!
             </h2>
-            <p style={{ color: 'var(--gray)', fontSize: '15px', lineHeight: '1.7', marginBottom: '32px' }}>
+            <p style={{ color: 'var(--gray)', fontSize: '0.9375rem', lineHeight: '1.7', marginBottom: '32px' }}>
               Thank you for choosing {VILLA.name}. Our team will reply to <strong>{contact.email}</strong> within 24 hours with availability and full pricing for your stay.
             </p>
             <div style={{ background: 'var(--cream)', padding: '24px', marginBottom: '32px', textAlign: 'left' }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
                 <div>
-                  <div style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>Check-in</div>
-                  <div style={{ fontWeight: '500', fontSize: '15px' }}>{formatDate(checkIn)}</div>
+                  <div style={{ fontSize: '0.6875rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>Check-in</div>
+                  <div style={{ fontWeight: '500', fontSize: '0.9375rem' }}>{formatDate(checkIn)}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>Check-out</div>
-                  <div style={{ fontWeight: '500', fontSize: '15px' }}>{formatDate(checkOut)}</div>
+                  <div style={{ fontSize: '0.6875rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>Check-out</div>
+                  <div style={{ fontWeight: '500', fontSize: '0.9375rem' }}>{formatDate(checkOut)}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>Guests</div>
-                  <div style={{ fontWeight: '500', fontSize: '15px' }}>{guests} guests</div>
+                  <div style={{ fontSize: '0.6875rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>Guests</div>
+                  <div style={{ fontWeight: '500', fontSize: '0.9375rem' }}>{guests} guests</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>Services</div>
-                  <div style={{ fontWeight: '500', fontSize: '15px' }}>{selectedServices.length > 0 ? `${selectedServices.length} requested` : 'None'}</div>
+                  <div style={{ fontSize: '0.6875rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>Services</div>
+                  <div style={{ fontWeight: '500', fontSize: '0.9375rem' }}>{selectedServices.length > 0 ? `${selectedServices.length} requested` : 'None'}</div>
                 </div>
               </div>
             </div>
             <button onClick={onClose} style={{
               background: 'linear-gradient(135deg, #c9a84c, #e8c96a)',
               color: '#0e0e0e', border: 'none',
-              padding: '14px 44px', fontSize: '12px',
+              padding: '14px 44px', fontSize: '0.75rem',
               letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: '600',
               cursor: 'pointer',
             }}>
@@ -195,8 +195,8 @@ export default function BookingFlow({ onClose, initialService = null }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
                 <img src="/assets/logo.png" alt="logo" style={{ height: '44px' }} />
                 <div>
-                  <div style={{ color: 'white', fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: '600' }}>Request Your Stay</div>
-                  <div style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: '2px' }}>{VILLA.name} · Discovery Bay, Jamaica</div>
+                  <div style={{ color: 'white', fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: '600' }}>Request Your Stay</div>
+                  <div style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: '2px' }}>{VILLA.name} · Discovery Bay, Jamaica</div>
                 </div>
               </div>
 
@@ -211,12 +211,12 @@ export default function BookingFlow({ onClose, initialService = null }) {
                         border: step >= s.n ? 'none' : '1px solid rgba(255,255,255,0.2)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         color: step >= s.n ? '#0e0e0e' : 'rgba(255,255,255,0.4)',
-                        fontSize: '13px', fontWeight: '600',
+                        fontSize: '0.8125rem', fontWeight: '600',
                         transition: 'all 0.3s',
                       }}>
                         {step > s.n ? <Check size={14} /> : s.n}
                       </div>
-                      <span style={{ color: step >= s.n ? 'white' : 'rgba(255,255,255,0.35)', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+                      <span style={{ color: step >= s.n ? 'white' : 'rgba(255,255,255,0.35)', fontSize: '0.625rem', letterSpacing: '0.1em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
                         {s.label}
                       </span>
                     </div>
@@ -245,7 +245,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '8px' }}>
                       How many guests?
                     </h3>
-                    <p style={{ color: 'var(--gray)', fontSize: '14px' }}>{VILLA.name} accommodates up to {VILLA.sleeps} guests across {VILLA.bedrooms} en-suite bedrooms.</p>
+                    <p style={{ color: 'var(--gray)', fontSize: '0.875rem' }}>{VILLA.name} accommodates up to {VILLA.sleeps} guests across {VILLA.bedrooms} en-suite bedrooms.</p>
                   </div>
 
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
@@ -266,14 +266,14 @@ export default function BookingFlow({ onClose, initialService = null }) {
                       >
                         <Users size={22} style={{ color: guests === n ? 'var(--gold)' : 'var(--gray)', marginBottom: '10px' }} />
                         <span style={{ fontSize: '22px', fontFamily: 'var(--font-heading)', fontWeight: '600', color: guests === n ? 'var(--gold-dark)' : 'var(--charcoal)', lineHeight: 1 }}>{n}</span>
-                        <span style={{ fontSize: '11px', color: 'var(--gray)', marginTop: '4px', letterSpacing: '0.06em' }}>guests</span>
+                        <span style={{ fontSize: '0.6875rem', color: 'var(--gray)', marginTop: '4px', letterSpacing: '0.06em' }}>guests</span>
                       </button>
                     ))}
                   </div>
 
                   <div style={{ marginTop: '28px', padding: '16px 20px', background: 'var(--cream)', borderLeft: '3px solid var(--gold)', display: 'flex', gap: '12px', alignItems: 'center' }}>
                     <Star size={16} style={{ color: 'var(--gold)', flexShrink: 0 }} />
-                    <p style={{ fontSize: '13px', color: 'var(--gray)', lineHeight: 1.6 }}>
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--gray)', lineHeight: 1.6 }}>
                       Planning a wedding or event? The villa hosts up to {VILLA.eventCapacity} guests for celebrations, with {VILLA.sleeps} sleeping on-site. Mention it in your special requests and our team will make custom arrangements.
                     </p>
                   </div>
@@ -287,7 +287,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '8px' }}>
                       Anything we can arrange?
                     </h3>
-                    <p style={{ color: 'var(--gray)', fontSize: '14px' }}>Your chef, butler, housekeeping, concierge, and security are already part of the villa. Select anything else you'd like and we'll price it into your quote.</p>
+                    <p style={{ color: 'var(--gray)', fontSize: '0.875rem' }}>Your chef, butler, housekeeping, concierge, and security are already part of the villa. Select anything else you'd like and we'll price it into your quote.</p>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -316,10 +316,10 @@ export default function BookingFlow({ onClose, initialService = null }) {
                           </div>
                           <div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <span style={{ fontWeight: '500', fontSize: '15px', color: 'var(--charcoal)' }}>{service.title}</span>
-                              <span style={{ fontSize: '11px', color: 'var(--gray)', background: 'var(--light-gray)', padding: '2px 8px', borderRadius: '2px' }}>{service.subtitle}</span>
+                              <span style={{ fontWeight: '500', fontSize: '0.9375rem', color: 'var(--charcoal)' }}>{service.title}</span>
+                              <span style={{ fontSize: '0.6875rem', color: 'var(--gray)', background: 'var(--light-gray)', padding: '2px 8px', borderRadius: '2px' }}>{service.subtitle}</span>
                             </div>
-                            <p style={{ color: 'var(--gray)', fontSize: '12px', marginTop: '4px', lineHeight: '1.5' }}>{service.desc}</p>
+                            <p style={{ color: 'var(--gray)', fontSize: '0.75rem', marginTop: '4px', lineHeight: '1.5' }}>{service.desc}</p>
                           </div>
                           <div style={{
                             width: '22px', height: '22px', borderRadius: '50%',
@@ -344,12 +344,12 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '8px' }}>
                       Select your dates
                     </h3>
-                    <p style={{ color: 'var(--gray)', fontSize: '14px' }}>Minimum stay of {VILLA.minNights} nights. Check-in {VILLA.checkIn} · Check-out {VILLA.checkOut}.</p>
+                    <p style={{ color: 'var(--gray)', fontSize: '0.875rem' }}>Minimum stay of {VILLA.minNights} nights. Check-in {VILLA.checkIn} · Check-out {VILLA.checkOut}.</p>
                   </div>
 
                   <div className="bf-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '28px' }}>
                     <div>
-                      <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '10px', fontWeight: '500' }}>
+                      <label style={{ display: 'block', fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '10px', fontWeight: '500' }}>
                         Check-in Date
                       </label>
                       <div style={{ position: 'relative' }}>
@@ -365,7 +365,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                           style={{
                             width: '100%', padding: '14px 14px 14px 40px',
                             border: '1px solid var(--light-gray)',
-                            fontSize: '14px', color: 'var(--charcoal)',
+                            fontSize: '0.875rem', color: 'var(--charcoal)',
                             outline: 'none', background: 'white',
                             fontFamily: 'var(--font-body)',
                           }}
@@ -373,7 +373,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                       </div>
                     </div>
                     <div>
-                      <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '10px', fontWeight: '500' }}>
+                      <label style={{ display: 'block', fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '10px', fontWeight: '500' }}>
                         Check-out Date
                       </label>
                       <div style={{ position: 'relative' }}>
@@ -387,7 +387,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                           style={{
                             width: '100%', padding: '14px 14px 14px 40px',
                             border: '1px solid var(--light-gray)',
-                            fontSize: '14px', color: 'var(--charcoal)',
+                            fontSize: '0.875rem', color: 'var(--charcoal)',
                             outline: 'none', background: !checkIn ? 'var(--cream)' : 'white',
                             fontFamily: 'var(--font-body)',
                             opacity: !checkIn ? 0.5 : 1,
@@ -400,14 +400,14 @@ export default function BookingFlow({ onClose, initialService = null }) {
                   {nights > 0 && (
                     <div style={{ background: 'var(--cream)', padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderLeft: '3px solid var(--gold)' }}>
                       <div>
-                        <span style={{ fontWeight: '500', color: 'var(--charcoal)', fontSize: '15px' }}>{nights} Night{nights !== 1 ? 's' : ''}</span>
-                        <span style={{ color: 'var(--gray)', fontSize: '13px', marginLeft: '8px' }}>{formatDate(checkIn)} → {formatDate(checkOut)}</span>
+                        <span style={{ fontWeight: '500', color: 'var(--charcoal)', fontSize: '0.9375rem' }}>{nights} Night{nights !== 1 ? 's' : ''}</span>
+                        <span style={{ color: 'var(--gray)', fontSize: '0.8125rem', marginLeft: '8px' }}>{formatDate(checkIn)} → {formatDate(checkOut)}</span>
                       </div>
                     </div>
                   )}
 
                   {nights > 0 && nights < VILLA.minNights && (
-                    <p style={{ color: '#c0392b', fontSize: '13px', marginTop: '12px' }}>Minimum stay is {VILLA.minNights} nights. Please adjust your dates.</p>
+                    <p style={{ color: '#c0392b', fontSize: '0.8125rem', marginTop: '12px' }}>Minimum stay is {VILLA.minNights} nights. Please adjust your dates.</p>
                   )}
                 </div>
               )}
@@ -419,7 +419,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '8px' }}>
                       Review your inquiry
                     </h3>
-                    <p style={{ color: 'var(--gray)', fontSize: '14px' }}>No payment now — our team replies within 24 hours with availability and full pricing.</p>
+                    <p style={{ color: 'var(--gray)', fontSize: '0.875rem' }}>No payment now — our team replies within 24 hours with availability and full pricing.</p>
                   </div>
 
                   {/* Summary card */}
@@ -432,14 +432,14 @@ export default function BookingFlow({ onClose, initialService = null }) {
                         { label: 'Guests', val: `${guests}` },
                       ].map(item => (
                         <div key={item.label} style={{ padding: '18px 20px', borderRight: '1px solid var(--light-gray)' }}>
-                          <div style={{ fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '6px' }}>{item.label}</div>
-                          <div style={{ fontWeight: '500', color: 'var(--charcoal)', fontSize: '14px' }}>{item.val}</div>
+                          <div style={{ fontSize: '0.625rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '6px' }}>{item.label}</div>
+                          <div style={{ fontWeight: '500', color: 'var(--charcoal)', fontSize: '0.875rem' }}>{item.val}</div>
                         </div>
                       ))}
                     </div>
 
                     <div style={{ padding: '20px' }}>
-                      <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '10px' }}>Requested Services</div>
+                      <div style={{ fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '10px' }}>Requested Services</div>
                       {selectedServices.length > 0 ? (
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                           {selectedServices.map(s => (
@@ -448,15 +448,15 @@ export default function BookingFlow({ onClose, initialService = null }) {
                               border: '1px solid rgba(201,168,76,0.25)',
                               color: 'var(--charcoal)',
                               padding: '6px 14px',
-                              fontSize: '12px',
+                              fontSize: '0.75rem',
                               letterSpacing: '0.05em',
                             }}>{s.title}</span>
                           ))}
                         </div>
                       ) : (
-                        <p style={{ color: 'var(--gray)', fontSize: '13px' }}>None — your chef, butler, housekeeping, concierge, and security are always part of your stay.</p>
+                        <p style={{ color: 'var(--gray)', fontSize: '0.8125rem' }}>None — your chef, butler, housekeeping, concierge, and security are always part of your stay.</p>
                       )}
-                      <p style={{ color: 'var(--gray)', fontSize: '11px', marginTop: '14px' }}>
+                      <p style={{ color: 'var(--gray)', fontSize: '0.6875rem', marginTop: '14px' }}>
                         * This is a quote request, not a confirmed booking. Rates depend on dates, group size, and services.
                       </p>
                     </div>
@@ -466,13 +466,13 @@ export default function BookingFlow({ onClose, initialService = null }) {
                   <div style={{ border: '1px solid rgba(201,168,76,0.25)', padding: '20px 22px', marginBottom: '24px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
                       <Wallet size={15} style={{ color: 'var(--gold)' }} />
-                      <span style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--charcoal)', fontWeight: '500' }}>Payment Terms</span>
+                      <span style={{ fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--charcoal)', fontWeight: '500' }}>Payment Terms</span>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       {PAYMENT_TERMS.map(t => (
                         <div key={t.id} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
                           <Check size={13} style={{ color: 'var(--gold-dark)', flexShrink: 0, marginTop: '4px' }} />
-                          <p style={{ fontSize: '12.5px', color: 'var(--gray)', lineHeight: 1.6 }}>
+                          <p style={{ fontSize: '0.7813rem', color: 'var(--gray)', lineHeight: 1.6 }}>
                             <strong style={{ color: 'var(--charcoal)', fontWeight: '500' }}>{t.label}</strong> — {t.desc}
                           </p>
                         </div>
@@ -482,7 +482,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
 
                   {/* Contact form */}
                   <div style={{ background: 'var(--cream)', padding: '24px', marginBottom: '8px' }}>
-                    <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '20px' }}>
+                    <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.125rem', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '20px' }}>
                       Your Contact Details
                     </h4>
                     <div className="bf-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
@@ -493,7 +493,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                         { field: 'phone', label: 'Phone', ph: '+1 555 000 0000', type: 'tel' },
                       ].map(f => (
                         <div key={f.field}>
-                          <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '8px' }}>{f.label}</label>
+                          <label style={{ display: 'block', fontSize: '0.6875rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '8px' }}>{f.label}</label>
                           <input
                             type={f.type}
                             placeholder={f.ph}
@@ -502,7 +502,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                             style={{
                               width: '100%', padding: '12px 14px',
                               border: '1px solid rgba(201,168,76,0.2)',
-                              background: 'white', fontSize: '14px', color: 'var(--charcoal)',
+                              background: 'white', fontSize: '0.875rem', color: 'var(--charcoal)',
                               outline: 'none', fontFamily: 'var(--font-body)',
                             }}
                             onFocus={e => e.target.style.borderColor = 'var(--gold)'}
@@ -511,7 +511,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                         </div>
                       ))}
                       <div style={{ gridColumn: '1 / -1' }}>
-                        <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '8px' }}>Special Requests</label>
+                        <label style={{ display: 'block', fontSize: '0.6875rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '8px' }}>Special Requests</label>
                         <textarea
                           placeholder="Dietary requirements, celebrations, wedding plans, or any other requests..."
                           rows={3}
@@ -520,7 +520,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                           style={{
                             width: '100%', padding: '12px 14px',
                             border: '1px solid rgba(201,168,76,0.2)',
-                            background: 'white', fontSize: '14px', color: 'var(--charcoal)',
+                            background: 'white', fontSize: '0.875rem', color: 'var(--charcoal)',
                             outline: 'none', fontFamily: 'var(--font-body)',
                             resize: 'vertical',
                           }}
@@ -532,7 +532,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                   </div>
 
                   {error && (
-                    <p style={{ color: '#c0392b', fontSize: '13px', marginTop: '12px', lineHeight: 1.6 }}>{error}</p>
+                    <p style={{ color: '#c0392b', fontSize: '0.8125rem', marginTop: '12px', lineHeight: 1.6 }}>{error}</p>
                   )}
                 </div>
               )}
@@ -547,7 +547,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     display: 'flex', alignItems: 'center', gap: '8px',
                     background: 'none', border: '1px solid var(--light-gray)',
                     padding: '12px 24px', color: 'var(--gray)', cursor: 'pointer',
-                    fontSize: '13px', letterSpacing: '0.08em', transition: 'all 0.2s',
+                    fontSize: '0.8125rem', letterSpacing: '0.08em', transition: 'all 0.2s',
                   }}
                   onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--charcoal)'}
                   onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--light-gray)'}
@@ -567,7 +567,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                       background: canProceed() ? 'linear-gradient(135deg, #c9a84c, #e8c96a)' : 'var(--light-gray)',
                       color: canProceed() ? '#0e0e0e' : 'var(--gray)',
                       border: 'none', padding: '14px 36px',
-                      fontSize: '12px', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: '600',
+                      fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: '600',
                       cursor: canProceed() ? 'pointer' : 'not-allowed',
                       transition: 'all 0.3s',
                     }}
@@ -586,7 +586,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                       color: canSubmit ? '#0e0e0e' : 'var(--gray)',
                       border: 'none',
                       padding: '15px 40px',
-                      fontSize: '12px', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: '700',
+                      fontSize: '0.75rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: '700',
                       cursor: canSubmit ? 'pointer' : 'not-allowed',
                       boxShadow: canSubmit ? '0 4px 20px rgba(201,168,76,0.35)' : 'none',
                       transition: 'all 0.3s',

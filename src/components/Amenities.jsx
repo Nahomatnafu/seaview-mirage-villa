@@ -32,7 +32,7 @@ export default function Amenities() {
         <div style={{ textAlign: 'center', marginBottom: '52px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '16px' }}>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
-            <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase' }}>What's Included</span>
+            <span style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.22em', textTransform: 'uppercase' }}>What's Included</span>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
           </div>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: '600', color: 'white' }}>
@@ -68,7 +68,7 @@ export default function Amenities() {
             }}
             >
               <div style={{ color: 'var(--gold)' }}>{AMENITY_ICONS[a.id]}</div>
-              <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: '12px', letterSpacing: '0.1em', textTransform: 'uppercase', textAlign: 'center' }}>{a.label}</span>
+              <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase', textAlign: 'center' }}>{a.label}</span>
             </div>
           ))}
         </div>
@@ -86,7 +86,7 @@ export default function Amenities() {
           {GOOD_TO_KNOW.map(p => (
             <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <span style={{ color: 'var(--gold)', display: 'flex' }}>{POLICY_ICONS[p.id]}</span>
-              <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', letterSpacing: '0.04em' }}>{p.label}</span>
+              <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.8125rem', letterSpacing: '0.04em' }}>{p.label}</span>
             </div>
           ))}
         </div>

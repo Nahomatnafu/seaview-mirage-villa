@@ -54,7 +54,7 @@ export default function About() {
               minWidth: '140px',
             }}>
               <div style={{ color: 'var(--gold)', fontSize: '32px', fontFamily: 'var(--font-heading)', fontWeight: '600', lineHeight: 1 }}>7</div>
-              <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '6px' }}>En-suite Bedrooms</div>
+              <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.6875rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '6px' }}>En-suite Bedrooms</div>
             </div>
           </div>
 
@@ -62,7 +62,7 @@ export default function About() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
               <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
-              <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase' }}>About the Villa</span>
+              <span style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.22em', textTransform: 'uppercase' }}>About the Villa</span>
             </div>
 
             <h2 style={{
@@ -76,10 +76,10 @@ export default function About() {
               A Caribbean<br /><em style={{ fontStyle: 'italic', color: 'var(--gold-dark)' }}>sanctuary</em> like<br />no other
             </h2>
 
-            <p style={{ color: 'var(--gray)', lineHeight: '1.85', marginBottom: '20px', fontSize: '15px' }}>
+            <p style={{ color: 'var(--gray)', lineHeight: '1.85', marginBottom: '20px', fontSize: '0.9375rem' }}>
               Nestled in the hills of Discovery Bay, St. Ann, Sea View Mirage Villa offers a breathtaking panorama of the Caribbean Sea. Seven beautifully designed en-suite bedrooms — each with its own private balcony — sleep up to fourteen guests in refined tropical luxury.
             </p>
-            <p style={{ color: 'var(--gray)', lineHeight: '1.85', marginBottom: '40px', fontSize: '15px' }}>
+            <p style={{ color: 'var(--gray)', lineHeight: '1.85', marginBottom: '40px', fontSize: '0.9375rem' }}>
               The villa was built to be its owners' private home. They soon realized it was too spacious for just the two of them — and too special not to share. Today, a dedicated chef, butler, and housekeeping team deliver the same warm Jamaican hospitality it was designed around, making every stay effortless and personal.
             </p>
 
@@ -92,9 +92,9 @@ export default function About() {
                 <div key={f.label} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <div style={{ color: 'var(--gold)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     {f.icon}
-                    <span style={{ fontSize: '13px', fontWeight: '500', letterSpacing: '0.06em' }}>{f.label}</span>
+                    <span style={{ fontSize: '0.8125rem', fontWeight: '500', letterSpacing: '0.06em' }}>{f.label}</span>
                   </div>
-                  <p style={{ color: 'var(--gray)', fontSize: '13px' }}>{f.desc}</p>
+                  <p style={{ color: 'var(--gray)', fontSize: '0.8125rem' }}>{f.desc}</p>
                   <div style={{ width: '30px', height: '1px', background: 'var(--gold)', opacity: 0.5 }} />
                 </div>
               ))}

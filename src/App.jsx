@@ -1,50 +1,34 @@
-import React, { useState } from 'react'
-import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import About from './components/About'
-import Amenities from './components/Amenities'
-import Gallery from './components/Gallery'
-import Rooms from './components/Rooms'
-import Services from './components/Services'
-import Rates from './components/Rates'
-import Menu from './components/Menu'
-import Events from './components/Events'
-import BookingFlow from './components/BookingFlow'
-// Testimonials are still placeholder/invented text — the section stays out of
-// the page until the client sends real guest reviews. Re-add <Testimonials />
-// below Events once Testimonials.jsx holds genuine quotes.
-// import Testimonials from './components/Testimonials'
-import Location from './components/Location'
-import Footer from './components/Footer'
+import React from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import Layout from './components/Layout'
+import { BookingProvider } from './booking'
 
-function App() {
-  const [bookingOpen, setBookingOpen] = useState(false)
-  const [initialService, setInitialService] = useState(null)
+import Home from './pages/Home'
+import VillaPage from './pages/VillaPage'
+import GalleryPage from './pages/GalleryPage'
+import ServicesPage from './pages/ServicesPage'
+import RatesPage from './pages/RatesPage'
+import MenuPage from './pages/MenuPage'
+import EventsPage from './pages/EventsPage'
+import ContactPage from './pages/ContactPage'
 
-  const openBooking = (serviceId = null) => {
-    setInitialService(typeof serviceId === 'string' ? serviceId : null)
-    setBookingOpen(true)
-  }
-
+export default function App() {
   return (
-    <div className="app">
-      <Navbar onBookNow={() => openBooking()} />
-      <Hero onBookNow={() => openBooking()} />
-      <About />
-      <Amenities />
-      <Rooms />
-      <Gallery />
-      <Services onBookNow={openBooking} />
-      <Rates onBookNow={openBooking} />
-      <Menu />
-      <Events onBookNow={openBooking} />
-      <Location />
-      <Footer onBookNow={() => openBooking()} />
-      {bookingOpen && (
-        <BookingFlow onClose={() => setBookingOpen(false)} initialService={initialService} />
-      )}
-    </div>
+    <BookingProvider>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/villa" element={<VillaPage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/rates" element={<RatesPage />} />
+          <Route path="/menu" element={<MenuPage />} />
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          {/* Old single-page anchors and any stray URL land on Home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    </BookingProvider>
   )
 }
-
-export default App

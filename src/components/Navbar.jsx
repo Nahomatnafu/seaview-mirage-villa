@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
+import { PAGES } from '../site'
 
 export default function Navbar({ onBookNow }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const { pathname } = useLocation()
+
+  // Close the mobile menu whenever navigation happens.
+  useEffect(() => { setMenuOpen(false) }, [pathname])
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60)
@@ -19,16 +25,7 @@ export default function Navbar({ onBookNow }) {
     return () => { document.body.style.overflow = prev }
   }, [menuOpen])
 
-  const links = [
-    { label: 'About', href: '#about' },
-    { label: 'Villa', href: '#rooms' },
-    { label: 'Gallery', href: '#gallery' },
-    { label: 'Services', href: '#services' },
-    { label: 'Rates', href: '#rates' },
-    { label: 'Menu', href: '#menu' },
-    { label: 'Events', href: '#events' },
-    { label: 'Location', href: '#location' },
-  ]
+  const links = PAGES.map(p => ({ label: p.nav, to: p.path }))
 
   return (
     <>
@@ -50,9 +47,9 @@ export default function Navbar({ onBookNow }) {
       }}>
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Logo */}
-          <a href="#hero" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <img src="/assets/logo.png" alt="Sea View Mirage Villa" style={{ height: scrolled ? '50px' : '64px', transition: 'height 0.4s ease' }} />
-          </a>
+          </Link>
 
           {/* Desktop Nav */}
           <ul style={{
@@ -62,21 +59,19 @@ export default function Navbar({ onBookNow }) {
             listStyle: 'none',
           }} className="desktop-nav">
             {links.map(link => (
-              <li key={link.label}>
-                <a href={link.href} style={{
-                  color: '#141414',
-                  fontSize: '13px',
+              <li key={link.to}>
+                <NavLink to={link.to} end={link.to === '/'} className="nav-link" style={({ isActive }) => ({
+                  color: isActive ? 'var(--gold-dark)' : '#141414',
+                  fontSize: '0.8125rem',
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
                   fontWeight: '600',
                   transition: 'color 0.3s',
-                  position: 'relative',
-                }}
-                onMouseEnter={e => e.target.style.color = 'var(--gold-dark)'}
-                onMouseLeave={e => e.target.style.color = '#141414'}
-                >
+                  paddingBottom: '4px',
+                  borderBottom: isActive ? '2px solid var(--gold)' : '2px solid transparent',
+                })}>
                   {link.label}
-                </a>
+                </NavLink>
               </li>
             ))}
             <li>
@@ -85,7 +80,7 @@ export default function Navbar({ onBookNow }) {
                 color: '#0e0e0e',
                 border: 'none',
                 padding: '11px 28px',
-                fontSize: '12px',
+                fontSize: '0.75rem',
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
                 fontWeight: '600',
@@ -153,23 +148,30 @@ export default function Navbar({ onBookNow }) {
           }}>
             <img src="/assets/logo.png" alt="Sea View Mirage Villa" style={{ height: '64px', marginBottom: '2px' }} />
             {links.map(link => (
-              <a key={link.label} href={link.href} onClick={() => setMenuOpen(false)} style={{
-                color: 'white',
-                fontSize: '20px',
-                fontFamily: 'var(--font-heading)',
-                letterSpacing: '0.08em',
-                fontWeight: '600',
-                padding: '3px 10px',
-              }}>
+              <NavLink
+                key={link.to}
+                to={link.to}
+                end={link.to === '/'}
+                onClick={() => setMenuOpen(false)}
+                className="mobile-link"
+                style={({ isActive }) => ({
+                  color: isActive ? 'var(--gold-light)' : 'white',
+                  fontSize: '1.25rem',
+                  fontFamily: 'var(--font-heading)',
+                  letterSpacing: '0.08em',
+                  fontWeight: '600',
+                  padding: '3px 10px',
+                })}
+              >
                 {link.label}
-              </a>
+              </NavLink>
             ))}
             <button onClick={() => { onBookNow(); setMenuOpen(false) }} style={{
               background: 'linear-gradient(135deg, #c9a84c, #e8c96a)',
               color: '#0e0e0e',
               border: 'none',
               padding: '15px 40px',
-              fontSize: '13px',
+              fontSize: '0.8125rem',
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
               fontWeight: '600',
@@ -182,6 +184,8 @@ export default function Navbar({ onBookNow }) {
       )}
 
       <style>{`
+        .nav-link:hover { color: var(--gold-dark) !important; }
+        .mobile-link:hover { color: var(--gold-light) !important; }
         /* 8 links + CTA stop fitting well below this width */
         @media (max-width: 1080px) {
           .desktop-nav { display: none !important; }

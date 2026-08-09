@@ -13,7 +13,7 @@ const TABS = [
 
 function SectionEyebrow({ children }) {
   return (
-    <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+    <span style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
       {children}
     </span>
   )
@@ -63,7 +63,7 @@ function Course({ course, open, onToggle }) {
                 <div key={g.title || i}>
                   {g.title && (
                     <div style={{
-                      fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase',
+                      fontSize: '0.6875rem', letterSpacing: '0.16em', textTransform: 'uppercase',
                       color: 'var(--gold-dark)', marginBottom: '12px', fontWeight: '500',
                     }}>
                       {g.title}
@@ -72,7 +72,7 @@ function Course({ course, open, onToggle }) {
                   <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '7px' }}>
                     {g.items.map(item => (
                       <li key={item} style={{
-                        color: 'var(--gray)', fontSize: '13.5px', lineHeight: 1.55,
+                        color: 'var(--gray)', fontSize: '0.8438rem', lineHeight: 1.55,
                         paddingLeft: '14px', position: 'relative',
                       }}>
                         <span style={{
@@ -111,7 +111,7 @@ function PriceTable({ title, rows }) {
   return (
     <div>
       <div style={{
-        fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase',
+        fontSize: '0.6875rem', letterSpacing: '0.16em', textTransform: 'uppercase',
         color: 'var(--gold-dark)', marginBottom: '14px', fontWeight: '500',
       }}>
         {title}
@@ -120,13 +120,13 @@ function PriceTable({ title, rows }) {
         <tbody>
           {rows.map(([item, size, price], i) => (
             <tr key={item + i} style={{ borderBottom: '1px solid rgba(201,168,76,0.13)' }}>
-              <td style={{ padding: '9px 0', color: 'var(--charcoal)', fontSize: '13.5px' }}>{item}</td>
-              <td style={{ padding: '9px 8px', color: 'var(--gray)', fontSize: '12px', textAlign: 'right', whiteSpace: 'nowrap' }}>
+              <td style={{ padding: '9px 0', color: 'var(--charcoal)', fontSize: '0.8438rem' }}>{item}</td>
+              <td style={{ padding: '9px 8px', color: 'var(--gray)', fontSize: '0.75rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
                 {size === '—' ? '' : size}
               </td>
               <td style={{
                 padding: '9px 0 9px 12px', textAlign: 'right', whiteSpace: 'nowrap',
-                fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: '600', color: 'var(--gold-dark)',
+                fontFamily: 'var(--font-heading)', fontSize: '1rem', fontWeight: '600', color: 'var(--gold-dark)',
               }}>
                 {price}
               </td>
@@ -165,7 +165,7 @@ export default function Menu() {
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '16px' }}>
             Cooked for you, <em style={{ fontStyle: 'italic', color: 'var(--gold-dark)' }}>every day</em>
           </h2>
-          <p style={{ color: 'var(--gray)', maxWidth: '600px', margin: '0 auto', fontSize: '15px', lineHeight: 1.75 }}>
+          <p style={{ color: 'var(--gray)', maxWidth: '600px', margin: '0 auto', fontSize: '0.9375rem', lineHeight: 1.75 }}>
             Six collections, built around what your group actually wants to eat. Choose your meals before you
             travel and the chef takes care of the rest — {MENU_INTRO.budget}.
           </p>
@@ -187,7 +187,7 @@ export default function Menu() {
                   background: on ? 'var(--charcoal)' : 'white',
                   color: on ? 'white' : 'var(--gray)',
                   border: on ? '1px solid var(--charcoal)' : '1px solid rgba(201,168,76,0.22)',
-                  fontSize: '12px', letterSpacing: '0.12em', textTransform: 'uppercase',
+                  fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase',
                   fontWeight: on ? '500' : '400',
                   transition: 'all 0.25s ease',
                   display: 'flex', alignItems: 'center', gap: '9px',
@@ -195,7 +195,7 @@ export default function Menu() {
                 onMouseEnter={e => { if (!on) e.currentTarget.style.borderColor = 'var(--gold)' }}
                 onMouseLeave={e => { if (!on) e.currentTarget.style.borderColor = 'rgba(201,168,76,0.22)' }}
               >
-                <span style={{ color: on ? 'var(--gold-light)' : 'var(--gold)', fontFamily: 'var(--font-heading)', fontSize: '14px' }}>
+                <span style={{ color: on ? 'var(--gold-light)' : 'var(--gold)', fontFamily: 'var(--font-heading)', fontSize: '0.875rem' }}>
                   {t.number}
                 </span>
                 {t.name}
@@ -216,7 +216,7 @@ export default function Menu() {
               }}>
                 {panel.name}
               </h3>
-              <p style={{ color: 'var(--gray)', fontSize: '14px', lineHeight: 1.7 }}>{panel.tagline}</p>
+              <p style={{ color: 'var(--gray)', fontSize: '0.875rem', lineHeight: 1.7 }}>{panel.tagline}</p>
             </div>
             <div style={{ minHeight: '260px', overflow: 'hidden' }}>
               <img
@@ -255,14 +255,14 @@ export default function Menu() {
                 </div>
 
                 <div style={{ marginTop: '36px' }}>
-                  <div style={{ fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--gold-dark)', marginBottom: '14px', fontWeight: '500' }}>
+                  <div style={{ fontSize: '0.6875rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--gold-dark)', marginBottom: '14px', fontWeight: '500' }}>
                     Chasers
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                     {BAR.chasers.map(c => (
                       <span key={c} style={{
                         background: 'var(--cream)', border: '1px solid rgba(201,168,76,0.2)',
-                        color: 'var(--charcoal)', padding: '6px 14px', fontSize: '12px', letterSpacing: '0.04em',
+                        color: 'var(--charcoal)', padding: '6px 14px', fontSize: '0.75rem', letterSpacing: '0.04em',
                       }}>{c}</span>
                     ))}
                   </div>
@@ -270,7 +270,7 @@ export default function Menu() {
 
                 <p style={{
                   marginTop: '30px', paddingTop: '22px', borderTop: '1px solid rgba(201,168,76,0.18)',
-                  color: 'var(--gray)', fontSize: '13.5px', lineHeight: 1.7, fontStyle: 'italic',
+                  color: 'var(--gray)', fontSize: '0.8438rem', lineHeight: 1.7, fontStyle: 'italic',
                 }}>
                   {BAR.note}
                 </p>
@@ -284,7 +284,7 @@ export default function Menu() {
                   {SNACKS.items.map(s => (
                     <span key={s} style={{
                       background: 'var(--cream)', border: '1px solid rgba(201,168,76,0.2)',
-                      color: 'var(--charcoal)', padding: '8px 16px', fontSize: '13px', letterSpacing: '0.03em',
+                      color: 'var(--charcoal)', padding: '8px 16px', fontSize: '0.8125rem', letterSpacing: '0.03em',
                     }}>{s}</span>
                   ))}
                 </div>
@@ -315,10 +315,10 @@ export default function Menu() {
               }}>
                 {String(i + 1).padStart(2, '0')}
               </div>
-              <div style={{ fontSize: '14px', fontWeight: '500', color: 'var(--charcoal)', marginBottom: '8px', letterSpacing: '0.02em' }}>
+              <div style={{ fontSize: '0.875rem', fontWeight: '500', color: 'var(--charcoal)', marginBottom: '8px', letterSpacing: '0.02em' }}>
                 {s.step}
               </div>
-              <p style={{ color: 'var(--gray)', fontSize: '13px', lineHeight: 1.65 }}>{s.desc}</p>
+              <p style={{ color: 'var(--gray)', fontSize: '0.8125rem', lineHeight: 1.65 }}>{s.desc}</p>
             </div>
           ))}
         </div>
@@ -332,7 +332,7 @@ export default function Menu() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '13px' }}>
               {HOW_IT_WORKS.map(t => (
-                <p key={t} style={{ color: 'var(--gray)', fontSize: '13.5px', lineHeight: 1.75 }}>{t}</p>
+                <p key={t} style={{ color: 'var(--gray)', fontSize: '0.8438rem', lineHeight: 1.75 }}>{t}</p>
               ))}
             </div>
           </div>
@@ -349,7 +349,7 @@ export default function Menu() {
                     width: '4px', height: '4px', borderRadius: '50%', background: 'var(--gold)',
                     flexShrink: 0, marginTop: '8px',
                   }} />
-                  <p style={{ color: 'var(--gray)', fontSize: '13.5px', lineHeight: 1.7 }}>{n.label}</p>
+                  <p style={{ color: 'var(--gray)', fontSize: '0.8438rem', lineHeight: 1.7 }}>{n.label}</p>
                 </div>
               ))}
             </div>
@@ -364,10 +364,10 @@ export default function Menu() {
         }}>
           <AlertCircle size={19} style={{ color: 'var(--gold)', flexShrink: 0, marginTop: '2px' }} />
           <div>
-            <div style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: '8px' }}>
+            <div style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: '8px' }}>
               Allergies & Dietary Restrictions
             </div>
-            <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '14px', lineHeight: 1.75 }}>{ALLERGY_NOTICE}</p>
+            <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.875rem', lineHeight: 1.75 }}>{ALLERGY_NOTICE}</p>
           </div>
         </div>
 
@@ -377,12 +377,12 @@ export default function Menu() {
           display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px',
         }}>
           <PartyPopper size={20} style={{ color: 'var(--gold)' }} />
-          <p style={{ color: 'var(--gray)', fontSize: '14px', lineHeight: 1.75, maxWidth: '540px' }}>{EVENTS_NOTE}</p>
+          <p style={{ color: 'var(--gray)', fontSize: '0.875rem', lineHeight: 1.75, maxWidth: '540px' }}>{EVENTS_NOTE}</p>
         </div>
 
         {/* Required attribution for the Creative Commons menu photos.
             Remove this once the client's own food photography replaces them. */}
-        <p style={{ marginTop: '40px', textAlign: 'center', color: 'var(--gray)', fontSize: '11px', opacity: 0.75 }}>
+        <p style={{ marginTop: '40px', textAlign: 'center', color: 'var(--gray)', fontSize: '0.6875rem', opacity: 0.75 }}>
           Menu photography is illustrative —{' '}
           <a
             href="/assets/menu/CREDITS.md"
