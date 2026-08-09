@@ -17,16 +17,15 @@ export default function Hero({ onBookNow }) {
 
   return (
     <section id="hero" style={{ position: 'relative', height: '100vh', minHeight: '700px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      {/* Background. This 4:3 frame crops to the villa's balconies on a tall
-          phone screen. Portrait alternatives were tried and read worse — one was
-          mostly foreground planting, another put balustrades straight behind the
-          headline — so the landscape frame is used at every width. */}
+      {/* Background. This 4:3 frame crops in on a tall phone screen; portrait
+          alternatives were tried and read worse, so the landscape frame is used
+          at every width. */}
       <div ref={parallaxRef} className="hero-bg" style={{
         position: 'absolute',
         inset: '-10%',
-        backgroundImage: `url('/assets/villa/exterior-08.jpg')`,
+        backgroundImage: `url('/assets/villa/exterior-10.jpg')`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center 55%',
+        backgroundPosition: 'center 50%',
         willChange: 'transform',
       }} />
 
@@ -52,7 +51,7 @@ export default function Hero({ onBookNow }) {
         <h1 style={{
           fontFamily: 'var(--font-heading)',
           fontSize: 'clamp(52px, 8vw, 96px)',
-          fontWeight: '300',
+          fontWeight: '600',
           color: 'white',
           lineHeight: '1.05',
           letterSpacing: '-0.01em',
@@ -126,7 +125,7 @@ export default function Hero({ onBookNow }) {
             { num: '∞', label: 'Sea Views' },
           ].map(stat => (
             <div key={stat.label} style={{ textAlign: 'center' }}>
-              <div style={{ color: 'var(--gold-light)', fontSize: '28px', fontFamily: 'var(--font-heading)', fontWeight: '500' }}>{stat.num}</div>
+              <div style={{ color: 'var(--gold-light)', fontSize: '28px', fontFamily: 'var(--font-heading)', fontWeight: '600' }}>{stat.num}</div>
               <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: '4px' }}>{stat.label}</div>
             </div>
           ))}

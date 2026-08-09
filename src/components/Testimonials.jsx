@@ -51,7 +51,7 @@ export default function Testimonials() {
             <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Guest Stories</span>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
           </div>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '300', color: 'var(--charcoal)' }}>
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '600', color: 'var(--charcoal)' }}>
             <em style={{ fontStyle: 'italic', color: 'var(--gold-dark)' }}>Reviews</em> from Our Guests
           </h2>
         </div>
@@ -63,7 +63,7 @@ export default function Testimonials() {
             <p style={{
               fontFamily: 'var(--font-heading)',
               fontSize: 'clamp(18px, 2.5vw, 24px)',
-              fontWeight: '300',
+              fontWeight: '600',
               fontStyle: 'italic',
               lineHeight: '1.7',
               color: 'var(--charcoal)',

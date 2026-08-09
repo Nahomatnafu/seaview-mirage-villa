@@ -53,7 +53,7 @@ export default function About() {
               textAlign: 'center',
               minWidth: '140px',
             }}>
-              <div style={{ color: 'var(--gold)', fontSize: '32px', fontFamily: 'var(--font-heading)', fontWeight: '500', lineHeight: 1 }}>7</div>
+              <div style={{ color: 'var(--gold)', fontSize: '32px', fontFamily: 'var(--font-heading)', fontWeight: '600', lineHeight: 1 }}>7</div>
               <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '6px' }}>En-suite Bedrooms</div>
             </div>
           </div>
@@ -68,7 +68,7 @@ export default function About() {
             <h2 style={{
               fontFamily: 'var(--font-heading)',
               fontSize: 'clamp(36px, 4vw, 56px)',
-              fontWeight: '300',
+              fontWeight: '600',
               lineHeight: '1.15',
               color: 'var(--charcoal)',
               marginBottom: '24px',

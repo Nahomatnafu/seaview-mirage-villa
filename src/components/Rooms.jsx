@@ -55,7 +55,7 @@ export default function Rooms() {
             <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Accommodations</span>
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)' }} />
           </div>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '300', color: 'var(--charcoal)' }}>
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: '600', color: 'var(--charcoal)' }}>
             Inside <em style={{ fontStyle: 'italic', color: 'var(--gold-dark)' }}>the Villa</em>
           </h2>
         </div>
@@ -68,7 +68,7 @@ export default function Rooms() {
           {stats.map(s => (
             <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <span style={{ color: 'var(--gold)', display: 'flex' }}>{s.icon}</span>
-              <span style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: '500', color: 'var(--charcoal)', lineHeight: 1 }}>{s.num}</span>
+              <span style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: '600', color: 'var(--charcoal)', lineHeight: 1 }}>{s.num}</span>
               <span style={{ color: 'var(--gray)', fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase' }}>{s.label}</span>
             </div>
           ))}
@@ -134,7 +134,7 @@ export default function Rooms() {
           {/* Details */}
           <div style={{ background: 'white', padding: '52px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <span style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '12px', display: 'block' }}>{space.tag}</span>
-            <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: '400', color: 'var(--charcoal)', marginBottom: '20px', lineHeight: 1.2 }}>
+            <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '20px', lineHeight: 1.2 }}>
               {space.name}
             </h3>
             <p style={{ color: 'var(--gray)', lineHeight: '1.8', marginBottom: '32px', fontSize: '14px' }}>{space.desc}</p>

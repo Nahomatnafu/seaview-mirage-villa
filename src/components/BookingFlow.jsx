@@ -152,7 +152,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
             }}>
               <Check size={32} color="white" />
             </div>
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '36px', fontWeight: '400', color: 'var(--charcoal)', marginBottom: '12px' }}>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '36px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '12px' }}>
               Inquiry Sent!
             </h2>
             <p style={{ color: 'var(--gray)', fontSize: '15px', lineHeight: '1.7', marginBottom: '32px' }}>
@@ -195,7 +195,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
                 <img src="/assets/logo.png" alt="logo" style={{ height: '44px' }} />
                 <div>
-                  <div style={{ color: 'white', fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: '400' }}>Request Your Stay</div>
+                  <div style={{ color: 'white', fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: '600' }}>Request Your Stay</div>
                   <div style={{ color: 'var(--gold)', fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: '2px' }}>{VILLA.name} · Discovery Bay, Jamaica</div>
                 </div>
               </div>
@@ -242,7 +242,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
               {step === 1 && (
                 <div>
                   <div style={{ marginBottom: '32px' }}>
-                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '400', color: 'var(--charcoal)', marginBottom: '8px' }}>
+                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '8px' }}>
                       How many guests?
                     </h3>
                     <p style={{ color: 'var(--gray)', fontSize: '14px' }}>{VILLA.name} accommodates up to {VILLA.sleeps} guests across {VILLA.bedrooms} en-suite bedrooms.</p>
@@ -265,7 +265,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                         onMouseLeave={e => { if (guests !== n) e.currentTarget.style.borderColor = 'var(--light-gray)' }}
                       >
                         <Users size={22} style={{ color: guests === n ? 'var(--gold)' : 'var(--gray)', marginBottom: '10px' }} />
-                        <span style={{ fontSize: '22px', fontFamily: 'var(--font-heading)', fontWeight: '500', color: guests === n ? 'var(--gold-dark)' : 'var(--charcoal)', lineHeight: 1 }}>{n}</span>
+                        <span style={{ fontSize: '22px', fontFamily: 'var(--font-heading)', fontWeight: '600', color: guests === n ? 'var(--gold-dark)' : 'var(--charcoal)', lineHeight: 1 }}>{n}</span>
                         <span style={{ fontSize: '11px', color: 'var(--gray)', marginTop: '4px', letterSpacing: '0.06em' }}>guests</span>
                       </button>
                     ))}
@@ -284,7 +284,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
               {step === 2 && (
                 <div>
                   <div style={{ marginBottom: '32px' }}>
-                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '400', color: 'var(--charcoal)', marginBottom: '8px' }}>
+                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '8px' }}>
                       Anything we can arrange?
                     </h3>
                     <p style={{ color: 'var(--gray)', fontSize: '14px' }}>Your chef, butler, housekeeping, concierge, and security are already part of the villa. Select anything else you'd like and we'll price it into your quote.</p>
@@ -341,7 +341,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
               {step === 3 && (
                 <div>
                   <div style={{ marginBottom: '32px' }}>
-                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '400', color: 'var(--charcoal)', marginBottom: '8px' }}>
+                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '8px' }}>
                       Select your dates
                     </h3>
                     <p style={{ color: 'var(--gray)', fontSize: '14px' }}>Minimum stay of {VILLA.minNights} nights. Check-in {VILLA.checkIn} · Check-out {VILLA.checkOut}.</p>
@@ -416,7 +416,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
               {step === 4 && (
                 <div>
                   <div style={{ marginBottom: '32px' }}>
-                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '400', color: 'var(--charcoal)', marginBottom: '8px' }}>
+                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '8px' }}>
                       Review your inquiry
                     </h3>
                     <p style={{ color: 'var(--gray)', fontSize: '14px' }}>No payment now — our team replies within 24 hours with availability and full pricing.</p>
@@ -482,7 +482,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
 
                   {/* Contact form */}
                   <div style={{ background: 'var(--cream)', padding: '24px', marginBottom: '8px' }}>
-                    <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: '500', color: 'var(--charcoal)', marginBottom: '20px' }}>
+                    <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '20px' }}>
                       Your Contact Details
                     </h4>
                     <div className="bf-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
