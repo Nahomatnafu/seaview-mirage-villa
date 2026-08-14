@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { X, ChevronRight, ChevronLeft, Check, Calendar, Users, ChefHat, Car, Leaf, Waves, PartyPopper, Star, LoaderCircle, Wallet } from 'lucide-react'
-import { VILLA, BOOKING_SERVICES, PAYMENT_TERMS, INQUIRY_ENDPOINT } from '../content'
+import { X, ChevronRight, ChevronLeft, Check, Calendar, ChefHat, Car, Leaf, Waves, PartyPopper, Star, LoaderCircle, Wallet } from 'lucide-react'
+import {
+  VILLA, RATES, BOOKING_SERVICES, PAYMENT_SCHEDULE, INQUIRY_ENDPOINT,
+  money, villaTotal, instalments,
+} from '../content'
 
 const SERVICE_ICONS = {
   mealplan: <ChefHat size={24} />,
@@ -9,8 +12,6 @@ const SERVICE_ICONS = {
   watersports: <Waves size={24} />,
   events: <PartyPopper size={24} />,
 }
-
-const GUEST_OPTIONS = [2, 4, 6, 8, 10, 12, 14]
 
 function formatDate(d) {
   if (!d) return ''
@@ -25,6 +26,13 @@ function diffDays(a, b) {
   return Math.max(0, Math.round((new Date(b) - new Date(a)) / (1000 * 60 * 60 * 24)))
 }
 
+// Add days to a YYYY-MM-DD string without going through UTC.
+function addDays(d, n) {
+  const [y, m, day] = d.split('-').map(Number)
+  const dt = new Date(y, m - 1, day + n)
+  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`
+}
+
 export default function BookingFlow({ onClose, initialService = null }) {
   // Lock the page behind the modal so touch scrolling stays inside it.
   useEffect(() => {
@@ -33,17 +41,20 @@ export default function BookingFlow({ onClose, initialService = null }) {
     return () => { document.body.style.overflow = prev }
   }, [])
 
-  const [step, setStep] = useState(1) // 1: guests, 2: services, 3: dates, 4: review
-  const [guests, setGuests] = useState(null)
+  // The villa is let whole-house at a flat nightly rate, so there is no party
+  // size to choose — the flow is dates, then extras, then review.
+  const [step, setStep] = useState(1) // 1: dates, 2: extras, 3: review
   const [selected, setSelected] = useState(() => initialService ? { [initialService]: true } : {})
   const [checkIn, setCheckIn] = useState('')
   const [checkOut, setCheckOut] = useState('')
-  const [contact, setContact] = useState({ firstName: '', lastName: '', email: '', phone: '', requests: '' })
+  const [contact, setContact] = useState({ firstName: '', lastName: '', email: '', phone: '', partySize: '', requests: '' })
   const [sending, setSending] = useState(false)
   const [error, setError] = useState(null)
   const [submitted, setSubmitted] = useState(false)
 
   const nights = diffDays(checkIn, checkOut)
+  const total = villaTotal(nights)
+  const parts = instalments(total)
   const selectedServices = BOOKING_SERVICES.filter(s => selected[s.id])
 
   const toggleService = (id) => {
@@ -54,10 +65,18 @@ export default function BookingFlow({ onClose, initialService = null }) {
     setContact(prev => ({ ...prev, [field]: e.target.value }))
   }
 
+  // Picking an arrival date fills in a departure date a full minimum stay
+  // later, so the common case needs one tap. Guests can extend it freely.
+  const pickCheckIn = (value) => {
+    setCheckIn(value)
+    if (!value) { setCheckOut(''); return }
+    if (!checkOut || diffDays(value, checkOut) < VILLA.minNights) {
+      setCheckOut(addDays(value, VILLA.minNights))
+    }
+  }
+
   const canProceed = () => {
-    if (step === 1) return guests !== null
-    if (step === 2) return true
-    if (step === 3) return nights >= VILLA.minNights
+    if (step === 1) return nights >= VILLA.minNights
     return true
   }
 
@@ -80,8 +99,12 @@ export default function BookingFlow({ onClose, initialService = null }) {
           'Check-in': formatDate(checkIn),
           'Check-out': formatDate(checkOut),
           Nights: nights,
-          Guests: guests,
-          'Requested services': selectedServices.map(s => s.title).join(', ') || 'None',
+          'Villa total': `${money(total)} (${nights} × ${RATES.nightlyRate})`,
+          'Payment schedule': PAYMENT_SCHEDULE
+            .map((p, i) => `${Math.round(p.pct * 100)}% ${money(parts[i])} — ${p.when}`)
+            .join(' | '),
+          'Party size': contact.partySize.trim() || 'Not stated',
+          'Requested extras': selectedServices.map(s => s.title).join(', ') || 'None',
           'Special requests': contact.requests.trim() || 'None',
         }),
       })
@@ -95,10 +118,9 @@ export default function BookingFlow({ onClose, initialService = null }) {
   }
 
   const steps = [
-    { n: 1, label: 'Guests' },
-    { n: 2, label: 'Services' },
-    { n: 3, label: 'Dates' },
-    { n: 4, label: 'Review' },
+    { n: 1, label: 'Dates' },
+    { n: 2, label: 'Extras' },
+    { n: 3, label: 'Review' },
   ]
 
   const today = new Date().toISOString().split('T')[0]
@@ -169,12 +191,12 @@ export default function BookingFlow({ onClose, initialService = null }) {
                   <div style={{ fontWeight: '500', fontSize: '0.9375rem' }}>{formatDate(checkOut)}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '0.6875rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>Guests</div>
-                  <div style={{ fontWeight: '500', fontSize: '0.9375rem' }}>{guests} guests</div>
+                  <div style={{ fontSize: '0.6875rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>Nights</div>
+                  <div style={{ fontWeight: '500', fontSize: '0.9375rem' }}>{nights}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '0.6875rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>Services</div>
-                  <div style={{ fontWeight: '500', fontSize: '0.9375rem' }}>{selectedServices.length > 0 ? `${selectedServices.length} requested` : 'None'}</div>
+                  <div style={{ fontSize: '0.6875rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '4px' }}>Villa total</div>
+                  <div style={{ fontWeight: '500', fontSize: '0.9375rem' }}>{money(total)}</div>
                 </div>
               </div>
             </div>
@@ -238,49 +260,123 @@ export default function BookingFlow({ onClose, initialService = null }) {
             {/* Body */}
             <div className="bf-body" style={{ padding: '40px' }}>
 
-              {/* STEP 1: Guests */}
+              {/* STEP 1: Dates */}
               {step === 1 && (
                 <div>
-                  <div style={{ marginBottom: '32px' }}>
+                  <div style={{ marginBottom: '28px' }}>
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '8px' }}>
-                      How many guests?
+                      When would you like to arrive?
                     </h3>
-                    <p style={{ color: 'var(--gray)', fontSize: '0.875rem' }}>{VILLA.name} accommodates up to {VILLA.sleeps} guests across {VILLA.bedrooms} en-suite bedrooms.</p>
+                    <p style={{ color: 'var(--gray)', fontSize: '0.875rem', lineHeight: 1.65 }}>
+                      The villa is booked whole-house at {RATES.nightlyRate} {RATES.nightlyUnit}, for up to {VILLA.sleeps} guests.
+                      Minimum stay is {VILLA.minNights} nights — pick an arrival date and we'll fill in a {VILLA.minNights}-night
+                      departure you can extend.
+                    </p>
                   </div>
 
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-                    {GUEST_OPTIONS.map(n => (
-                      <button
-                        key={n}
-                        onClick={() => setGuests(n)}
-                        style={{
-                          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                          width: '104px', height: '100px',
-                          border: guests === n ? '2px solid var(--gold)' : '1px solid var(--light-gray)',
-                          background: guests === n ? 'rgba(201,168,76,0.06)' : 'white',
-                          cursor: 'pointer',
-                          transition: 'all 0.25s',
-                        }}
-                        onMouseEnter={e => { if (guests !== n) e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)' }}
-                        onMouseLeave={e => { if (guests !== n) e.currentTarget.style.borderColor = 'var(--light-gray)' }}
-                      >
-                        <Users size={22} style={{ color: guests === n ? 'var(--gold)' : 'var(--gray)', marginBottom: '10px' }} />
-                        <span style={{ fontSize: '22px', fontFamily: 'var(--font-heading)', fontWeight: '600', color: guests === n ? 'var(--gold-dark)' : 'var(--charcoal)', lineHeight: 1 }}>{n}</span>
-                        <span style={{ fontSize: '0.6875rem', color: 'var(--gray)', marginTop: '4px', letterSpacing: '0.06em' }}>guests</span>
-                      </button>
-                    ))}
+                  <div className="bf-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+                    <div>
+                      <label htmlFor="bf-checkin" style={{ display: 'block', fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '10px', fontWeight: '500' }}>
+                        Arrival
+                      </label>
+                      <div style={{ position: 'relative' }}>
+                        <Calendar size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--gold)', pointerEvents: 'none' }} />
+                        <input
+                          id="bf-checkin"
+                          type="date"
+                          min={today}
+                          value={checkIn}
+                          onChange={e => pickCheckIn(e.target.value)}
+                          style={{
+                            width: '100%', padding: '14px 14px 14px 40px',
+                            border: '1px solid var(--light-gray)',
+                            fontSize: '0.875rem', color: 'var(--charcoal)',
+                            outline: 'none', background: 'white',
+                            fontFamily: 'var(--font-body)',
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label htmlFor="bf-checkout" style={{ display: 'block', fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '10px', fontWeight: '500' }}>
+                        Departure
+                      </label>
+                      <div style={{ position: 'relative' }}>
+                        <Calendar size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--gold)', pointerEvents: 'none' }} />
+                        <input
+                          id="bf-checkout"
+                          type="date"
+                          min={checkIn ? addDays(checkIn, VILLA.minNights) : today}
+                          value={checkOut}
+                          onChange={e => setCheckOut(e.target.value)}
+                          disabled={!checkIn}
+                          style={{
+                            width: '100%', padding: '14px 14px 14px 40px',
+                            border: '1px solid var(--light-gray)',
+                            fontSize: '0.875rem', color: 'var(--charcoal)',
+                            outline: 'none', background: !checkIn ? 'var(--cream)' : 'white',
+                            fontFamily: 'var(--font-body)',
+                            opacity: !checkIn ? 0.5 : 1,
+                          }}
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  <div style={{ marginTop: '28px', padding: '16px 20px', background: 'var(--cream)', borderLeft: '3px solid var(--gold)', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <Star size={16} style={{ color: 'var(--gold)', flexShrink: 0 }} />
-                    <p style={{ fontSize: '0.8125rem', color: 'var(--gray)', lineHeight: 1.6 }}>
-                      Planning a wedding or event? The villa hosts up to {VILLA.eventCapacity} guests for celebrations, with {VILLA.sleeps} sleeping on-site. Mention it in your special requests and our team will make custom arrangements.
+                  {nights >= VILLA.minNights && (
+                    <div style={{ border: '1px solid rgba(201,168,76,0.3)', background: 'var(--cream)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '8px', padding: '20px 22px', borderBottom: '1px solid rgba(201,168,76,0.22)' }}>
+                        <div>
+                          <div style={{ fontWeight: '500', color: 'var(--charcoal)', fontSize: '0.9375rem' }}>
+                            {nights} nights × {RATES.nightlyRate}
+                          </div>
+                          <div style={{ color: 'var(--gray)', fontSize: '0.8125rem', marginTop: '2px' }}>
+                            {formatDate(checkIn)} → {formatDate(checkOut)}
+                          </div>
+                        </div>
+                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '30px', fontWeight: '600', color: 'var(--charcoal)', lineHeight: 1 }}>
+                          {money(total)}
+                        </div>
+                      </div>
+
+                      <div style={{ padding: '18px 22px' }}>
+                        <div style={{ fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '12px' }}>
+                          Paid in three instalments
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
+                          {PAYMENT_SCHEDULE.map((p, i) => (
+                            <div key={p.id}>
+                              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: '600', color: 'var(--gold-dark)' }}>
+                                {money(parts[i])}
+                              </div>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--charcoal)', fontWeight: '500', marginTop: '2px' }}>
+                                {Math.round(p.pct * 100)}% · {p.label}
+                              </div>
+                              <div style={{ fontSize: '0.6875rem', color: 'var(--gray)', marginTop: '2px' }}>{p.when}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {checkIn && nights > 0 && nights < VILLA.minNights && (
+                    <p style={{ color: '#c0392b', fontSize: '0.8125rem', marginTop: '4px' }}>
+                      Minimum stay is {VILLA.minNights} nights. Please choose a later departure date.
+                    </p>
+                  )}
+
+                  <div style={{ marginTop: '22px', padding: '16px 20px', background: 'white', border: '1px solid var(--light-gray)', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                    <Star size={16} style={{ color: 'var(--gold)', flexShrink: 0, marginTop: '2px' }} />
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--gray)', lineHeight: 1.65 }}>
+                      Planning a wedding or celebration? The villa hosts up to {VILLA.eventCapacity} guests for events,
+                      with {VILLA.sleeps} sleeping on site. Mention it in your requests and the team will make arrangements.
                     </p>
                   </div>
                 </div>
               )}
 
-              {/* STEP 2: Services */}
+              {/* STEP 2: Extras */}
               {step === 2 && (
                 <div>
                   <div style={{ marginBottom: '32px' }}>
@@ -337,83 +433,8 @@ export default function BookingFlow({ onClose, initialService = null }) {
                 </div>
               )}
 
-              {/* STEP 3: Dates */}
+              {/* STEP 3: Review & Contact */}
               {step === 3 && (
-                <div>
-                  <div style={{ marginBottom: '32px' }}>
-                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '8px' }}>
-                      Select your dates
-                    </h3>
-                    <p style={{ color: 'var(--gray)', fontSize: '0.875rem' }}>Minimum stay of {VILLA.minNights} nights. Check-in {VILLA.checkIn} · Check-out {VILLA.checkOut}.</p>
-                  </div>
-
-                  <div className="bf-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '28px' }}>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '10px', fontWeight: '500' }}>
-                        Check-in Date
-                      </label>
-                      <div style={{ position: 'relative' }}>
-                        <Calendar size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--gold)', pointerEvents: 'none' }} />
-                        <input
-                          type="date"
-                          min={today}
-                          value={checkIn}
-                          onChange={e => {
-                            setCheckIn(e.target.value)
-                            if (checkOut && e.target.value >= checkOut) setCheckOut('')
-                          }}
-                          style={{
-                            width: '100%', padding: '14px 14px 14px 40px',
-                            border: '1px solid var(--light-gray)',
-                            fontSize: '0.875rem', color: 'var(--charcoal)',
-                            outline: 'none', background: 'white',
-                            fontFamily: 'var(--font-body)',
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '10px', fontWeight: '500' }}>
-                        Check-out Date
-                      </label>
-                      <div style={{ position: 'relative' }}>
-                        <Calendar size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--gold)', pointerEvents: 'none' }} />
-                        <input
-                          type="date"
-                          min={checkIn || today}
-                          value={checkOut}
-                          onChange={e => setCheckOut(e.target.value)}
-                          disabled={!checkIn}
-                          style={{
-                            width: '100%', padding: '14px 14px 14px 40px',
-                            border: '1px solid var(--light-gray)',
-                            fontSize: '0.875rem', color: 'var(--charcoal)',
-                            outline: 'none', background: !checkIn ? 'var(--cream)' : 'white',
-                            fontFamily: 'var(--font-body)',
-                            opacity: !checkIn ? 0.5 : 1,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {nights > 0 && (
-                    <div style={{ background: 'var(--cream)', padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderLeft: '3px solid var(--gold)' }}>
-                      <div>
-                        <span style={{ fontWeight: '500', color: 'var(--charcoal)', fontSize: '0.9375rem' }}>{nights} Night{nights !== 1 ? 's' : ''}</span>
-                        <span style={{ color: 'var(--gray)', fontSize: '0.8125rem', marginLeft: '8px' }}>{formatDate(checkIn)} → {formatDate(checkOut)}</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {nights > 0 && nights < VILLA.minNights && (
-                    <p style={{ color: '#c0392b', fontSize: '0.8125rem', marginTop: '12px' }}>Minimum stay is {VILLA.minNights} nights. Please adjust your dates.</p>
-                  )}
-                </div>
-              )}
-
-              {/* STEP 4: Review & Contact */}
-              {step === 4 && (
                 <div>
                   <div style={{ marginBottom: '32px' }}>
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '8px' }}>
@@ -426,10 +447,10 @@ export default function BookingFlow({ onClose, initialService = null }) {
                   <div style={{ border: '1px solid var(--light-gray)', marginBottom: '24px' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', borderBottom: '1px solid var(--light-gray)' }}>
                       {[
-                        { label: 'Check-in', val: formatDate(checkIn) },
-                        { label: 'Check-out', val: formatDate(checkOut) },
+                        { label: 'Arrival', val: formatDate(checkIn) },
+                        { label: 'Departure', val: formatDate(checkOut) },
                         { label: 'Nights', val: `${nights}` },
-                        { label: 'Guests', val: `${guests}` },
+                        { label: 'Villa total', val: money(total) },
                       ].map(item => (
                         <div key={item.label} style={{ padding: '18px 20px', borderRight: '1px solid var(--light-gray)' }}>
                           <div style={{ fontSize: '0.625rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '6px' }}>{item.label}</div>
@@ -439,7 +460,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     </div>
 
                     <div style={{ padding: '20px' }}>
-                      <div style={{ fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '10px' }}>Requested Services</div>
+                      <div style={{ fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '10px' }}>Requested Extras</div>
                       {selectedServices.length > 0 ? (
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                           {selectedServices.map(s => (
@@ -456,8 +477,9 @@ export default function BookingFlow({ onClose, initialService = null }) {
                       ) : (
                         <p style={{ color: 'var(--gray)', fontSize: '0.8125rem' }}>None — your chef, butler, housekeeping, concierge, and security are always part of your stay.</p>
                       )}
-                      <p style={{ color: 'var(--gray)', fontSize: '0.6875rem', marginTop: '14px' }}>
-                        * This is a quote request, not a confirmed booking. Rates depend on dates, group size, and services.
+                      <p style={{ color: 'var(--gray)', fontSize: '0.6875rem', marginTop: '14px', lineHeight: 1.6 }}>
+                        * This is an enquiry, not a confirmed booking. The villa total above covers exclusive use of the
+                        property and its staff; food, Kingston transfers and excursions are extra and are itemised in your quote.
                       </p>
                     </div>
                   </div>
@@ -466,18 +488,28 @@ export default function BookingFlow({ onClose, initialService = null }) {
                   <div style={{ border: '1px solid rgba(201,168,76,0.25)', padding: '20px 22px', marginBottom: '24px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
                       <Wallet size={15} style={{ color: 'var(--gold)' }} />
-                      <span style={{ fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--charcoal)', fontWeight: '500' }}>Payment Terms</span>
+                      <span style={{ fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--charcoal)', fontWeight: '500' }}>
+                        Payment schedule · {money(total)} total
+                      </span>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      {PAYMENT_TERMS.map(t => (
-                        <div key={t.id} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                          <Check size={13} style={{ color: 'var(--gold-dark)', flexShrink: 0, marginTop: '4px' }} />
-                          <p style={{ fontSize: '0.7813rem', color: 'var(--gray)', lineHeight: 1.6 }}>
-                            <strong style={{ color: 'var(--charcoal)', fontWeight: '500' }}>{t.label}</strong> — {t.desc}
-                          </p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {PAYMENT_SCHEDULE.map((p, i) => (
+                        <div key={p.id} style={{ display: 'flex', gap: '12px', alignItems: 'baseline', justifyContent: 'space-between' }}>
+                          <div style={{ display: 'flex', gap: '10px', alignItems: 'baseline' }}>
+                            <Check size={13} style={{ color: 'var(--gold-dark)', flexShrink: 0 }} />
+                            <p style={{ fontSize: '0.7813rem', color: 'var(--gray)', lineHeight: 1.6 }}>
+                              <strong style={{ color: 'var(--charcoal)', fontWeight: '500' }}>{Math.round(p.pct * 100)}% {p.label}</strong> — {p.when}
+                            </p>
+                          </div>
+                          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', fontWeight: '600', color: 'var(--charcoal)', whiteSpace: 'nowrap' }}>
+                            {money(parts[i])}
+                          </span>
                         </div>
                       ))}
                     </div>
+                    <p style={{ color: 'var(--gray)', fontSize: '0.6875rem', marginTop: '12px', lineHeight: 1.6 }}>
+                      Nothing is charged now. We confirm availability and send a written quote before any payment is taken.
+                    </p>
                   </div>
 
                   {/* Contact form */}
@@ -491,6 +523,9 @@ export default function BookingFlow({ onClose, initialService = null }) {
                         { field: 'lastName', label: 'Last Name *', ph: 'Smith', type: 'text' },
                         { field: 'email', label: 'Email *', ph: 'john@example.com', type: 'email' },
                         { field: 'phone', label: 'Phone', ph: '+1 555 000 0000', type: 'tel' },
+                        // Not a pricing input — the rate is the same whole-house
+                        // either way. The chef needs a headcount to plan meals.
+                        { field: 'partySize', label: `In your party (max ${VILLA.sleeps})`, ph: `e.g. ${VILLA.sleeps}`, type: 'text' },
                       ].map(f => (
                         <div key={f.field}>
                           <label style={{ display: 'block', fontSize: '0.6875rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '8px' }}>{f.label}</label>
@@ -558,7 +593,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                   <div />
                 )}
 
-                {step < 4 ? (
+                {step < 3 ? (
                   <button
                     onClick={() => canProceed() && setStep(step + 1)}
                     disabled={!canProceed()}
@@ -574,7 +609,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     onMouseEnter={e => { if (canProceed()) e.currentTarget.style.boxShadow = '0 8px 24px rgba(201,168,76,0.4)' }}
                     onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none' }}
                   >
-                    {step === 2 ? 'Next: Dates' : step === 3 ? 'Review Inquiry' : 'Continue'} <ChevronRight size={16} />
+                    {step === 1 ? 'Next: Extras' : 'Review Inquiry'} <ChevronRight size={16} />
                   </button>
                 ) : (
                   <button

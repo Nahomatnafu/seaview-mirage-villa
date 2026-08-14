@@ -1,24 +1,28 @@
 import React from 'react'
 import { Home, UtensilsCrossed, Plane, Compass, Check, CalendarCheck, Wallet, Receipt, ChefHat, ShoppingBasket, ClipboardList } from 'lucide-react'
-import { VILLA, RATES, MEAL_PLAN, PAYMENT_TERMS } from '../content'
+import { VILLA, RATES, MEAL_PLAN, PAYMENT_SCHEDULE, money, villaTotal, instalments } from '../content'
 
 const PROCESS_ICONS = [<ClipboardList size={18} />, <ChefHat size={18} />, <ShoppingBasket size={18} />, <Receipt size={18} />]
 
 const PAYMENT_ICONS = {
   deposit: <Wallet size={18} />,
-  balance: <CalendarCheck size={18} />,
-  quote: <Receipt size={18} />,
+  second: <CalendarCheck size={18} />,
+  final: <Receipt size={18} />,
 }
 
 export default function Rates({ onBookNow }) {
+  // Worked examples use the minimum stay, which is also the most common one.
+  const minTotal = villaTotal(VILLA.minNights)
+  const minParts = instalments(minTotal)
+
   const cards = [
     {
       id: 'villa',
       icon: <Home size={24} />,
       title: 'The Villa',
-      price: RATES.nightlyRate || 'Contact for rates',
-      unit: RATES.nightlyRate ? 'per night' : 'quoted for your dates',
-      desc: `Exclusive use of all ${VILLA.bedrooms} bedrooms, sleeping ${VILLA.sleeps}, with your chef, butler, housekeeping, concierge, and security included. ${VILLA.minNights}-night minimum.`,
+      price: RATES.nightlyRate,
+      unit: RATES.nightlyUnit,
+      desc: `Exclusive use of the whole property — all ${VILLA.bedrooms} bedrooms, sleeping ${VILLA.sleeps} — with your chef, butler, housekeeping, concierge and security included. Minimum stay ${VILLA.minNights} nights, ${money(minTotal)}.`,
       featured: true,
     },
     {
@@ -177,12 +181,16 @@ export default function Rates({ onBookNow }) {
           </div>
         </div>
 
-        {/* Payment terms */}
-        <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+        {/* Payment schedule */}
+        <div style={{ textAlign: 'center', marginBottom: '14px' }}>
           <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(24px, 3vw, 34px)', fontWeight: '600', color: 'var(--charcoal)' }}>
             How you <em style={{ fontStyle: 'italic', color: 'var(--gold-dark)' }}>reserve</em>
           </h3>
         </div>
+        <p style={{ textAlign: 'center', color: 'var(--gray)', fontSize: '0.9375rem', lineHeight: 1.7, maxWidth: '560px', margin: '0 auto 36px' }}>
+          Three instalments, spread across the run-up to your stay. The amounts below are worked out
+          on a {VILLA.minNights}-night stay at {money(minTotal)} — your quote shows the exact figures for your dates.
+        </p>
 
         <div className="rates-terms" style={{
           display: 'grid',
@@ -190,7 +198,7 @@ export default function Rates({ onBookNow }) {
           gap: '2px',
           marginBottom: '48px',
         }}>
-          {PAYMENT_TERMS.map((t, i) => (
+          {PAYMENT_SCHEDULE.map((t, i) => (
             <div key={t.id} style={{
               padding: '30px 28px',
               background: 'white',
@@ -203,11 +211,22 @@ export default function Rates({ onBookNow }) {
                 color: 'rgba(201,168,76,0.18)', lineHeight: 1,
               }}>{i + 1}</div>
               <div style={{ color: 'var(--gold)', marginBottom: '16px' }}>{PAYMENT_ICONS[t.id]}</div>
-              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '21px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '10px' }}>{t.label}</div>
+              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '30px', fontWeight: '600', color: 'var(--charcoal)', lineHeight: 1.1 }}>
+                {Math.round(t.pct * 100)}%
+              </div>
+              <div style={{ color: 'var(--gold-dark)', fontSize: '1rem', fontWeight: '500', marginBottom: '10px' }}>
+                {money(minParts[i])} <span style={{ color: 'var(--gray)', fontSize: '0.75rem', fontWeight: '400' }}>on a {VILLA.minNights}-night stay</span>
+              </div>
+              <div style={{ fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '8px' }}>{t.when}</div>
               <p style={{ color: 'var(--gray)', fontSize: '0.8438rem', lineHeight: 1.7 }}>{t.desc}</p>
             </div>
           ))}
         </div>
+
+        <p style={{ textAlign: 'center', color: 'var(--gray)', fontSize: '0.8125rem', lineHeight: 1.7, maxWidth: '620px', margin: '0 auto 48px' }}>
+          Nothing is due to make an enquiry — send your dates and we reply with availability and a written
+          quote first. Food, Kingston transfers and excursions are billed separately from the villa rate.
+        </p>
 
         {/* CTA */}
         <div style={{ textAlign: 'center' }}>

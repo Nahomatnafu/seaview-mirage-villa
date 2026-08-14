@@ -25,7 +25,7 @@ export default function Navbar({ onBookNow }) {
     return () => { document.body.style.overflow = prev }
   }, [menuOpen])
 
-  const links = PAGES.map(p => ({ label: p.nav, to: p.path }))
+  const links = PAGES.filter(p => !p.navHidden).map(p => ({ label: p.nav, to: p.path }))
 
   return (
     <>

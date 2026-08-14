@@ -22,7 +22,7 @@ export const VILLA = {
   eventCapacity: 70,
   checkIn: '3:00 PM',
   checkOut: '11:00 AM',
-  minNights: 3,
+  minNights: 7,
   airport: 'Montego Bay Airport (MBJ)',
   airportDrive: '45 min drive',
 }
@@ -67,13 +67,14 @@ export const GOOD_TO_KNOW = [
 ]
 
 // ---------------------------------------------------------------------------
-// Pricing. The client asked for prices to be published. He supplied the meal
-// plan, transfer, and excursion rates below but has NOT yet given a nightly
-// villa rate — set `nightlyRate` to a string (e.g. 'From $1,800 / night') and
-// the rates section will show it in place of "Contact for rates".
+// Pricing. `nightly` is the number everything else is derived from — the
+// published rate, the booking wizard's live total and the instalment amounts.
+// The villa is let whole-house only, so the rate does not vary by party size.
 // ---------------------------------------------------------------------------
 export const RATES = {
-  nightlyRate: null,
+  nightly: 2600,
+  nightlyRate: '$2,600',
+  nightlyUnit: 'per night',
   mealPlan: '$70',
   mealPlanUnit: 'per person, per day',
   kingstonTransfer: '$350',
@@ -99,10 +100,140 @@ export const MEAL_PLAN = {
   ],
 }
 
-export const PAYMENT_TERMS = [
-  { id: 'deposit', label: '50% deposit', desc: 'Reserves your dates and takes the villa off the calendar.' },
-  { id: 'balance', label: 'Balance 20–30 days out', desc: 'The remaining 50% is due 20 to 30 days before your arrival date.' },
-  { id: 'quote', label: 'No payment to inquire', desc: 'Send your dates first — we reply with availability and a full written quote.' },
+// Three instalments. Percentages are the source of truth for both the published
+// schedule and the live figures in the booking wizard, and are what the Stripe
+// integration should read when it lands.
+export const PAYMENT_SCHEDULE = [
+  {
+    id: 'deposit', pct: 0.25, label: 'To reserve',
+    when: 'Due on booking',
+    desc: 'Holds your dates and takes the villa off the calendar.',
+  },
+  {
+    id: 'second', pct: 0.35, label: 'Second instalment',
+    when: 'Due within one month of booking',
+    desc: 'Confirms the reservation and your chef begins menu planning.',
+  },
+  {
+    id: 'final', pct: 0.40, label: 'Final instalment',
+    when: 'Due 20–30 days before arrival',
+    desc: 'Settles the balance ahead of your arrival.',
+  },
+]
+
+export const money = n =>
+  `$${Math.round(n).toLocaleString('en-US')}`
+
+// Villa total for a given number of nights, and that total split across the
+// three instalments above. Rounding is applied to the first two and the final
+// instalment takes the remainder, so the parts always sum to the total exactly.
+export const villaTotal = nights => nights * RATES.nightly
+
+export const instalments = total => {
+  const first = Math.round(total * PAYMENT_SCHEDULE[0].pct)
+  const second = Math.round(total * PAYMENT_SCHEDULE[1].pct)
+  return [first, second, total - first - second]
+}
+
+// ---------------------------------------------------------------------------
+// FAQ. Every answer below is drawn from something the client has confirmed in
+// writing. Questions we cannot answer yet — cancellation and refund terms, a
+// damage/security deposit, pets, and whether local tax applies — are
+// deliberately absent rather than guessed at. See SETUP.md.
+// ---------------------------------------------------------------------------
+export const FAQ = [
+  {
+    q: 'Can we book individual rooms?',
+    a: `No — ${VILLA.name} is let whole-villa only. One booking gives your group exclusive use of all ${VILLA.bedrooms} bedrooms and the entire property, so the rate is the same whether you are six people or ${VILLA.sleeps}.`,
+  },
+  {
+    q: 'How many people can stay?',
+    a: `Up to ${VILLA.sleeps} guests across ${VILLA.bedrooms} bedrooms — 3 king rooms including the master suite, and 4 queen rooms. Every bedroom has its own en-suite bathroom, and there are 2 further guest half baths.`,
+  },
+  {
+    q: 'Is there a minimum stay?',
+    a: `Yes, ${VILLA.minNights} nights. At ${RATES.nightlyRate} ${RATES.nightlyUnit}, a ${VILLA.minNights}-night stay comes to ${money(villaTotal(VILLA.minNights))}. Longer stays are welcome — the booking form will price any length from ${VILLA.minNights} nights upward.`,
+  },
+  {
+    q: 'What is included in the nightly rate?',
+    a: 'Exclusive use of the whole villa and its staff: your private chef, butler, housekeepers and caretakers, groundskeeper, concierge, and on-site security. Airport pickup and drop-off at Montego Bay is included too.',
+  },
+  {
+    q: 'Is food included?',
+    a: `Food is separate. The chef's meal plan is ${RATES.mealPlan} ${RATES.mealPlanUnit} and covers breakfast, lunch, dinner, dessert, bottled water and fresh juices. Your chef contacts you before you travel to plan the menu, does the shopping, and gives you an itemised receipt for everything bought on your behalf. You are welcome to self-cater instead.`,
+  },
+  {
+    q: 'How do payments work?',
+    a: 'In three instalments: 25% to reserve your dates, 35% within a month of booking, and the final 40% between 20 and 30 days before you arrive. Nothing is due to make an enquiry — we reply with availability and a written quote first.',
+  },
+  {
+    q: 'How do we get to the villa?',
+    a: `Montego Bay Airport (MBJ) is about a ${VILLA.airportDrive} away and the villa collects you and returns you at no charge. If you fly into Kingston instead, transfers are ${RATES.kingstonTransfer} ${RATES.kingstonTransferUnit}.`,
+  },
+  {
+    q: 'Is the property secure?',
+    a: 'Yes. The grounds are gated with a security guard on site, and a 360° camera system covers the exterior of the property. There are no cameras inside the villa or in any private space.',
+  },
+  {
+    q: 'Can we use a beach?',
+    a: 'Yes — guests use Puerto Seco Beach, about five minutes away, on guest passes provided by the villa.',
+  },
+  {
+    q: 'Can you arrange excursions?',
+    a: `Your concierge arranges guided island days at ${RATES.excursion} ${RATES.excursionUnit} — Dunn's River Falls, Green Grotto Caves, Dolphin Cove and more. In-villa spa treatments can also be arranged on request.`,
+  },
+  {
+    q: 'Can we host a wedding or event?',
+    a: `Yes. The villa hosts weddings and celebrations for up to ${VILLA.eventCapacity} guests, with ${VILLA.sleeps} sleeping on site and your concierge present throughout. Speak to the manager or chef about catering for the event.`,
+  },
+  {
+    q: 'Is the villa suitable for children?',
+    a: "Yes — the villa is all-age friendly and the chef prepares children's meals to parents' requests. Do mention ages when you enquire so the team can prepare.",
+  },
+]
+
+// House policies. Same rule as the FAQ: only what the client has confirmed.
+export const POLICIES = [
+  {
+    id: 'booking',
+    title: 'Booking & Payment',
+    points: [
+      `Minimum stay is ${VILLA.minNights} nights, whole-villa only.`,
+      'Payment is taken in three instalments: 25% to reserve, 35% within one month of booking, and 40% due 20–30 days before arrival.',
+      'Enquiries are free. Your dates are only held once the first instalment is received.',
+      'Rates are quoted in US dollars.',
+    ],
+  },
+  {
+    id: 'stay',
+    title: 'Arrival & Departure',
+    points: [
+      `Check-in from ${VILLA.checkIn}, check-out by ${VILLA.checkOut}.`,
+      `Complimentary pickup and drop-off at ${VILLA.airport}. Kingston transfers are ${RATES.kingstonTransfer} ${RATES.kingstonTransferUnit}.`,
+      'Please share your flight details once booked so the driver can meet you.',
+    ],
+  },
+  {
+    id: 'food',
+    title: 'Food & Drink',
+    points: [
+      `The chef's meal plan is ${RATES.mealPlan} ${RATES.mealPlanUnit}, covering all three meals, dessert, water and juices.`,
+      'Groceries are bought on your behalf and billed at cost; every receipt is reviewed with you before checkout.',
+      'Food is settled in cash or by card at the villa.',
+      'Please tell us about allergies and dietary restrictions in advance.',
+      'Bar items and drinks are charged separately at the published bar prices.',
+    ],
+  },
+  {
+    id: 'house',
+    title: 'House Rules',
+    points: [
+      'No smoking inside the villa.',
+      'The grounds are gated and monitored by a 360° exterior camera system for the safety of guests and staff. There are no cameras inside the villa.',
+      `Events and celebrations are welcome for up to ${VILLA.eventCapacity} guests, arranged with the manager in advance.`,
+      'Please treat the villa and its staff with the same care you would your own home.',
+    ],
+  },
 ]
 
 // Staff included with every stay
