@@ -142,9 +142,9 @@ export const instalments = total => {
 
 // ---------------------------------------------------------------------------
 // FAQ. Every answer below is drawn from something the client has confirmed in
-// writing. Questions we cannot answer yet — cancellation and refund terms, a
-// damage/security deposit, pets, and whether local tax applies — are
-// deliberately absent rather than guessed at. See SETUP.md.
+// writing. What we still cannot state — the cancellation fee percentage, a
+// damage/security deposit, pets, and whether local tax applies — is left out
+// rather than guessed at. See SETUP.md §4 and §5.
 // ---------------------------------------------------------------------------
 export const FAQ = [
   {
@@ -192,10 +192,66 @@ export const FAQ = [
     a: `Yes. The villa hosts weddings and celebrations for up to ${VILLA.eventCapacity} guests, with ${VILLA.sleeps} sleeping on site and your concierge present throughout. Speak to the manager or chef about catering for the event.`,
   },
   {
+    q: 'What is the cancellation policy?',
+    a: 'It depends how close to arrival you cancel. On standard dates, cancellations 61 or more days before arrival can be refunded less a cancellation fee; 60 days or less before arrival is non-refundable. Holiday periods need longer notice — 91 days for Easter and Thanksgiving, 121 days for Christmas and New Year. The full terms, including the exact fee, are set out in your written quote before any payment is taken.',
+  },
+  {
+    q: 'Can we move our dates instead of cancelling?',
+    a: `We will always try to accommodate a change of dates, though we cannot guarantee it. A shortened stay must still meet the ${VILLA.minNights}-night minimum, and rescheduled dates are non-refundable. Ask us as early as you can — the further out you are, the more we can do.`,
+  },
+  {
     q: 'Is the villa suitable for children?',
     a: "Yes — the villa is all-age friendly and the chef prepares children's meals to parents' requests. Do mention ages when you enquire so the team can prepare.",
   },
 ]
+
+// ---------------------------------------------------------------------------
+// Cancellation. The client supplied four answers that agree on the cut-off
+// windows below but CONTRADICT each other on the fee and on rescheduling:
+//   * standard cancellation fee is given as both 5% and 20%
+//   * Christmas/New Year is called "non-refundable" in one answer and
+//     refundable at 121+ days less 30% in another
+//   * rescheduling is "treated as a new booking" in one answer and "full
+//     credit within 365 days" in another
+// Only the agreed parts are published. The contested figures stay null and
+// render as "set out in your written quote" until the client resolves them —
+// see SETUP.md §4. Do not fill these in by guessing; this is a binding term.
+// ---------------------------------------------------------------------------
+export const CANCELLATION = {
+  windows: [
+    {
+      id: 'standard',
+      season: 'Standard dates',
+      nonRefundable: '60 days or less before arrival',
+      refundable: '61 days or more before arrival',
+    },
+    {
+      id: 'easter',
+      season: 'Easter & Thanksgiving',
+      nonRefundable: '90 days or less before arrival',
+      refundable: '91 days or more before arrival',
+    },
+    {
+      id: 'festive',
+      season: 'Christmas & New Year',
+      nonRefundable: '120 days or less before arrival',
+      refundable: '121 days or more before arrival',
+    },
+  ],
+  // Percentage retained on an in-window (refundable) cancellation.
+  feeStandard: null,
+  feeHoliday: null,
+  noRefundFor: [
+    'Goods or services booked but not used',
+    'Guests who do not arrive',
+    'Late arrival or early departure during the rental period',
+  ],
+  reschedule: [
+    `A shortened stay must still meet the ${VILLA.minNights}-night minimum.`,
+    'Rescheduled dates are non-refundable.',
+    'We will always try to accommodate a date change, but cannot guarantee it.',
+  ],
+}
 
 // House policies. Same rule as the FAQ: only what the client has confirmed.
 export const POLICIES = [
@@ -208,6 +264,7 @@ export const POLICIES = [
       'Enquiries are free. Your dates are only held once the first instalment is received.',
       'The instalments cover the villa itself. Food, Kingston transfers, excursions, spa treatments and bar items are settled directly with the villa.',
       'Rates are quoted in US dollars.',
+      'Cancellation terms depend on how far ahead you cancel and on the season — see the cancellation table below.',
     ],
   },
   {

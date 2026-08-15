@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronDown, ScrollText, ShieldCheck } from 'lucide-react'
-import { FAQ, POLICIES, VILLA } from '../content'
+import { ChevronDown, ScrollText, ShieldCheck, CalendarX, CalendarSync } from 'lucide-react'
+import { FAQ, POLICIES, CANCELLATION, VILLA } from '../content'
 
 function Question({ item, open, onToggle }) {
   return (
@@ -120,6 +120,110 @@ export default function FaqPolicies() {
             ))}
           </div>
 
+          {/* Cancellation */}
+          <div style={{ marginTop: '56px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+              <CalendarX size={18} style={{ color: 'var(--gold)' }} />
+              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(22px, 2.6vw, 28px)', fontWeight: '600', color: 'var(--charcoal)' }}>
+                Cancellation
+              </h3>
+            </div>
+            <p style={{ color: 'var(--gray)', fontSize: '0.9375rem', lineHeight: 1.75, maxWidth: '64ch', marginBottom: '24px' }}>
+              How close to your arrival you cancel determines whether a refund is possible. Holiday
+              periods carry longer notice requirements than standard dates.
+            </p>
+
+            {/* Table on wider screens. On a phone the third column would scroll
+                out of sight, so the same rows render as stacked cards below. */}
+            <div className="cancel-table" style={{ border: '1px solid rgba(201,168,76,0.2)', background: 'white', overflowX: 'auto' }}>
+              <table style={{ width: '100%', minWidth: '520px', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ background: 'var(--cream)' }}>
+                    {['Period', 'Refund possible', 'Non-refundable'].map(h => (
+                      <th key={h} style={{
+                        textAlign: 'left', padding: '14px 20px',
+                        fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase',
+                        color: 'var(--gray)', fontWeight: '500',
+                        borderBottom: '1px solid rgba(201,168,76,0.22)',
+                      }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {CANCELLATION.windows.map(w => (
+                    <tr key={w.id} style={{ borderBottom: '1px solid rgba(201,168,76,0.14)' }}>
+                      <td style={{ padding: '16px 20px', fontSize: '0.875rem', fontWeight: '500', color: 'var(--charcoal)' }}>{w.season}</td>
+                      <td style={{ padding: '16px 20px', fontSize: '0.875rem', color: 'var(--gray)' }}>{w.refundable}</td>
+                      <td style={{ padding: '16px 20px', fontSize: '0.875rem', color: 'var(--gray)' }}>{w.nonRefundable}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="cancel-cards" style={{ display: 'none', gridTemplateColumns: '1fr', gap: '2px' }}>
+              {CANCELLATION.windows.map(w => (
+                <div key={w.id} style={{ background: 'white', border: '1px solid rgba(201,168,76,0.2)', padding: '20px 22px' }}>
+                  <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.125rem', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '14px' }}>
+                    {w.season}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div>
+                      <div style={{ fontSize: '0.625rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '3px' }}>Refund possible</div>
+                      <div style={{ fontSize: '0.875rem', color: 'var(--charcoal)' }}>{w.refundable}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.625rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '3px' }}>Non-refundable</div>
+                      <div style={{ fontSize: '0.875rem', color: 'var(--charcoal)' }}>{w.nonRefundable}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <p style={{ color: 'var(--gray)', fontSize: '0.875rem', lineHeight: 1.75, marginTop: '18px', maxWidth: '64ch' }}>
+              {CANCELLATION.feeStandard
+                ? `Cancellations made in the refundable window are returned less a ${CANCELLATION.feeStandard} cancellation fee (${CANCELLATION.feeHoliday} over holiday periods).`
+                : 'Cancellations made in the refundable window are returned less a cancellation fee, set out in your written quote before any payment is taken.'}
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2px', marginTop: '26px' }}>
+              <div style={{ padding: '28px 26px', background: 'white', border: '1px solid rgba(201,168,76,0.14)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                  <CalendarX size={16} style={{ color: 'var(--gold)' }} />
+                  <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.125rem', fontWeight: '600', color: 'var(--charcoal)' }}>
+                    No refund is given for
+                  </h4>
+                </div>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {CANCELLATION.noRefundFor.map(pt => (
+                    <li key={pt} style={{ color: 'var(--gray)', fontSize: '0.875rem', lineHeight: 1.7, paddingLeft: '16px', position: 'relative' }}>
+                      <span style={{ position: 'absolute', left: 0, top: '9px', width: '5px', height: '5px', borderRadius: '50%', background: 'rgba(201,168,76,0.6)' }} />
+                      {pt}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div style={{ padding: '28px 26px', background: 'white', border: '1px solid rgba(201,168,76,0.14)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                  <CalendarSync size={16} style={{ color: 'var(--gold)' }} />
+                  <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.125rem', fontWeight: '600', color: 'var(--charcoal)' }}>
+                    Changing your dates
+                  </h4>
+                </div>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {CANCELLATION.reschedule.map(pt => (
+                    <li key={pt} style={{ color: 'var(--gray)', fontSize: '0.875rem', lineHeight: 1.7, paddingLeft: '16px', position: 'relative' }}>
+                      <span style={{ position: 'absolute', left: 0, top: '9px', width: '5px', height: '5px', borderRadius: '50%', background: 'rgba(201,168,76,0.6)' }} />
+                      {pt}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
           {/* Written terms notice */}
           <div style={{
             marginTop: '2px', padding: '28px 32px',
@@ -144,6 +248,13 @@ export default function FaqPolicies() {
           </div>
         </div>
       </section>
+
+      <style>{`
+        @media (max-width: 640px) {
+          #policies .cancel-table { display: none !important; }
+          #policies .cancel-cards { display: grid !important; }
+        }
+      `}</style>
     </>
   )
 }
