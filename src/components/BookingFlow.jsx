@@ -383,7 +383,11 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '8px' }}>
                       Anything we can arrange?
                     </h3>
-                    <p style={{ color: 'var(--gray)', fontSize: '0.875rem' }}>Your chef, butler, housekeeping, concierge, and security are already part of the villa. Select anything else you'd like and we'll price it into your quote.</p>
+                    <p style={{ color: 'var(--gray)', fontSize: '0.875rem', lineHeight: 1.65 }}>
+                      Your chef, butler, housekeeping, concierge and security are already part of the villa.
+                      Select anything else you'd like and we'll include it in your quote — these are settled
+                      directly with the villa, separately from the instalments above.
+                    </p>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -479,7 +483,8 @@ export default function BookingFlow({ onClose, initialService = null }) {
                       )}
                       <p style={{ color: 'var(--gray)', fontSize: '0.6875rem', marginTop: '14px', lineHeight: 1.6 }}>
                         * This is an enquiry, not a confirmed booking. The villa total above covers exclusive use of the
-                        property and its staff; food, Kingston transfers and excursions are extra and are itemised in your quote.
+                        property and its staff. Food, Kingston transfers, excursions and spa treatments are extra and
+                        are settled directly with the villa during your stay.
                       </p>
                     </div>
                   </div>

@@ -61,7 +61,7 @@ export const AMENITIES = [
 export const GOOD_TO_KNOW = [
   { id: 'checkin', label: `Check-in ${VILLA.checkIn} · Check-out ${VILLA.checkOut}` },
   { id: 'minstay', label: `${VILLA.minNights}-night minimum stay` },
-  { id: 'meals', label: 'Chef meal plan $70 per person, per day' },
+  { id: 'meals', label: 'Chef meal plan $70 per person, per day — paid at the villa' },
   { id: 'security', label: 'Gated entry · On-site security · 360° cameras' },
   { id: 'smoking', label: 'No smoking inside the villa' },
 ]
@@ -86,6 +86,11 @@ export const RATES = {
 export const MEAL_PLAN = {
   price: RATES.mealPlan,
   unit: RATES.mealPlanUnit,
+  // The chef is part of the villa's staff; this covers the food and the meal
+  // service. Settled directly with the villa on site — it is NOT taken through
+  // the website, and must stay out of scope when Stripe is wired up.
+  paidOnSite: true,
+  paymentNote: 'Settled with the villa during your stay, not charged through this site.',
   includes: [
     'Breakfast, lunch, and dinner',
     'Dessert with dinner',
@@ -160,15 +165,15 @@ export const FAQ = [
   },
   {
     q: 'Is food included?',
-    a: `Food is separate. The chef's meal plan is ${RATES.mealPlan} ${RATES.mealPlanUnit} and covers breakfast, lunch, dinner, dessert, bottled water and fresh juices. Your chef contacts you before you travel to plan the menu, does the shopping, and gives you an itemised receipt for everything bought on your behalf. You are welcome to self-cater instead.`,
+    a: `The chef is part of the villa's staff, but the food is separate: ${RATES.mealPlan} ${RATES.mealPlanUnit}, covering breakfast, lunch, dinner, dessert, bottled water and fresh juices. Your chef contacts you before you travel to plan the menu, does the grocery shopping, and gives you an itemised receipt for everything bought on your behalf. You settle this directly with the villa during your stay — it is not charged through this website. You are welcome to self-cater instead.`,
   },
   {
     q: 'How do payments work?',
     a: 'In three instalments: 25% to reserve your dates, 35% within a month of booking, and the final 40% between 20 and 30 days before you arrive. Nothing is due to make an enquiry — we reply with availability and a written quote first.',
   },
   {
-    q: 'How do we get to the villa?',
-    a: `Montego Bay Airport (MBJ) is about a ${VILLA.airportDrive} away and the villa collects you and returns you at no charge. If you fly into Kingston instead, transfers are ${RATES.kingstonTransfer} ${RATES.kingstonTransferUnit}.`,
+    q: 'Which airport should we fly into?',
+    a: `Montego Bay (MBJ) — it is the closest airport, about a ${VILLA.airportDrive} away, and the villa collects you and returns you free of charge. Kingston is the farthest airport from Discovery Bay; if you have to fly in there, transfers are ${RATES.kingstonTransfer} ${RATES.kingstonTransferUnit}.`,
   },
   {
     q: 'Is the property secure?',
@@ -179,8 +184,8 @@ export const FAQ = [
     a: 'Yes — guests use Puerto Seco Beach, about five minutes away, on guest passes provided by the villa.',
   },
   {
-    q: 'Can you arrange excursions?',
-    a: `Your concierge arranges guided island days at ${RATES.excursion} ${RATES.excursionUnit} — Dunn's River Falls, Green Grotto Caves, Dolphin Cove and more. In-villa spa treatments can also be arranged on request.`,
+    q: 'Can you arrange excursions and spa treatments?',
+    a: `Yes. Your concierge arranges guided island days at ${RATES.excursion} ${RATES.excursionUnit} — Dunn's River Falls, Green Grotto Caves, Dolphin Cove and more. In-villa massages and spa treatments are available on request; just ask and we will arrange them for you.`,
   },
   {
     q: 'Can we host a wedding or event?',
@@ -201,6 +206,7 @@ export const POLICIES = [
       `Minimum stay is ${VILLA.minNights} nights, whole-villa only.`,
       'Payment is taken in three instalments: 25% to reserve, 35% within one month of booking, and 40% due 20–30 days before arrival.',
       'Enquiries are free. Your dates are only held once the first instalment is received.',
+      'The instalments cover the villa itself. Food, Kingston transfers, excursions, spa treatments and bar items are settled directly with the villa.',
       'Rates are quoted in US dollars.',
     ],
   },
@@ -209,7 +215,8 @@ export const POLICIES = [
     title: 'Arrival & Departure',
     points: [
       `Check-in from ${VILLA.checkIn}, check-out by ${VILLA.checkOut}.`,
-      `Complimentary pickup and drop-off at ${VILLA.airport}. Kingston transfers are ${RATES.kingstonTransfer} ${RATES.kingstonTransferUnit}.`,
+      `Montego Bay (MBJ) is the closest airport and the one we recommend — pickup and drop-off there is free of charge.`,
+      `Kingston is the farthest airport; transfers from there are ${RATES.kingstonTransfer} ${RATES.kingstonTransferUnit}.`,
       'Please share your flight details once booked so the driver can meet you.',
     ],
   },
@@ -217,9 +224,9 @@ export const POLICIES = [
     id: 'food',
     title: 'Food & Drink',
     points: [
-      `The chef's meal plan is ${RATES.mealPlan} ${RATES.mealPlanUnit}, covering all three meals, dessert, water and juices.`,
+      `The chef is part of the villa's staff. Meals are ${RATES.mealPlan} ${RATES.mealPlanUnit}, covering all three meals, dessert, water and juices.`,
       'Groceries are bought on your behalf and billed at cost; every receipt is reviewed with you before checkout.',
-      'Food is settled in cash or by card at the villa.',
+      'Food is settled directly with the villa in cash or by card during your stay — it is not charged through this website.',
       'Please tell us about allergies and dietary restrictions in advance.',
       'Bar items and drinks are charged separately at the published bar prices.',
     ],
@@ -241,7 +248,7 @@ export const INCLUDED_SERVICES = [
   {
     id: 'chef',
     title: 'Private Chef',
-    desc: `A villa chef cooks for your group on the ${RATES.mealPlan} per person, per day meal plan — breakfast, lunch, dinner, dessert, water, and fresh juices. He contacts you before arrival to plan the menu around your preferences and does the grocery shopping for you.`,
+    desc: `The chef is part of the villa's staff. Meals are ${RATES.mealPlan} per person, per day — breakfast, lunch, dinner, dessert, water, and fresh juices. He contacts you before arrival to plan the menu, does the grocery shopping for you, and is settled with directly at the villa.`,
   },
   {
     id: 'butler',
@@ -275,12 +282,12 @@ export const REQUEST_SERVICES = [
   {
     id: 'transfer',
     title: 'Airport Transfer',
-    desc: `Complimentary pickup and drop-off at ${VILLA.airport}, about 45 minutes away. Arriving into Kingston instead? Transfers are ${RATES.kingstonTransfer} round trip.`,
+    desc: `Fly into ${VILLA.airport} — it is the closest airport and the one we recommend, about 45 minutes away, with pickup and drop-off free of charge. Kingston is the farthest airport; transfers from there are ${RATES.kingstonTransfer} ${RATES.kingstonTransferUnit}.`,
   },
   {
     id: 'spa',
     title: 'Spa Services',
-    desc: 'In-villa massages and spa treatments arranged through your concierge.',
+    desc: 'In-villa massages and spa treatments, arranged on request through your concierge.',
   },
   {
     id: 'watersports',
@@ -301,7 +308,7 @@ export const BOOKING_SERVICES = [
     id: 'mealplan',
     title: 'Chef Meal Plan',
     subtitle: `${RATES.mealPlan} ${RATES.mealPlanUnit}`,
-    desc: 'Breakfast, lunch, dinner, dessert, water, and juices. Menu planned with your chef in advance; groceries bought before you land.',
+    desc: 'Breakfast, lunch, dinner, dessert, water, and juices. Menu planned with your chef in advance, groceries bought before you land, and settled with the villa during your stay.',
   },
   ...REQUEST_SERVICES.map(s => ({ ...s, subtitle: 'On request' })),
 ]

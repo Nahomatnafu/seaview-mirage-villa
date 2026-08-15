@@ -73,6 +73,12 @@ rate, the live booking total, the instalment amounts, and the FAQ.
 
 Agreed to be done on a separate branch. Notes for whoever picks it up:
 
+- **Scope: only the villa rate goes through Stripe.** The client confirmed the
+  chef's meal plan ($70/person/day) is settled with the villa on site, not
+  online. The same goes for Kingston transfers, excursions, spa treatments and
+  bar items. So the amount Stripe ever charges is `nights × RATES.nightly`,
+  split across the three instalments — nothing else. `MEAL_PLAN.paidOnSite` in
+  `content.js` records this.
 - The three instalments are **scheduled payments, not a subscription.** The
   second and third are due on dates relative to booking and arrival, so this
   wants either three `PaymentIntent`s created up front with the later two
@@ -103,7 +109,6 @@ Answers we do not have, so the site deliberately says nothing about them:
 - **Damage or security deposit** — whether one is taken, how much, when returned.
 - **Whether Jamaican GCT or any tourism tax applies** to the nightly rate.
 - **Pets** — allowed or not.
-- Spa treatment pricing.
 - High-resolution food photos from the chef (the menu currently uses
   Creative Commons stock — see `public/assets/menu/CREDITS.md`).
 - Real guest reviews (`Testimonials.jsx` is written but unmounted).
