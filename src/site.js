@@ -45,6 +45,15 @@ export const PAGES = [
     image: '/assets/villa/pool-06.jpg',
   },
   {
+    // Kept out of the top nav (eight items is already the limit before the
+    // desktop bar stops fitting) but listed in the footer and linked from Rates.
+    path: '/faq', nav: 'FAQ', title: 'FAQ & Policies', navHidden: true,
+    eyebrow: 'Good to Know',
+    heading: 'FAQ & Policies',
+    blurb: 'How booking works, what is included, and the house rules — in plain terms.',
+    image: '/assets/villa/interior-11.jpg',
+  },
+  {
     path: '/contact', nav: 'Contact', title: 'Contact & Location',
     eyebrow: 'Getting Here',
     heading: 'Discovery Bay, Jamaica',

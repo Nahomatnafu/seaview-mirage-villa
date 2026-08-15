@@ -10,6 +10,7 @@ import ServicesPage from './pages/ServicesPage'
 import RatesPage from './pages/RatesPage'
 import MenuPage from './pages/MenuPage'
 import EventsPage from './pages/EventsPage'
+import FaqPage from './pages/FaqPage'
 import ContactPage from './pages/ContactPage'
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/rates" element={<RatesPage />} />
           <Route path="/menu" element={<MenuPage />} />
           <Route path="/events" element={<EventsPage />} />
+          <Route path="/faq" element={<FaqPage />} />
           <Route path="/contact" element={<ContactPage />} />
           {/* Old single-page anchors and any stray URL land on Home */}
           <Route path="*" element={<Navigate to="/" replace />} />
