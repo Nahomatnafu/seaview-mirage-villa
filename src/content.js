@@ -61,7 +61,7 @@ export const AMENITIES = [
 export const GOOD_TO_KNOW = [
   { id: 'checkin', label: `Check-in ${VILLA.checkIn} · Check-out ${VILLA.checkOut}` },
   { id: 'minstay', label: `${VILLA.minNights}-night minimum stay` },
-  { id: 'meals', label: 'Chef meal plan $70 per person, per day — paid at the villa' },
+  { id: 'meals', label: 'All meals included — cooked by your villa chef' },
   { id: 'security', label: 'Gated entry · On-site security · 360° cameras' },
   { id: 'smoking', label: 'No smoking inside the villa' },
 ]
@@ -83,25 +83,31 @@ export const RATES = {
   excursionUnit: 'per day, per group',
 }
 
+// Dining. The client corrected this in August 2026: the standard menu is
+// INCLUDED in the nightly rate. The $70 per person figure now applies only to
+// special or custom meals arranged with the chef — it is not a daily food
+// charge on every stay. This reverses his earlier answer and the menu PDF, both
+// of which framed $70/pp/day as the cost of all meals. See SETUP.md §6.
 export const MEAL_PLAN = {
-  price: RATES.mealPlan,
-  unit: RATES.mealPlanUnit,
-  // The chef is part of the villa's staff; this covers the food and the meal
-  // service. Settled directly with the villa on site — it is NOT taken through
-  // the website, and must stay out of scope when Stripe is wired up.
-  paidOnSite: true,
-  paymentNote: 'Settled with the villa during your stay, not charged through this site.',
+  // Covered by the nightly rate
   includes: [
     'Breakfast, lunch, and dinner',
-    'Dessert with dinner',
+    'Dessert',
     'Bottled water throughout the day',
     'Fresh juices — pineapple, orange, and fruit punch',
   ],
+  special: {
+    price: RATES.mealPlan,
+    unit: RATES.mealPlanUnit,
+    // Arranged and settled with the villa, not charged through the website.
+    paidOnSite: true,
+    blurb: 'Want something beyond the standard menu? Special or custom meals are arranged with the chef as a separate package.',
+  },
   process: [
-    { step: 'Menu in advance', desc: 'We send the menu before you travel so you know exactly what to expect.' },
-    { step: 'Plan with your chef', desc: 'The villa chef contacts you directly to build the week around your preferences.' },
+    { step: 'Menu in advance', desc: 'We send the menu before you travel so you know exactly what is on offer.' },
+    { step: 'The chef contacts you', desc: 'Your villa chef reaches out to plan the week around your preferences and any special requests.' },
     { step: 'Shopping done for you', desc: 'All grocery shopping is completed before you arrive — you walk into a stocked kitchen.' },
-    { step: 'Itemized receipt', desc: 'You receive a detailed receipt for everything purchased. No guesswork, no markup surprises.' },
+    { step: 'Anything different', desc: `If you would like something outside the standard menu, you agree it with the chef as a ${RATES.mealPlan} ${RATES.mealPlanUnit} package.` },
   ],
 }
 
@@ -161,11 +167,15 @@ export const FAQ = [
   },
   {
     q: 'What is included in the nightly rate?',
-    a: 'Exclusive use of the whole villa and its staff: your private chef, butler, housekeepers and caretakers, groundskeeper, concierge, and on-site security. Airport pickup and drop-off at Montego Bay is included too.',
+    a: 'Exclusive use of the whole villa and its staff: your private chef, butler, housekeepers and caretakers, groundskeeper, concierge, and on-site security. Your meals are included — breakfast, lunch, dinner, dessert, water and juices — as is airport pickup and drop-off at Montego Bay.',
   },
   {
     q: 'Is food included?',
-    a: `The chef is part of the villa's staff, but the food is separate: ${RATES.mealPlan} ${RATES.mealPlanUnit}, covering breakfast, lunch, dinner, dessert, bottled water and fresh juices. Your chef contacts you before you travel to plan the menu, does the grocery shopping, and gives you an itemised receipt for everything bought on your behalf. You settle this directly with the villa during your stay — it is not charged through this website. You are welcome to self-cater instead.`,
+    a: `Yes. Breakfast, lunch, dinner, dessert, bottled water and fresh juices are included in the nightly rate and cooked for you by the villa chef. He contacts you before you travel to plan the menu around your group and does the grocery shopping in advance.`,
+  },
+  {
+    q: 'What if we want something outside the standard menu?',
+    a: `Special or custom meals are arranged directly with the chef as a ${RATES.mealPlan} ${RATES.mealPlanUnit} package. He will contact you before your stay to talk it through, and it is settled with the villa rather than through this website. If you would like to cook something yourself, discuss it with him and he will shop for it.`,
   },
   {
     q: 'How do payments work?',
@@ -262,7 +272,7 @@ export const POLICIES = [
       `Minimum stay is ${VILLA.minNights} nights, whole-villa only.`,
       'Payment is taken in three instalments: 25% to reserve, 35% within one month of booking, and 40% due 20–30 days before arrival.',
       'Enquiries are free. Your dates are only held once the first instalment is received.',
-      'The instalments cover the villa itself. Food, Kingston transfers, excursions, spa treatments and bar items are settled directly with the villa.',
+      'The instalments cover the villa, its staff and your meals. Special meal packages, Kingston transfers, excursions, spa treatments and bar items are settled directly with the villa.',
       'Rates are quoted in US dollars.',
       'Cancellation terms depend on how far ahead you cancel and on the season — see the cancellation table below.',
     ],
@@ -281,9 +291,9 @@ export const POLICIES = [
     id: 'food',
     title: 'Food & Drink',
     points: [
-      `The chef is part of the villa's staff. Meals are ${RATES.mealPlan} ${RATES.mealPlanUnit}, covering all three meals, dessert, water and juices.`,
-      'Groceries are bought on your behalf and billed at cost; every receipt is reviewed with you before checkout.',
-      'Food is settled directly with the villa in cash or by card during your stay — it is not charged through this website.',
+      "The chef is part of the villa's staff, and your meals are included in the rate: breakfast, lunch, dinner, dessert, bottled water and fresh juices.",
+      'Your chef contacts you before you travel to plan the menu, and does the grocery shopping in advance.',
+      `Special or custom meals beyond the standard menu are arranged with the chef as a ${RATES.mealPlan} ${RATES.mealPlanUnit} package, settled with the villa rather than through this website.`,
       'Please tell us about allergies and dietary restrictions in advance.',
       'Bar items and drinks are charged separately at the published bar prices.',
     ],
@@ -305,7 +315,7 @@ export const INCLUDED_SERVICES = [
   {
     id: 'chef',
     title: 'Private Chef',
-    desc: `The chef is part of the villa's staff. Meals are ${RATES.mealPlan} per person, per day — breakfast, lunch, dinner, dessert, water, and fresh juices. He contacts you before arrival to plan the menu, does the grocery shopping for you, and is settled with directly at the villa.`,
+    desc: `The chef is part of the villa's staff, and your meals are included in the rate — breakfast, lunch, dinner, dessert, bottled water and fresh juices. He contacts you before arrival to plan the menu and does the grocery shopping for you. Anything beyond the standard menu is arranged with him as a ${RATES.mealPlan} ${RATES.mealPlanUnit} package.`,
   },
   {
     id: 'butler',
@@ -363,9 +373,9 @@ export const REQUEST_SERVICES = [
 export const BOOKING_SERVICES = [
   {
     id: 'mealplan',
-    title: 'Chef Meal Plan',
+    title: 'Special Meal Package',
     subtitle: `${RATES.mealPlan} ${RATES.mealPlanUnit}`,
-    desc: 'Breakfast, lunch, dinner, dessert, water, and juices. Menu planned with your chef in advance, groceries bought before you land, and settled with the villa during your stay.',
+    desc: 'Your everyday meals are already included. Choose this if you would like something beyond the standard menu — the chef will contact you to plan it.',
   },
   ...REQUEST_SERVICES.map(s => ({ ...s, subtitle: 'On request' })),
 ]

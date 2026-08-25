@@ -73,12 +73,13 @@ rate, the live booking total, the instalment amounts, and the FAQ.
 
 Agreed to be done on a separate branch. Notes for whoever picks it up:
 
-- **Scope: only the villa rate goes through Stripe.** The client confirmed the
-  chef's meal plan ($70/person/day) is settled with the villa on site, not
-  online. The same goes for Kingston transfers, excursions, spa treatments and
-  bar items. So the amount Stripe ever charges is `nights × RATES.nightly`,
-  split across the three instalments — nothing else. `MEAL_PLAN.paidOnSite` in
-  `content.js` records this.
+- **Scope: only the villa rate goes through Stripe.** Everyday meals are
+  included in the nightly rate, so they are already inside that figure — there
+  is nothing extra to charge for them. Special meal packages ($70/pp/day),
+  Kingston transfers, excursions, spa treatments and bar items are all settled
+  with the villa on site. So the amount Stripe ever charges is
+  `nights × RATES.nightly`, split across the three instalments — nothing else.
+  `MEAL_PLAN.special.paidOnSite` in `content.js` records this.
 - The three instalments are **scheduled payments, not a subscription.** The
   second and third are due on dates relative to booking and arrival, so this
   wants either three `PaymentIntent`s created up front with the later two
@@ -164,7 +165,33 @@ Answers we do not have, so the site deliberately says nothing about them:
 
 ---
 
-## 6. Deploys
+## 6. Dining — one thing to confirm
+
+**August 2026: the client reversed the meal arrangement.** He now says the
+standard menu — breakfast, lunch, dinner, dessert, fresh juice and water — is
+*included in the price*, and the $70 per person figure applies only to special
+or custom meals arranged with the chef.
+
+This contradicts both his earlier written answer and the menu PDF, which framed
+$70 per person per day as the cost of *all* meals. The site follows the newer
+instruction.
+
+**Worth confirming:** he wrote "$70 per person" and "the $70/person package"
+without repeating "per day". His earlier answer said "per person, per day". The
+site still says **per person, per day** because that is the only figure he has
+ever given in full and under-quoting a guest is worse than over-quoting. If a
+special meal package is actually a one-off per-person charge rather than daily,
+change `RATES.mealPlanUnit` in `content.js`.
+
+Also removed as a consequence: the old "you receive every shopping receipt and
+settle the food bill in cash or by card" copy. That described guests paying for
+groceries at cost, which cannot be true if meals are included in the rate. If
+the client does still itemise groceries for the special package, tell us and it
+goes back in for that package only.
+
+---
+
+## 7. Deploys
 
 - `main` auto-deploys to production on Vercel.
 - Any other branch gets a preview URL — use those for client review.

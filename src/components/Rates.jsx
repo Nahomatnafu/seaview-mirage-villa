@@ -28,10 +28,10 @@ export default function Rates({ onBookNow }) {
     {
       id: 'meals',
       icon: <UtensilsCrossed size={24} />,
-      title: 'Chef Meal Plan',
-      price: RATES.mealPlan,
-      unit: `${RATES.mealPlanUnit} · paid at the villa`,
-      desc: "The chef is part of the villa's staff. All three meals plus dessert, water and juices — planned with your chef, shopped for before you arrive, and settled directly with the villa rather than through this site.",
+      title: 'Your Meals',
+      price: 'Included',
+      unit: 'cooked by the villa chef',
+      desc: `Breakfast, lunch, dinner, dessert, water and fresh juices are covered by the rate. Want something beyond the standard menu? Special meals are arranged with the chef as a ${RATES.mealPlan} ${RATES.mealPlanUnit} package, settled at the villa.`,
     },
     {
       id: 'transfer',
@@ -135,12 +135,12 @@ export default function Rates({ onBookNow }) {
         }}>
           {/* What's included */}
           <div style={{ padding: '44px 42px', borderRight: '1px solid rgba(201,168,76,0.16)' }}>
-            <span style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>The Meal Plan</span>
+            <span style={{ color: 'var(--gold)', fontSize: '0.6875rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Dining</span>
             <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(26px, 3vw, 34px)', fontWeight: '600', color: 'var(--charcoal)', margin: '14px 0 8px', lineHeight: 1.2 }}>
-              {MEAL_PLAN.price} <span style={{ fontSize: '1rem', color: 'var(--gray)', fontFamily: 'var(--font-body)' }}>{MEAL_PLAN.unit}</span>
+              Meals included
             </h3>
             <p style={{ color: 'var(--gray)', fontSize: '0.875rem', lineHeight: 1.75, marginBottom: '28px' }}>
-              Full board, cooked in the villa by your chef. Groceries are bought on your behalf and billed at cost with a detailed receipt.
+              Cooked in the villa by your chef and covered by the nightly rate:
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '13px' }}>
               {MEAL_PLAN.includes.map(item => (
@@ -154,6 +154,15 @@ export default function Rates({ onBookNow }) {
                   <span style={{ color: 'var(--charcoal)', fontSize: '0.875rem', lineHeight: 1.55 }}>{item}</span>
                 </div>
               ))}
+            </div>
+
+            <div style={{ marginTop: '28px', paddingTop: '22px', borderTop: '1px solid rgba(201,168,76,0.2)' }}>
+              <div style={{ fontSize: '0.6875rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--gold-dark)', marginBottom: '8px' }}>
+                Something different?
+              </div>
+              <p style={{ color: 'var(--gray)', fontSize: '0.875rem', lineHeight: 1.75 }}>
+                {MEAL_PLAN.special.blurb} It is <strong style={{ color: 'var(--charcoal)', fontWeight: '500' }}>{MEAL_PLAN.special.price} {MEAL_PLAN.special.unit}</strong>, settled at the villa.
+              </p>
             </div>
           </div>
 

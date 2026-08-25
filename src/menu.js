@@ -8,9 +8,13 @@
 
 import { RATES } from './content'
 
+// The standard menu below is included in the nightly rate. The $70 per person
+// figure applies only to special or custom meals — see MEAL_PLAN in content.js.
 export const MENU_INTRO = {
-  budget: `${RATES.mealPlan} ${RATES.mealPlanUnit}`,
-  note: 'Recommended food budget, covering breakfast, lunch, and dinner.',
+  included: 'Included in your rate',
+  note: 'Breakfast, lunch, dinner, dessert, bottled water and fresh juices, cooked by your villa chef.',
+  special: `${RATES.mealPlan} ${RATES.mealPlanUnit}`,
+  specialNote: 'For special or custom meals beyond the standard menu, arranged with the chef.',
 }
 
 // Numbered steps the guest follows before arrival.
@@ -19,14 +23,14 @@ export const ORDERING_STEPS = [
   { step: 'Choose your meals for each day', desc: "Pick breakfast, lunch, dinner, and dessert. Don't see something you want? Just ask the chef." },
   { step: 'Note allergies and preparation', desc: 'Flag any allergies, dietary restrictions, and specific preparation requirements.' },
   { step: 'Send your selections', desc: 'Email, text, or WhatsApp your day-by-day choices to the villa.' },
-  { step: 'The chef calls you', desc: 'Your chef reaches out to review and finalize the menu with you.' },
-  { step: 'Share your food budget', desc: 'Give the chef a budget so shopping can be planned around it.' },
+  { step: 'The chef calls you', desc: 'Your chef reaches out to review and finalise the menu with you.' },
+  { step: 'Anything special', desc: `Want something beyond the menu? Agree it with the chef as a ${RATES.mealPlan} ${RATES.mealPlanUnit} package.` },
 ]
 
 export const HOW_IT_WORKS = [
-  'Once the menu is finalized, your chef shops for the entire length of your stay.',
-  'One day before checkout you receive every shopping receipt to review, and the chef goes through the bills with you and answers any questions.',
-  'Food is paid in cash or by credit card.',
+  'Your everyday meals are covered by the nightly rate — there is no separate food bill for the standard menu.',
+  'Once the menu is finalised, your chef shops for the entire length of your stay before you arrive.',
+  `Special or custom meals are a ${RATES.mealPlan} ${RATES.mealPlanUnit} package, agreed with the chef and settled with the villa.`,
 ]
 
 export const MENU_NOTICES = [

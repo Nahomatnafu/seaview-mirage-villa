@@ -65,14 +65,14 @@ export default function BookingFlow({ onClose, initialService = null }) {
     setContact(prev => ({ ...prev, [field]: e.target.value }))
   }
 
-  // Picking an arrival date fills in a departure date a full minimum stay
-  // later, so the common case needs one tap. Guests can extend it freely.
+  // Guests choose their own departure. The departure input's `min` is set a
+  // full minimum stay after arrival, so the calendar greys out anything
+  // shorter rather than us picking a length for them. Changing arrival clears
+  // a departure that would no longer meet the minimum.
   const pickCheckIn = (value) => {
     setCheckIn(value)
     if (!value) { setCheckOut(''); return }
-    if (!checkOut || diffDays(value, checkOut) < VILLA.minNights) {
-      setCheckOut(addDays(value, VILLA.minNights))
-    }
+    if (checkOut && diffDays(value, checkOut) < VILLA.minNights) setCheckOut('')
   }
 
   const canProceed = () => {
@@ -269,8 +269,8 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     </h3>
                     <p style={{ color: 'var(--gray)', fontSize: '0.875rem', lineHeight: 1.65 }}>
                       The villa is booked whole-house at {RATES.nightlyRate} {RATES.nightlyUnit}, for up to {VILLA.sleeps} guests.
-                      Minimum stay is {VILLA.minNights} nights — pick an arrival date and we'll fill in a {VILLA.minNights}-night
-                      departure you can extend.
+                      Minimum stay is {VILLA.minNights} nights — once you pick an arrival date, any departure
+                      shorter than that is greyed out in the calendar.
                     </p>
                   </div>
 
@@ -323,41 +323,30 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     </div>
                   </div>
 
+                  {/* Dates only — the cost is shown once on the review step, so
+                      guests are picking dates here rather than watching a total. */}
                   {nights >= VILLA.minNights && (
-                    <div style={{ border: '1px solid rgba(201,168,76,0.3)', background: 'var(--cream)' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '8px', padding: '20px 22px', borderBottom: '1px solid rgba(201,168,76,0.22)' }}>
-                        <div>
-                          <div style={{ fontWeight: '500', color: 'var(--charcoal)', fontSize: '0.9375rem' }}>
-                            {nights} nights × {RATES.nightlyRate}
-                          </div>
-                          <div style={{ color: 'var(--gray)', fontSize: '0.8125rem', marginTop: '2px' }}>
-                            {formatDate(checkIn)} → {formatDate(checkOut)}
-                          </div>
+                    <div style={{
+                      border: '1px solid rgba(201,168,76,0.3)', background: 'var(--cream)',
+                      padding: '18px 22px', display: 'flex', alignItems: 'center', gap: '12px',
+                    }}>
+                      <Check size={16} style={{ color: 'var(--gold-dark)', flexShrink: 0 }} />
+                      <div>
+                        <div style={{ fontWeight: '500', color: 'var(--charcoal)', fontSize: '0.9375rem' }}>
+                          {nights} nights
                         </div>
-                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '30px', fontWeight: '600', color: 'var(--charcoal)', lineHeight: 1 }}>
-                          {money(total)}
-                        </div>
-                      </div>
-
-                      <div style={{ padding: '18px 22px' }}>
-                        <div style={{ fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '12px' }}>
-                          Paid in three instalments
-                        </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
-                          {PAYMENT_SCHEDULE.map((p, i) => (
-                            <div key={p.id}>
-                              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: '600', color: 'var(--gold-dark)' }}>
-                                {money(parts[i])}
-                              </div>
-                              <div style={{ fontSize: '0.75rem', color: 'var(--charcoal)', fontWeight: '500', marginTop: '2px' }}>
-                                {Math.round(p.pct * 100)}% · {p.label}
-                              </div>
-                              <div style={{ fontSize: '0.6875rem', color: 'var(--gray)', marginTop: '2px' }}>{p.when}</div>
-                            </div>
-                          ))}
+                        <div style={{ color: 'var(--gray)', fontSize: '0.8125rem', marginTop: '2px' }}>
+                          {formatDate(checkIn)} → {formatDate(checkOut)}
                         </div>
                       </div>
                     </div>
+                  )}
+
+                  {checkIn && !checkOut && (
+                    <p style={{ color: 'var(--gray)', fontSize: '0.8125rem', lineHeight: 1.65 }}>
+                      Now choose your departure date. Anything less than {VILLA.minNights} nights
+                      after {formatDate(checkIn)} is unavailable.
+                    </p>
                   )}
 
                   {checkIn && nights > 0 && nights < VILLA.minNights && (
