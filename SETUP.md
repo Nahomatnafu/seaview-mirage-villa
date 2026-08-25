@@ -73,12 +73,13 @@ rate, the live booking total, the instalment amounts, and the FAQ.
 
 Agreed to be done on a separate branch. Notes for whoever picks it up:
 
-- **Scope: only the villa rate goes through Stripe.** The client confirmed the
-  chef's meal plan ($70/person/day) is settled with the villa on site, not
-  online. The same goes for Kingston transfers, excursions, spa treatments and
-  bar items. So the amount Stripe ever charges is `nights × RATES.nightly`,
-  split across the three instalments — nothing else. `MEAL_PLAN.paidOnSite` in
-  `content.js` records this.
+- **Scope: only the villa rate goes through Stripe.** Everyday meals are
+  included in the nightly rate, so they are already inside that figure — there
+  is nothing extra to charge for them. Special meal packages ($70/pp/day),
+  Kingston transfers, excursions, spa treatments and bar items are all settled
+  with the villa on site. So the amount Stripe ever charges is
+  `nights × RATES.nightly`, split across the three instalments — nothing else.
+  `MEAL_PLAN.special.paidOnSite` in `content.js` records this.
 - The three instalments are **scheduled payments, not a subscription.** The
   second and third are due on dates relative to booking and arrival, so this
   wants either three `PaymentIntent`s created up front with the later two
@@ -99,13 +100,60 @@ Agreed to be done on a separate branch. Notes for whoever picks it up:
 
 ---
 
-## 4. Still needed from the client
+## 4. Cancellation policy — PARTIALLY BLOCKED
+
+The client supplied four answers about cancellation. They agree on the notice
+windows, which are published. **They contradict each other on three points,
+which are not published.** Do not resolve these by picking one — a cancellation
+policy is a binding term on an $18,200 booking.
+
+### Published (all four answers agree)
+
+| Period                | Refund possible | Non-refundable |
+| --------------------- | --------------- | -------------- |
+| Standard dates        | 61+ days before | ≤ 60 days      |
+| Easter & Thanksgiving | 91+ days before | ≤ 90 days      |
+| Christmas & New Year  | 121+ days before| ≤ 120 days     |
+
+Also published: no refund for unused goods/services, no-shows, late arrival or
+early departure; a shortened rescheduled stay must still meet the 7-night
+minimum; rescheduled dates are non-refundable.
+
+### Unresolved — three direct conflicts
+
+1. **The standard cancellation fee.** Answer 1 says *"a one-time cancellation
+   fee of 5%"* for cancellations 60+ days out. Answer 2 says *"refund all
+   deposits, with a 20% cancellation fee deducted"* for 61+ days out. Same
+   window, two different numbers. Answer 3 separately gives 30% for holiday
+   periods, which nothing contradicts but which should be confirmed alongside.
+2. **Christmas and New Year.** Answer 1 says festive bookings are
+   *non-refundable* outright. Answer 3 says they are refundable at 121+ days
+   less a 30% fee. These cannot both be true.
+3. **Rescheduling.** Answer 1 says a reschedule *"will be treated as a new
+   booking"*. Answer 4 says guests may move dates within 365 days *"with full
+   credit applied towards the new reservation"*. Losing the money versus
+   carrying it over is a large difference to a guest.
+
+Until these are settled, `CANCELLATION.feeStandard` and `feeHoliday` in
+`content.js` stay `null` and the page reads "less a cancellation fee, set out in
+your written quote". Filling in those two values is the only change needed.
+
+### Also worth raising
+
+The supplied text names **"Seaview Mirage Villa Paradise"** and **"Seaview
+Mirage View"** — two names, neither matching the villa's actual name used
+everywhere else on the site. It reads as though it was copied from another
+property's website. Worth confirming with the client that these are genuinely
+his terms and the numbers are what he wants, rather than someone else's policy
+pasted over. Publishing another business's terms verbatim is its own problem.
+
+---
+
+## 5. Still needed from the client
 
 Answers we do not have, so the site deliberately says nothing about them:
 
-- **Cancellation and refund policy.** The biggest gap. The policies section
-  currently says full terms come with the written quote, which is true but thin
-  for a site taking $18,200 bookings. Needed before Stripe goes live.
+- **The three cancellation conflicts above.** Needed before Stripe goes live.
 - **Damage or security deposit** — whether one is taken, how much, when returned.
 - **Whether Jamaican GCT or any tourism tax applies** to the nightly rate.
 - **Pets** — allowed or not.
@@ -117,7 +165,33 @@ Answers we do not have, so the site deliberately says nothing about them:
 
 ---
 
-## 5. Deploys
+## 6. Dining — one thing to confirm
+
+**August 2026: the client reversed the meal arrangement.** He now says the
+standard menu — breakfast, lunch, dinner, dessert, fresh juice and water — is
+*included in the price*, and the $70 per person figure applies only to special
+or custom meals arranged with the chef.
+
+This contradicts both his earlier written answer and the menu PDF, which framed
+$70 per person per day as the cost of *all* meals. The site follows the newer
+instruction.
+
+**Worth confirming:** he wrote "$70 per person" and "the $70/person package"
+without repeating "per day". His earlier answer said "per person, per day". The
+site still says **per person, per day** because that is the only figure he has
+ever given in full and under-quoting a guest is worse than over-quoting. If a
+special meal package is actually a one-off per-person charge rather than daily,
+change `RATES.mealPlanUnit` in `content.js`.
+
+Also removed as a consequence: the old "you receive every shopping receipt and
+settle the food bill in cash or by card" copy. That described guests paying for
+groceries at cost, which cannot be true if meals are included in the rate. If
+the client does still itemise groceries for the special package, tell us and it
+goes back in for that package only.
+
+---
+
+## 7. Deploys
 
 - `main` auto-deploys to production on Vercel.
 - Any other branch gets a preview URL — use those for client review.

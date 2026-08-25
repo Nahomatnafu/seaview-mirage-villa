@@ -167,8 +167,27 @@ export default function Menu() {
           </h2>
           <p style={{ color: 'var(--gray)', maxWidth: '600px', margin: '0 auto', fontSize: '0.9375rem', lineHeight: 1.75 }}>
             Six collections, built around what your group actually wants to eat. Choose your meals before you
-            travel and the chef takes care of the rest — {MENU_INTRO.budget}.
+            travel and the chef takes care of the rest.
           </p>
+
+          {/* What the rate covers vs. what is a separate package */}
+          <div className="menu-pricing" style={{
+            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: '2px', maxWidth: '760px', margin: '32px auto 0', textAlign: 'left',
+          }}>
+            <div style={{ padding: '22px 24px', background: 'var(--charcoal)', border: '1px solid var(--gold)' }}>
+              <div style={{ color: 'var(--gold-light)', fontFamily: 'var(--font-heading)', fontSize: '1.375rem', fontWeight: '600', marginBottom: '6px' }}>
+                {MENU_INTRO.included}
+              </div>
+              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.8438rem', lineHeight: 1.7 }}>{MENU_INTRO.note}</p>
+            </div>
+            <div style={{ padding: '22px 24px', background: 'white', border: '1px solid rgba(201,168,76,0.2)' }}>
+              <div style={{ color: 'var(--charcoal)', fontFamily: 'var(--font-heading)', fontSize: '1.375rem', fontWeight: '600', marginBottom: '6px' }}>
+                {MENU_INTRO.special}
+              </div>
+              <p style={{ color: 'var(--gray)', fontSize: '0.8438rem', lineHeight: 1.7 }}>{MENU_INTRO.specialNote}</p>
+            </div>
+          </div>
         </div>
 
         {/* Collection tabs */}
@@ -328,7 +347,7 @@ export default function Menu() {
           <div style={{ padding: '34px 32px', background: 'var(--cream)', border: '1px solid rgba(201,168,76,0.16)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
               <UtensilsCrossed size={17} style={{ color: 'var(--gold)' }} />
-              <SectionEyebrow>Shopping & Receipts</SectionEyebrow>
+              <SectionEyebrow>What You Pay For</SectionEyebrow>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '13px' }}>
               {HOW_IT_WORKS.map(t => (
