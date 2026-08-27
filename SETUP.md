@@ -133,32 +133,100 @@ Two test suites cover this:
 
 ### Setting it up
 
+`npm run dev` alone is not enough: Vite serves only the frontend and does not
+execute the functions in `/api`. Use `vercel dev`, which serves both.
+
+The Stripe CLI is **not required**. On this account it shows "CLI disabled" for
+every environment, which only the account owner can change — so the webhook is
+tested against a Vercel preview deployment instead. That has the advantage of
+exercising the real deployed code path rather than a local proxy.
+
 1. Copy `.env.example` to `.env.local` and fill it in with **test** keys.
-2. `npm run dev` in one terminal.
-3. `stripe listen --forward-to localhost:5173/api/stripe-webhook` in another,
-   and put the `whsec_...` it prints into `.env.local`.
-4. Generate a link, open it, pay with test card `4242 4242 4242 4242`, any
-   future expiry, any CVC.
-5. Add the same variables in Vercel → Settings → Environment Variables, then
-   add a webhook endpoint in the Stripe dashboard pointing at
-   `https://<domain>/api/stripe-webhook` for `checkout.session.completed`.
+2. `vercel dev` (serves the site and `/api`, usually on port 3000).
+3. Push the branch. Vercel builds a preview URL.
+4. Add the test-mode variables under Vercel → Settings → Environment Variables.
+5. Stripe Dashboard (test mode) → **Developers → Webhooks → Add endpoint**,
+   pointing at `https://<preview-url>/api/stripe-webhook`, subscribed to
+   `checkout.session.completed`. Reveal the signing secret and set it as
+   `STRIPE_WEBHOOK_SECRET` in Vercel, then redeploy.
+6. Book through the site and pay with test card `4242 4242 4242 4242`, any
+   future expiry, any CVC. The event shows in the webhook's delivery log and
+   the payment in the Vercel function logs.
+
+Production is the same, with the live keys and a webhook endpoint on the real
+domain. **The production signing secret is different from any test one** — they
+are per-endpoint.
 
 Note `vercel.json` had to exclude `/api` from the SPA rewrite — without that
 every API call returned the HTML page instead.
 
+### DECIDED: instalments 2 and 3 use Stripe Invoicing
+
+**Agreed August 2026. Not built yet — this is the plan of record.**
+
+At booking, create two Stripe invoices with due dates:
+
+| Instalment | Due                          |
+| ---------- | ---------------------------- |
+| Second 35% | one month after booking      |
+| Final 40%  | 20–30 days before arrival    |
+
+Use `collection_method: 'send_invoice'` with a `due_date`. Stripe emails the
+invoice and, once reminders are switched on, **sends the reminders itself** —
+Dashboard → Settings → Billing → *Subscriptions and emails*, plus *Advanced
+invoicing features* for one-off invoices. Reminders can fire before, on, or
+after the due date, so the client's "a week or two earlier" is a dashboard
+setting, not code we maintain.
+
+Why this rather than auto-charging a stored card:
+
+- The later charges land weeks or months after the card was captured. Cards
+  expire, banks decline, and 3-D Secure can demand re-authentication the
+  customer is not present to give. When that fails you need an invoice anyway,
+  so the invoice path has to exist either way.
+- A surprise $6,370 on someone's card is a chargeback risk in a way that "your
+  invoice is due in 14 days" is not.
+- Nothing is lost by starting here: switching `collection_method` to
+  `charge_automatically` later keeps the same invoices and reminders and just
+  charges the card on file instead.
+
+Amounts must come from `instalments()` in `shared/pricing.mjs`, same as
+everything else. Check whether Invoicing carries a per-invoice fee on this
+account before going live — it is two invoices per booking.
+
+### Availability — deliberately NOT built yet
+
+**The client has no booking system at all.** No calendar, no spreadsheet, no
+Airbnb or VRBO listing, and he is not taking bookings yet — he asked for the
+calendar to be blocked until 10 December while he sets things up. That block is
+in place (`FIRST_AVAILABLE_DATE`), and it is enough for now.
+
+Building a calendar integration for someone with zero bookings would be
+guessing at a process that does not exist. When he is ready to take bookings,
+the recommendation is:
+
+- **Google Calendar on the villa's Gmail as the surface he edits**, because it
+  is the thing he is most likely to actually keep updated — he already has the
+  account and can block dates from his phone.
+- The site checks free/busy through the Calendar API before allowing a booking.
+- **The webhook writes each paid booking into that calendar automatically**, so
+  website bookings block themselves and he only has to add phone and WhatsApp
+  ones by hand.
+
+Not Calendly — it is built for appointment slots, not multi-night stays.
+
+If he ever lists on Airbnb or VRBO, import their iCal feeds too, or the site
+will happily sell a week those platforms already sold.
+
+Until then, `BLOCKED_RANGES` in `shared/pricing.mjs` is the stopgap and needs a
+developer to edit. That is acceptable at zero bookings and is not acceptable
+once he is busy.
+
 ### Still to decide (client)
 
-- **Availability.** There is still no calendar, so the site cannot tell whether
-  dates are free. The flow above keeps a human in the loop, which is why it is
-  the safe default. Taking a deposit for an already-booked week is worse than
-  answering enquiries by hand.
-- **Instalments 2 and 3.** Currently each needs its own link. If the client
-  wants them charged automatically, that needs the guest's consent to store the
-  card at the first payment (`setup_future_usage`), plus handling for cards that
-  expire or fail 3-D Secure months later. Not built yet — it is a real amount of
-  extra work and should not be guessed at.
 - **The $200 incidental deposit** — charged and refunded, or held on the card;
   before arrival or on arrival. Not implemented pending that answer.
+- **The three cancellation-policy conflicts** in section 4.
 
 ### Original notes
 

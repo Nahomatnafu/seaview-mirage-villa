@@ -66,48 +66,43 @@ no refunds for no-shows or leaving early — are already on the website.)*
 We're setting up card payments now. These are business decisions only you can
 make.
 
-### 5. How will you know if the dates are free?
+### 3. Before you start taking bookings — how will you track them?
 
-The website currently has no calendar, so it can't tell whether a week is
-already booked. Two options:
+You've told us you're not taking bookings yet and don't have a calendar or
+diary set up. That's fine for now: the website is blocked off until **10
+December**, so nothing can be booked before then.
 
-- **Option A (safer, recommended):** A guest requests dates → you check your
-  calendar → you send them a payment link. Nothing is charged until you've
-  confirmed the dates are available.
-- **Option B:** The guest pays the 25% deposit instantly on the website. Faster,
-  but risks taking money for a week that's already booked — which means
-  refunding and apologising.
+But **before that date you'll need somewhere to record bookings**, or the
+website could sell a week you've already promised someone over the phone.
 
-**Which do you prefer?** And how do you currently track which weeks are booked —
-a paper diary, a phone calendar, Google Calendar, something else?
+Our recommendation is a **Google Calendar on the villa's Gmail account**. You'd
+block dates from your phone like any appointment, and we'd connect the website
+to it so that:
 
-### 6. How should the 2nd and 3rd payments be collected?
+- the website never offers a week you've marked as taken, and
+- any booking made *through the website* appears in your calendar
+  automatically, without you doing anything.
 
-You've told us payment is in three parts (25%, then 35%, then 40%). For the
-second and third:
+That way the only thing you have to remember is adding bookings you take by
+phone or WhatsApp.
 
-- **Option A:** We securely store the guest's card and charge it automatically
-  on the due date. Smoother, but the guest must agree to it up front, and cards
-  sometimes expire or get declined — so you'd still need to chase occasionally.
-- **Option B:** We email the guest a payment link each time it's due. More
-  manual for you, but nothing charges unexpectedly.
+**Does that work for you, or would you rather we build you a simple booking
+page on the website instead?**
 
-**Which would you rather?**
-
-### 7. What name should appear on the guest's bank statement?
+### 4. What name should appear on the guest's bank statement?
 
 When the charge shows up on their credit card statement, what should it say?
 Usually the business name, e.g. "SEA VIEW MIRAGE". Keep it recognisable —
 guests who don't recognise a charge often report it as fraud, which causes
 problems for you.
 
-### 8. Is the Stripe account fully set up?
+### 5. Is the Stripe account fully set up?
 
 Can you confirm the Stripe account is finished and ready to receive money —
 bank account connected and identity verification complete? If Stripe is still
 asking for documents, payments will be collected but not paid out to you.
 
-### 9. Who is allowed to issue refunds?
+### 6. Who is allowed to issue refunds?
 
 If a guest cancels and is owed money back, who processes that — you personally,
 or someone else at the villa? We'll make sure the right people have access.
@@ -116,7 +111,7 @@ or someone else at the villa? We'll make sure the right people have access.
 
 ## C. Needed to finish the website content
 
-### 10. Photos of the chef's actual food
+### 7. Photos of the chef's actual food
 
 The menu section currently uses stock photographs of similar dishes — they are
 **not** your food. They're licensed properly, so nothing is wrong, but real
@@ -125,7 +120,7 @@ small "photo credits" note at the bottom of the menu.
 
 Even ten good phone photos of finished dishes would do it.
 
-### 11. Real guest reviews
+### 8. Real guest reviews
 
 We have a reviews section built and ready, but it's **hidden** because we don't
 have genuine reviews. We won't publish invented ones — in the US, making up
@@ -135,13 +130,13 @@ If you have any past guests who'd write a few lines, or reviews on Airbnb,
 VRBO, Google or WhatsApp messages we could quote with permission, send them
 over and the section goes live immediately.
 
-### 12. Wedding and event photographs
+### 9. Wedding and event photographs
 
 The Events page currently shows the pool and grounds because we have no photos
 of an actual wedding or celebration at the villa. If you have any from past
 events, they'd make that page much stronger.
 
-### 13. Social media links
+### 10. Social media links
 
 Do you have Instagram or Facebook pages for the villa? If so, send the links and
 we'll add the icons to the website footer. If not, no problem — we'll leave them
@@ -151,7 +146,7 @@ off.
 
 ## D. One more on the deposit
 
-### 14. How is the $200 incidental deposit taken?
+### 11. How is the $200 incidental deposit taken?
 
 Thanks for confirming the $200 incidental deposit. Two quick follow-ups so we
 set it up correctly:
@@ -172,7 +167,11 @@ For reference, these are settled and live on the site:
 - Rate: **$2,600 per night**, whole villa only, minimum **7 nights** ($18,200)
 - **Tax is included** — $2,600 a night is the final price, nothing added on top
 - Payments: **25% to reserve, 35% within a month, 40% due 20–30 days before**
-- **$200 incidental deposit** (see question 14 above for the one open detail)
+- The 25% is paid **on the website** at the moment of booking. The 2nd and 3rd
+  are **Stripe invoices with a due date**, and Stripe emails a reminder ahead of
+  each one — so nothing is charged to a guest's card by surprise
+- The calendar is **blocked until 10 December** while you get set up
+- **$200 incidental deposit** (see question 11 for the one open detail)
 - 7 bedrooms (3 king, 4 queen), 7 en-suite bathrooms, 2 guest half baths,
   sleeps 14
 - Meals included in the rate; special meals **$70 per person, per day**
