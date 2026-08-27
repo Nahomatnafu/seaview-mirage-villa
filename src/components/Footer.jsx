@@ -4,7 +4,9 @@ import { Mail, Phone, MapPin } from 'lucide-react'
 import { VILLA } from '../content'
 import { PAGES } from '../site'
 
-const exploreLinks = PAGES.map(p => ({ label: p.title || p.nav, to: p.path }))
+const exploreLinks = PAGES
+  .filter(p => !p.footerHidden)
+  .map(p => ({ label: p.title || p.nav, to: p.path }))
 
 const serviceItems = [
   'Private Chef',

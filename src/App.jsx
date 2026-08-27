@@ -12,6 +12,8 @@ import MenuPage from './pages/MenuPage'
 import EventsPage from './pages/EventsPage'
 import FaqPage from './pages/FaqPage'
 import ContactPage from './pages/ContactPage'
+import PayPage from './pages/PayPage'
+import PayThanksPage from './pages/PayThanksPage'
 
 export default function App() {
   return (
@@ -27,6 +29,9 @@ export default function App() {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          {/* Reached only from a signed link the villa sends, so no nav entry */}
+          <Route path="/pay" element={<PayPage />} />
+          <Route path="/pay/thanks" element={<PayThanksPage />} />
           {/* Old single-page anchors and any stray URL land on Home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

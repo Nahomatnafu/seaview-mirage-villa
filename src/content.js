@@ -1,3 +1,9 @@
+// Imported (not just re-exported) because content.js uses these itself — a
+// bare `export { x } from '...'` creates no local binding.
+import {
+  NIGHTLY_RATE, MIN_NIGHTS, money, villaTotal, instalments, PAYMENT_SCHEDULE,
+} from '../shared/pricing.mjs'
+
 // Single source of truth for all villa facts and copy.
 // Originally sourced from the client's Wix site (seaview-mirage.com), July 2026.
 // Updated August 2026 from the client's written answers to our open questions —
@@ -22,7 +28,7 @@ export const VILLA = {
   eventCapacity: 70,
   checkIn: '3:00 PM',
   checkOut: '11:00 AM',
-  minNights: 7,
+  minNights: MIN_NIGHTS,
   // Confirmed Aug 2026: taxes are inside the nightly rate, and a $200
   // incidental deposit applies. Whether the $200 is charged or held, and when,
   // is still open — see ask-clients.md Q14.
@@ -77,8 +83,9 @@ export const GOOD_TO_KNOW = [
 // The villa is let whole-house only, so the rate does not vary by party size.
 // ---------------------------------------------------------------------------
 export const RATES = {
-  nightly: 2600,
-  nightlyRate: '$2,600',
+  // Mirrors NIGHTLY_RATE in shared/pricing.mjs — change it there, not here.
+  nightly: NIGHTLY_RATE,
+  nightlyRate: money(NIGHTLY_RATE),
   nightlyUnit: 'per night',
   mealPlan: '$70',
   mealPlanUnit: 'per person, per day',
@@ -116,46 +123,15 @@ export const MEAL_PLAN = {
   ],
 }
 
-// Three instalments. Percentages are the source of truth for both the published
-// schedule and the live figures in the booking wizard, and are what the Stripe
-// integration should read when it lands.
-export const PAYMENT_SCHEDULE = [
-  {
-    id: 'deposit', pct: 0.25, label: 'To reserve',
-    when: 'Due on booking',
-    desc: 'Holds your dates and takes the villa off the calendar.',
-  },
-  {
-    id: 'second', pct: 0.35, label: 'Second instalment',
-    when: 'Due within one month of booking',
-    desc: 'Confirms the reservation and your chef begins menu planning.',
-  },
-  {
-    id: 'final', pct: 0.40, label: 'Final instalment',
-    when: 'Due 20–30 days before arrival',
-    desc: 'Settles the balance ahead of your arrival.',
-  },
-]
-
-export const money = n =>
-  `$${Math.round(n).toLocaleString('en-US')}`
-
-// Villa total for a given number of nights, and that total split across the
-// three instalments above. Rounding is applied to the first two and the final
-// instalment takes the remainder, so the parts always sum to the total exactly.
-export const villaTotal = nights => nights * RATES.nightly
-
-export const instalments = total => {
-  const first = Math.round(total * PAYMENT_SCHEDULE[0].pct)
-  const second = Math.round(total * PAYMENT_SCHEDULE[1].pct)
-  return [first, second, total - first - second]
-}
+// The booking maths lives in shared/pricing.mjs because the Stripe functions in
+// /api need exactly the same numbers. Re-exported here so components keep
+// importing from content.js as before.
+export { PAYMENT_SCHEDULE, money, villaTotal, instalments }
 
 // ---------------------------------------------------------------------------
 // FAQ. Every answer below is drawn from something the client has confirmed in
-// writing. What we still cannot state — the cancellation fee percentage, a
-// damage/security deposit, pets, and whether local tax applies — is left out
-// rather than guessed at. See SETUP.md §4 and §5.
+// writing. The one thing still unstated is the cancellation fee percentage,
+// where his answers conflict — left out rather than guessed at. See SETUP.md §4.
 // ---------------------------------------------------------------------------
 export const FAQ = [
   {

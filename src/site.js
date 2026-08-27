@@ -62,4 +62,12 @@ export const PAGES = [
   },
 ]
 
+// Payment pages: reached only from a signed link, so they are kept out of both
+// the nav and the footer. Listed here purely so Layout can set the tab title —
+// no `heading`, so they render without a page banner.
+PAGES.push(
+  { path: '/pay', nav: 'Payment', title: 'Secure Payment', navHidden: true, footerHidden: true },
+  { path: '/pay/thanks', nav: 'Payment', title: 'Thank You', navHidden: true, footerHidden: true },
+)
+
 export const findPage = pathname => PAGES.find(p => p.path === pathname)

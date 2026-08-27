@@ -69,9 +69,72 @@ rate, the live booking total, the instalment amounts, and the FAQ.
 
 ---
 
-## 3. Stripe — not yet built
+## 3. Stripe — built, needs keys and two decisions
 
-Agreed to be done on a separate branch. Notes for whoever picks it up:
+Lives on the `stripe-payments` branch. **Nothing is wired into the public
+booking flow yet** — the enquiry form still works exactly as before. What
+exists is the payment machinery, reachable only from a link the villa sends.
+
+### How it works today
+
+1. A guest enquires as normal. The villa checks the calendar by hand.
+2. The villa calls `POST /api/create-payment-link` with the dates, the guest's
+   email and name, and an `x-admin-token` header. It returns three signed
+   links, one per instalment, with the amounts already worked out.
+3. The villa sends the guest the first link.
+4. The guest opens `/pay?...`, sees what they are paying and for which stay,
+   and clicks through to **Stripe Checkout**. Card details are entered on
+   Stripe's page and never touch this site.
+5. Stripe calls `/api/stripe-webhook`, which verifies the signature and logs
+   the payment.
+
+This shape works whichever way the client answers the availability question —
+if he later wants the deposit taken instantly at booking, the booking wizard
+just calls the same endpoint.
+
+### Two rules the code follows
+
+- **The amount is never taken from the browser.** `/api/create-checkout-session`
+  recomputes `nights × rate` from the dates using `shared/pricing.mjs`. Anything
+  the client sends about price is ignored.
+- **Payment links are HMAC-signed** over dates, instalment and email. Without
+  this a guest could edit the dates in the URL and pay for a shorter stay than
+  they booked. Tampering returns 403.
+
+`npm run check:pricing` covers both: the instalment maths (including that the
+three parts always sum to the total for every stay length), date validation,
+and that tampered or forged signatures are rejected.
+
+### Setting it up
+
+1. Copy `.env.example` to `.env.local` and fill it in with **test** keys.
+2. `npm run dev` in one terminal.
+3. `stripe listen --forward-to localhost:5173/api/stripe-webhook` in another,
+   and put the `whsec_...` it prints into `.env.local`.
+4. Generate a link, open it, pay with test card `4242 4242 4242 4242`, any
+   future expiry, any CVC.
+5. Add the same variables in Vercel → Settings → Environment Variables, then
+   add a webhook endpoint in the Stripe dashboard pointing at
+   `https://<domain>/api/stripe-webhook` for `checkout.session.completed`.
+
+Note `vercel.json` had to exclude `/api` from the SPA rewrite — without that
+every API call returned the HTML page instead.
+
+### Still to decide (client)
+
+- **Availability.** There is still no calendar, so the site cannot tell whether
+  dates are free. The flow above keeps a human in the loop, which is why it is
+  the safe default. Taking a deposit for an already-booked week is worse than
+  answering enquiries by hand.
+- **Instalments 2 and 3.** Currently each needs its own link. If the client
+  wants them charged automatically, that needs the guest's consent to store the
+  card at the first payment (`setup_future_usage`), plus handling for cards that
+  expire or fail 3-D Secure months later. Not built yet — it is a real amount of
+  extra work and should not be guessed at.
+- **The $200 incidental deposit** — charged and refunded, or held on the card;
+  before arrival or on arrival. Not implemented pending that answer.
+
+### Original notes
 
 - **Scope: only the villa rate goes through Stripe.** Everyday meals are
   included in the nightly rate, so they are already inside that figure — there
