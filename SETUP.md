@@ -77,20 +77,39 @@ exists is the payment machinery, reachable only from a link the villa sends.
 
 ### How it works today
 
-1. A guest enquires as normal. The villa checks the calendar by hand.
-2. The villa calls `POST /api/create-payment-link` with the dates, the guest's
-   email and name, and an `x-admin-token` header. It returns three signed
-   links, one per instalment, with the amounts already worked out.
-3. The villa sends the guest the first link.
-4. The guest opens `/pay?...`, sees what they are paying and for which stay,
-   and clicks through to **Stripe Checkout**. Card details are entered on
-   Stripe's page and never touch this site.
-5. Stripe calls `/api/stripe-webhook`, which verifies the signature and logs
-   the payment.
+**The booking wizard now ends in a payment, not an enquiry.** The last step's
+button reads "Pay first instalment · $4,550". The guest's details are sent to
+the villa first — so an abandoned payment still leaves a lead — then the guest
+is handed to **Stripe Checkout**. Card details are entered on Stripe's page and
+never touch this site.
 
-This shape works whichever way the client answers the availability question —
-if he later wants the deposit taken instantly at booking, the booking wizard
-just calls the same endpoint.
+Instalments two and three use villa-issued links: `POST /api/create-payment-link`
+with the dates, guest email and an `x-admin-token` header returns three signed
+links with the amounts already worked out. The guest opens `/pay?...`, sees what
+they are paying for, and goes to the same Checkout flow.
+
+Stripe then calls `/api/stripe-webhook`, which verifies the signature before
+trusting anything and logs the payment.
+
+### Availability
+
+There is still no live calendar. Two things stand in for one:
+
+- `FIRST_AVAILABLE_DATE` in `shared/pricing.mjs` — currently **2026-12-10**,
+  because the villa is booked solid until then. The date picker will not offer
+  anything earlier and the server refuses it too.
+- `BLOCKED_RANGES` in the same file — **the villa must add each confirmed
+  booking here.** Nothing else prevents two guests paying deposits for the same
+  week. Adding a range takes one line:
+
+  ```js
+  { from: '2027-01-05', to: '2027-01-12', note: 'Smith party' },
+  ```
+
+  `to` is the departure date, so one stay may begin on another's `to`.
+
+This is the weakest part of the setup and should be replaced with a real
+calendar before the villa is busy.
 
 ### Two rules the code follows
 
@@ -101,9 +120,16 @@ just calls the same endpoint.
   this a guest could edit the dates in the URL and pay for a shorter stay than
   they booked. Tampering returns 403.
 
-`npm run check:pricing` covers both: the instalment maths (including that the
-three parts always sum to the total for every stay length), date validation,
-and that tampered or forged signatures are rejected.
+Two test suites cover this:
+
+- `npm run check:pricing` — 40 checks, no network. Instalment maths (including
+  that the three parts sum exactly to the total for every length from 7 to 90
+  nights), date validation, the availability floor, blocked-range overlap at
+  every boundary, and signature forgery.
+- `npm run check:stripe` — 20 checks against the real Stripe **test** sandbox.
+  Creates sessions and reads them back to confirm Stripe records $4,550 and
+  $7,280, that a price injected by the client is ignored, and that every
+  refusal returns the right status. It refuses to run against a live key.
 
 ### Setting it up
 

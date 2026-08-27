@@ -68,6 +68,7 @@ export const PAGES = [
 PAGES.push(
   { path: '/pay', nav: 'Payment', title: 'Secure Payment', navHidden: true, footerHidden: true },
   { path: '/pay/thanks', nav: 'Payment', title: 'Thank You', navHidden: true, footerHidden: true },
+  { path: '/pay/cancelled', nav: 'Payment', title: 'Payment Cancelled', navHidden: true, footerHidden: true },
 )
 
 export const findPage = pathname => PAGES.find(p => p.path === pathname)

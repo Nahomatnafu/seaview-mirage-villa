@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { X, ChevronRight, ChevronLeft, Check, Calendar, ChefHat, Car, Leaf, Waves, PartyPopper, Star, LoaderCircle, Wallet } from 'lucide-react'
+import { X, ChevronRight, ChevronLeft, Check, Calendar, ChefHat, Car, Leaf, Waves, PartyPopper, Star, LoaderCircle, Wallet, Lock } from 'lucide-react'
 import {
   VILLA, RATES, BOOKING_SERVICES, PAYMENT_SCHEDULE, INQUIRY_ENDPOINT,
   money, villaTotal, instalments,
 } from '../content'
+import { earliestArrival, toISODate, validateStay } from '../../shared/pricing.mjs'
 
 const SERVICE_ICONS = {
   mealplan: <ChefHat size={24} />,
@@ -75,25 +76,43 @@ export default function BookingFlow({ onClose, initialService = null }) {
     if (checkOut && diffDays(value, checkOut) < VILLA.minNights) setCheckOut('')
   }
 
+  // The villa is booked out until a fixed date, so the calendar cannot offer
+  // anything earlier. Re-checked on the server before any charge.
+  const openFrom = toISODate(earliestArrival())
+  const stayCheck = validateStay(checkIn, checkOut)
+
   const canProceed = () => {
-    if (step === 1) return nights >= VILLA.minNights
+    if (step === 1) return stayCheck.ok
     return true
   }
 
   const canSubmit = contact.firstName.trim() && contact.lastName.trim() && contact.email.includes('@') && !sending
 
-  const submitInquiry = async () => {
+  /**
+   * Sends the booking details to the villa, then hands off to Stripe Checkout
+   * for the deposit.
+   *
+   * The enquiry goes first and on purpose: if the guest abandons the payment
+   * page, the villa still has their dates and can follow up. A failure to
+   * deliver the enquiry does not block the payment — Stripe's metadata carries
+   * the same details, so the booking is never lost either way.
+   */
+  const payDeposit = async () => {
     setSending(true)
     setError(null)
+
+    const fullName = `${contact.firstName.trim()} ${contact.lastName.trim()}`
+    const extras = selectedServices.map(s => s.title).join(', ') || 'None'
+
     try {
-      const res = await fetch(INQUIRY_ENDPOINT, {
+      await fetch(INQUIRY_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
-          _subject: `New booking inquiry — ${VILLA.name}`,
+          _subject: `Booking + deposit started — ${VILLA.name}`,
           _template: 'table',
           _honey: '',
-          Name: `${contact.firstName.trim()} ${contact.lastName.trim()}`,
+          Name: fullName,
           Email: contact.email.trim(),
           Phone: contact.phone.trim() || 'Not provided',
           'Check-in': formatDate(checkIn),
@@ -104,14 +123,33 @@ export default function BookingFlow({ onClose, initialService = null }) {
             .map((p, i) => `${Math.round(p.pct * 100)}% ${money(parts[i])} — ${p.when}`)
             .join(' | '),
           'Party size': contact.partySize.trim() || 'Not stated',
-          'Requested extras': selectedServices.map(s => s.title).join(', ') || 'None',
+          'Requested extras': extras,
           'Special requests': contact.requests.trim() || 'None',
         }),
+      }).catch(() => {}) // best effort only
+
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          checkIn, checkOut,
+          instalment: 'deposit',
+          email: contact.email.trim(),
+          name: fullName,
+          phone: contact.phone.trim(),
+          partySize: contact.partySize.trim(),
+          extras,
+          notes: contact.requests.trim(),
+        }),
       })
-      if (!res.ok) throw new Error(`Request failed (${res.status})`)
-      setSubmitted(true)
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || 'We could not start the payment. Please try again or call the villa.')
+      }
+      window.location.href = data.url
+      return
     } catch (err) {
-      setError('Something went wrong sending your inquiry. Please try again, or email us directly at ' + VILLA.email)
+      setError(err.message)
     } finally {
       setSending(false)
     }
@@ -272,6 +310,9 @@ export default function BookingFlow({ onClose, initialService = null }) {
                       Minimum stay is {VILLA.minNights} nights — once you pick an arrival date, any departure
                       shorter than that is greyed out in the calendar.
                     </p>
+                    <p style={{ color: 'var(--gold-dark)', fontSize: '0.8125rem', lineHeight: 1.65, marginTop: '10px', fontWeight: '500' }}>
+                      We are fully booked until {formatDate(openFrom)} — the calendar opens from that date.
+                    </p>
                   </div>
 
                   <div className="bf-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
@@ -284,7 +325,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                         <input
                           id="bf-checkin"
                           type="date"
-                          min={today}
+                          min={openFrom}
                           value={checkIn}
                           onChange={e => pickCheckIn(e.target.value)}
                           style={{
@@ -306,7 +347,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                         <input
                           id="bf-checkout"
                           type="date"
-                          min={checkIn ? addDays(checkIn, VILLA.minNights) : today}
+                          min={checkIn ? addDays(checkIn, VILLA.minNights) : openFrom}
                           value={checkOut}
                           onChange={e => setCheckOut(e.target.value)}
                           disabled={!checkIn}
@@ -349,9 +390,9 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     </p>
                   )}
 
-                  {checkIn && nights > 0 && nights < VILLA.minNights && (
-                    <p style={{ color: '#c0392b', fontSize: '0.8125rem', marginTop: '4px' }}>
-                      Minimum stay is {VILLA.minNights} nights. Please choose a later departure date.
+                  {checkIn && checkOut && !stayCheck.ok && (
+                    <p style={{ color: '#c0392b', fontSize: '0.8125rem', marginTop: '4px', lineHeight: 1.6 }}>
+                      {stayCheck.reason}
                     </p>
                   )}
 
@@ -431,9 +472,12 @@ export default function BookingFlow({ onClose, initialService = null }) {
                 <div>
                   <div style={{ marginBottom: '32px' }}>
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '600', color: 'var(--charcoal)', marginBottom: '8px' }}>
-                      Review your inquiry
+                      Review &amp; reserve
                     </h3>
-                    <p style={{ color: 'var(--gray)', fontSize: '0.875rem' }}>No payment now — our team replies within 24 hours with availability and full pricing.</p>
+                    <p style={{ color: 'var(--gray)', fontSize: '0.875rem', lineHeight: 1.65 }}>
+                      Paying the first instalment of {money(parts[0])} holds your dates. You will be taken to
+                      Stripe to pay securely — card details are entered on Stripe's page and never touch this site.
+                    </p>
                   </div>
 
                   {/* Summary card */}
@@ -471,9 +515,9 @@ export default function BookingFlow({ onClose, initialService = null }) {
                         <p style={{ color: 'var(--gray)', fontSize: '0.8125rem' }}>None — your chef, butler, housekeeping, concierge, and security are always part of your stay.</p>
                       )}
                       <p style={{ color: 'var(--gray)', fontSize: '0.6875rem', marginTop: '14px', lineHeight: 1.6 }}>
-                        * This is an enquiry, not a confirmed booking. The villa total above covers exclusive use of the
-                        property and its staff. Food, Kingston transfers, excursions and spa treatments are extra and
-                        are settled directly with the villa during your stay.
+                        * The villa total above covers exclusive use of the property, its staff and your meals, with
+                        tax included. Special meals, Kingston transfers, excursions, spa treatments and the bar are
+                        settled directly with the villa during your stay, along with a ${VILLA.incidentalDeposit} incidental deposit.
                       </p>
                     </div>
                   </div>
@@ -502,7 +546,8 @@ export default function BookingFlow({ onClose, initialService = null }) {
                       ))}
                     </div>
                     <p style={{ color: 'var(--gray)', fontSize: '0.6875rem', marginTop: '12px', lineHeight: 1.6 }}>
-                      Nothing is charged now. We confirm availability and send a written quote before any payment is taken.
+                      Only the first instalment is taken today. The villa will confirm your booking and arrange
+                      the remaining two payments with you.
                     </p>
                   </div>
 
@@ -603,19 +648,19 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     onMouseEnter={e => { if (canProceed()) e.currentTarget.style.boxShadow = '0 8px 24px rgba(201,168,76,0.4)' }}
                     onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none' }}
                   >
-                    {step === 1 ? 'Next: Extras' : 'Review Inquiry'} <ChevronRight size={16} />
+                    {step === 1 ? 'Next: Extras' : 'Review & Pay'} <ChevronRight size={16} />
                   </button>
                 ) : (
                   <button
-                    onClick={submitInquiry}
+                    onClick={payDeposit}
                     disabled={!canSubmit}
                     style={{
                       display: 'flex', alignItems: 'center', gap: '10px',
                       background: canSubmit ? 'linear-gradient(135deg, #c9a84c, #e8c96a)' : 'var(--light-gray)',
                       color: canSubmit ? '#0e0e0e' : 'var(--gray)',
                       border: 'none',
-                      padding: '15px 40px',
-                      fontSize: '0.75rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: '700',
+                      padding: '15px 34px',
+                      fontSize: '0.75rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: '700',
                       cursor: canSubmit ? 'pointer' : 'not-allowed',
                       boxShadow: canSubmit ? '0 4px 20px rgba(201,168,76,0.35)' : 'none',
                       transition: 'all 0.3s',
@@ -623,8 +668,9 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     onMouseEnter={e => { if (canSubmit) e.currentTarget.style.boxShadow = '0 8px 28px rgba(201,168,76,0.5)' }}
                     onMouseLeave={e => { if (canSubmit) e.currentTarget.style.boxShadow = '0 4px 20px rgba(201,168,76,0.35)' }}
                   >
-                    {sending && <LoaderCircle size={16} style={{ animation: 'spin 1s linear infinite' }} />}
-                    {sending ? 'Sending…' : 'Send Inquiry'}
+                    {sending
+                      ? <><LoaderCircle size={16} style={{ animation: 'spin 1s linear infinite' }} /> Opening payment…</>
+                      : <><Lock size={15} /> Pay first instalment · {money(parts[0])}</>}
                   </button>
                 )}
               </div>
