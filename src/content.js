@@ -23,6 +23,11 @@ export const VILLA = {
   checkIn: '3:00 PM',
   checkOut: '11:00 AM',
   minNights: 7,
+  // Confirmed Aug 2026: taxes are inside the nightly rate, and a $200
+  // incidental deposit applies. Whether the $200 is charged or held, and when,
+  // is still open — see ask-clients.md Q14.
+  taxIncluded: true,
+  incidentalDeposit: 200,
   airport: 'Montego Bay Airport (MBJ)',
   airportDrive: '45 min drive',
 }
@@ -166,6 +171,18 @@ export const FAQ = [
     a: `Yes, ${VILLA.minNights} nights. At ${RATES.nightlyRate} ${RATES.nightlyUnit}, a ${VILLA.minNights}-night stay comes to ${money(villaTotal(VILLA.minNights))}. Longer stays are welcome — the booking form will price any length from ${VILLA.minNights} nights upward.`,
   },
   {
+    q: 'Is tax added on top of the rate?',
+    a: `No. Tax is included in the ${RATES.nightlyRate} ${RATES.nightlyUnit} rate, so the figure you see is the figure you pay for the villa. A $${VILLA.incidentalDeposit} incidental deposit also applies to your stay, and anything settled at the villa — special meals, Kingston transfers, excursions, spa treatments and the bar — is separate.`,
+  },
+  {
+    q: 'Is there a security or damage deposit?',
+    a: `Yes — a $${VILLA.incidentalDeposit} incidental deposit covers your stay. Your concierge will confirm how and when it is taken when you book.`,
+  },
+  {
+    q: 'Can we bring pets?',
+    a: 'No — the villa does not accept pets. Smoking is also not permitted inside, though you are welcome to smoke on the balconies and grounds.',
+  },
+  {
     q: 'What is included in the nightly rate?',
     a: 'Exclusive use of the whole villa and its staff: your private chef, butler, housekeepers and caretakers, groundskeeper, concierge, and on-site security. Your meals are included — breakfast, lunch, dinner, dessert, water and juices — as is airport pickup and drop-off at Montego Bay.',
   },
@@ -273,7 +290,8 @@ export const POLICIES = [
       'Payment is taken in three instalments: 25% to reserve, 35% within one month of booking, and 40% due 20–30 days before arrival.',
       'Enquiries are free. Your dates are only held once the first instalment is received.',
       'The instalments cover the villa, its staff and your meals. Special meal packages, Kingston transfers, excursions, spa treatments and bar items are settled directly with the villa.',
-      'Rates are quoted in US dollars.',
+      'Rates are quoted in US dollars, with tax included — the nightly rate is the final price.',
+      `A $${VILLA.incidentalDeposit} incidental deposit applies to your stay.`,
       'Cancellation terms depend on how far ahead you cancel and on the season — see the cancellation table below.',
     ],
   },
@@ -303,6 +321,7 @@ export const POLICIES = [
     title: 'House Rules',
     points: [
       'No smoking inside the villa.',
+      'No pets.',
       'The grounds are gated and monitored by a 360° exterior camera system for the safety of guests and staff. There are no cameras inside the villa.',
       `Events and celebrations are welcome for up to ${VILLA.eventCapacity} guests, arranged with the manager in advance.`,
       'Please treat the villa and its staff with the same care you would your own home.',

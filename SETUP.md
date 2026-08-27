@@ -154,9 +154,8 @@ pasted over. Publishing another business's terms verbatim is its own problem.
 Answers we do not have, so the site deliberately says nothing about them:
 
 - **The three cancellation conflicts above.** Needed before Stripe goes live.
-- **Damage or security deposit** — whether one is taken, how much, when returned.
-- **Whether Jamaican GCT or any tourism tax applies** to the nightly rate.
-- **Pets** — allowed or not.
+- **How the $200 incidental deposit is taken** — charged then refunded, or held
+  on the card; and whether before arrival or on arrival. Affects Stripe.
 - High-resolution food photos from the chef (the menu currently uses
   Creative Commons stock — see `public/assets/menu/CREDITS.md`).
 - Real guest reviews (`Testimonials.jsx` is written but unmounted).
@@ -176,12 +175,8 @@ This contradicts both his earlier written answer and the menu PDF, which framed
 $70 per person per day as the cost of *all* meals. The site follows the newer
 instruction.
 
-**Worth confirming:** he wrote "$70 per person" and "the $70/person package"
-without repeating "per day". His earlier answer said "per person, per day". The
-site still says **per person, per day** because that is the only figure he has
-ever given in full and under-quoting a guest is worse than over-quoting. If a
-special meal package is actually a one-off per-person charge rather than daily,
-change `RATES.mealPlanUnit` in `content.js`.
+**Confirmed August 2026:** the special meal package is **$70 per person, per
+day**, as the site already states. No change needed.
 
 Also removed as a consequence: the old "you receive every shopping receipt and
 settle the food bill in cash or by card" copy. That described guests paying for

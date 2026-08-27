@@ -61,27 +61,6 @@ no refunds for no-shows or leaving early — are already on the website.)*
 
 ---
 
-### 3. Is there a damage or security deposit?
-
-Do you take a refundable deposit in case something gets broken?
-
-- If yes: **how much**, and **when do guests get it back**?
-- If no: just confirm, and we'll say so clearly.
-
-Guests booking a $18,200 stay will expect to see this stated one way or the
-other.
-
----
-
-### 4. Does tax get added to the price?
-
-Is the **$2,600 per night** the final price, or does Jamaican GCT (or any
-tourism tax) get added on top?
-
-Guests need to know whether the number they see is what they'll actually pay.
-
----
-
 ## B. Needed before we can take payments online
 
 We're setting up card payments now. These are business decisions only you can
@@ -170,20 +149,19 @@ off.
 
 ---
 
-## D. Quick confirmations
+## D. One more on the deposit
 
-### 14. The $70 special meals — is that per day?
+### 14. How is the $200 incidental deposit taken?
 
-You said everyday meals (breakfast, lunch, dinner, dessert, juice and water) are
-**included** in the price, and that special or custom meals are **$70 per
-person**. We've written that as **$70 per person, per day**, since that's the
-figure you gave us originally.
+Thanks for confirming the $200 incidental deposit. Two quick follow-ups so we
+set it up correctly:
 
-Is that right, or is it a one-off $70 per person for the whole stay?
-
-### 15. Are pets allowed?
-
-Yes or no? Guests ask, and right now the website doesn't say.
+- Is the $200 **charged** to the guest and then refunded after checkout, or is
+  it **held** on their card (the money is reserved but never actually taken,
+  and the hold is released a few days later)? A hold is friendlier for guests
+  and is what most villas do.
+- Is it taken **before arrival** with one of the instalments, or **on arrival**
+  at the villa?
 
 ---
 
@@ -192,13 +170,16 @@ Yes or no? Guests ask, and right now the website doesn't say.
 For reference, these are settled and live on the site:
 
 - Rate: **$2,600 per night**, whole villa only, minimum **7 nights** ($18,200)
+- **Tax is included** — $2,600 a night is the final price, nothing added on top
 - Payments: **25% to reserve, 35% within a month, 40% due 20–30 days before**
+- **$200 incidental deposit** (see question 14 above for the one open detail)
 - 7 bedrooms (3 king, 4 queen), 7 en-suite bathrooms, 2 guest half baths,
   sleeps 14
-- Meals included in the rate; special meals $70 per person
+- Meals included in the rate; special meals **$70 per person, per day**
 - Montego Bay airport pickup **free**; Kingston **$350** round trip
 - Excursions **$300 per day** per group
 - Spa treatments **on request**
 - Weddings and events for up to **70 guests**
 - Beach access at Puerto Seco with guest passes
+- **No pets**, and **no smoking inside** the villa
 - Address, both phone numbers, and email
