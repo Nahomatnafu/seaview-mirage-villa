@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "check:pricing": "node scripts/check-pricing.mjs",
-    "check:stripe": "node scripts/check-stripe.mjs"
+    "check:stripe": "node scripts/check-stripe.mjs",
+    "check:webhook": "node scripts/check-webhook.mjs"
   },
   "keywords": [],
   "author": "",

@@ -4,8 +4,8 @@
 Stripe is built and tested on the `stripe-payments` branch but **not merged**.
 Booking now ends in a real payment; the calendar is blocked until 10 December.
 
-Two things are genuinely unfinished: the webhook has never been tested against a
-real deploy, and instalments 2 and 3 don't exist yet.
+Two things are genuinely unfinished: the webhook has been proven offline but
+never against a real deploy, and instalments 2 and 3 don't exist yet.
 
 ---
 
@@ -15,9 +15,11 @@ Read through `ask-clients.md` and send it. Everything else waits on it.
 
 The three that actually block launch:
 
-- **The booking form still delivers nothing.** He has to click a FormSubmit
-  confirmation link. Two minutes, only he can do it. Every enquiry is being
-  lost right now.
+- **The booking form — client says he activated it (1 Sep).** A test submission
+  was accepted (`{"success":"true"}`), which it would not be if the address were
+  blocked. But FormSubmit returns that either way, so it is not proof of
+  delivery: someone has to open `seaviewmirage.info@gmail.com` and confirm the
+  `[TEST] Website booking form check` email actually arrived. Check spam.
 - **The cancellation policy contradicts itself** in three places (5% vs 20%,
   festive refundable or not, reschedule credit or not). We cannot take real
   money under terms we can't state.
@@ -26,14 +28,20 @@ The three that actually block launch:
 
 ---
 
-## 2. Test the webhook (~30 min)
+## 2. Test the webhook — mostly done
 
-Never been run end to end. The Stripe CLI is disabled on this account, so use a
-preview deploy instead — steps are in `SETUP.md` §3 "Setting it up".
+`npm run check:webhook` now covers the handler offline (26 checks): genuine
+Stripe signatures accepted and logged with the right amount; missing, empty,
+garbage, wrong-secret, hour-stale and edited-after-signing bodies all refused.
+It signs with a throwaway secret, so it runs before the real one exists.
 
-Short version: push the branch → add test env vars in Vercel → add a webhook
-endpoint in Stripe pointing at the preview URL → book with card
-`4242 4242 4242 4242` → confirm the event arrives.
+**Still needs one live run**, because the offline check cannot prove Vercel
+honours `bodyParser: false`. If it doesn't, Vercel re-encodes the body and every
+real signature fails.
+
+Push the branch → add test env vars in Vercel → add a webhook endpoint in Stripe
+pointing at the preview URL → book with `4242 4242 4242 4242` → confirm the
+event arrives. Full steps in `SETUP.md` §3.
 
 Note `npm run dev` can't test this. Use `vercel dev` locally.
 
@@ -99,5 +107,6 @@ is routine.
 ```
 npm run check:pricing   # 40 checks, offline — money maths, dates, signatures
 npm run check:stripe    # 20 checks against the test sandbox
+npm run check:webhook   # 26 checks, offline — signature verification, forgery
 vercel dev              # site + /api locally (npm run dev won't serve /api)
 ```

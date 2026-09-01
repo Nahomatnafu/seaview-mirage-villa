@@ -120,7 +120,7 @@ calendar before the villa is busy.
   this a guest could edit the dates in the URL and pay for a shorter stay than
   they booked. Tampering returns 403.
 
-Two test suites cover this:
+Three test suites cover this:
 
 - `npm run check:pricing` — 40 checks, no network. Instalment maths (including
   that the three parts sum exactly to the total for every length from 7 to 90
@@ -130,6 +130,18 @@ Two test suites cover this:
   Creates sessions and reads them back to confirm Stripe records $4,550 and
   $7,280, that a price injected by the client is ignored, and that every
   refusal returns the right status. It refuses to run against a live key.
+- `npm run check:webhook` — 26 checks, no network. Stripe's SDK can generate
+  genuine signature headers, so the handler is driven exactly as Stripe would
+  drive it: a real event is accepted and logged with the right amount, while a
+  missing, empty, garbage, wrong-secret or hour-stale signature is refused — as
+  is a body edited after signing, which is the attack that matters. It signs
+  with a throwaway secret, so it works before the real one exists and cannot be
+  skewed by whatever is in `.env.local`.
+
+What `check:webhook` **cannot** prove is that Vercel honours
+`export const config = { api: { bodyParser: false } }` in production. If it did
+not, Vercel would re-encode the body and every signature would fail. That is the
+one remaining reason to do the preview test below.
 
 ### Setting it up
 
