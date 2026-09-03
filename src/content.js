@@ -242,8 +242,16 @@ export const CANCELLATION = {
     },
   ],
   // Percentage retained on an in-window (refundable) cancellation.
+  //
+  // The holiday figure is confirmed (client, 3 Sep: "Holiday - 30% yes"). The
+  // standard one is still contested — his own text said both 5% and 20%, and
+  // asking again produced "there will be a percentage cut" without a number.
+  //
+  // Both must be set before either is shown. Publishing the holiday rate on its
+  // own would imply standard dates carry no fee, which is not what he means.
+  // See cancellation-policy-draft.md — awaiting his yes.
   feeStandard: null,
-  feeHoliday: null,
+  feeHoliday: '30%',
   noRefundFor: [
     'Goods or services booked but not used',
     'Guests who do not arrive',
