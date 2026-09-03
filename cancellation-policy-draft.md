@@ -1,10 +1,5 @@
 # Cancellation policy
 
-Here's what's now on the website. Have a read and let us know if anything
-doesn't match what you had in mind — otherwise we'll leave it as it is.
-
-The examples below all use a normal week: 7 nights at $2,600, so $18,200.
-
 ## Cancelling
 
 | Season | Notice needed | You keep | With less notice |

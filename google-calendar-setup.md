@@ -47,7 +47,15 @@ bookings and holds only — nothing else.
 
 ## Part 2 — for you (~20 minutes, one time)
 
-The client can't do this part; it needs a Google Cloud account.
+**Use your own Google account. You do not need to sign in as the client.**
+
+The Cloud project is only where the service account lives. The calendar stays
+his — he owns it and shares it with the service account the way he'd share it
+with a person. The one thing connecting them is the service account's email
+address, which you send him in step 5.
+
+No billing card is needed; the Calendar API is free at this volume. Google will
+prompt you to enable billing anyway — ignore it.
 
 1. **console.cloud.google.com** → create a project, e.g. `seaview-mirage`.
 2. **APIs & Services → Library** → search **Google Calendar API** → **Enable**.
@@ -57,7 +65,14 @@ The client can't do this part; it needs a Google Cloud account.
    **JSON**. It downloads once.
 5. Send the client the service account's email address (shown on that page) so
    he can do step 2 above.
-6. From the JSON, add to `.env.local` and to Vercel:
+6. **IAM & Admin → Grant access** → add the villa's Gmail as **Owner**.
+
+   Not required for anything to work, and worth doing anyway: it stops the
+   integration depending permanently on your personal Google account. If the
+   site is ever handed over, he still controls the thing that reads his
+   calendar.
+
+7. From the JSON, add to `.env.local` and to Vercel:
 
 ```
 GOOGLE_CALENDAR_ID=<the id he sends back>
