@@ -35,13 +35,19 @@ Stripe signatures accepted and logged with the right amount; missing, empty,
 garbage, wrong-secret, hour-stale and edited-after-signing bodies all refused.
 It signs with a throwaway secret, so it runs before the real one exists.
 
-**Still needs one live run**, because the offline check cannot prove Vercel
-honours `bodyParser: false`. If it doesn't, Vercel re-encodes the body and every
-real signature fails.
+**Proven live on 3 September.** Stripe delivered a real signed
+`checkout.session.expired` to the preview, the signature verified and the
+handler logged it. So Vercel *does* honour `bodyParser: false` — that was the
+last unknown, and no code change was needed.
 
-Push the branch → add test env vars in Vercel → add a webhook endpoint in Stripe
-pointing at the preview URL → book with `4242 4242 4242 4242` → confirm the
-event arrives. Full steps in `SETUP.md` §3.
+Endpoint `we_1UBenEGwLIYEIvf9…` (test mode) points at the branch alias
+`seaview-mirage-git-stripe-payments-…`. Three environment traps are written up
+in `SETUP.md` §3 "Three ways this silently doesn't work" — read that before
+setting up the production endpoint.
+
+**Still outstanding:** a real card payment through the booking form with
+`4242 4242 4242 4242`, to confirm `checkout.session.completed` arrives with the
+booking metadata attached. Expiry events carry none.
 
 Note `npm run dev` can't test this. Use `vercel dev` locally.
 

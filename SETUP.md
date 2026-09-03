@@ -169,6 +169,39 @@ Production is the same, with the live keys and a webhook endpoint on the real
 domain. **The production signing secret is different from any test one** — they
 are per-endpoint.
 
+### Three ways this silently doesn't work
+
+All three cost time on 3 September and all three look like a signature bug.
+
+**The webhook and the API key must be in the same Stripe environment.** A
+Sandbox (the named chip beside "Workbench") has its own keys *and* its own
+webhooks, separate from plain Test mode. A destination created in a Sandbox
+never sees events from a key that isn't that Sandbox's. It sits there marked
+Active showing "No event deliveries found" while payments succeed and nothing
+is recorded. To check which account a key belongs to:
+
+```
+GET https://api.stripe.com/v1/webhook_endpoints   # count must be > 0
+```
+
+If that returns zero while the dashboard shows a destination, they are in
+different environments. Creating the endpoint over the API with the same key
+the site uses makes the mismatch impossible.
+
+**Point Stripe at the branch alias, not a deployment URL.** Every deploy mints
+a new `seaview-mirage-<hash>` URL; the alias
+`seaview-mirage-git-stripe-payments-…` follows the branch. A destination pinned
+to a one-off URL keeps hitting an old build.
+
+**Vercel Authentication blocks Stripe.** With Deployment Protection on, every
+request to a preview 302s to `vercel.com/sso-api` and the handler never runs.
+Turn it off for previews, or use Protection Bypass for Automation.
+
+The tell for a reachable endpoint is `GET /api/stripe-webhook` returning
+**405** `{"error":"Method not allowed"}` — only the handler produces that. A
+**200** with HTML means the function isn't deployed and the SPA rewrite caught
+it; a **302** means protection is still on.
+
 Note `vercel.json` had to exclude `/api` from the SPA rewrite — without that
 every API call returned the HTML page instead.
 
