@@ -76,13 +76,63 @@ check('allows a stay starting as the block ends', validateStay(day(107), day(114
 P.BLOCKED_RANGES.pop()
 check('block removed cleanly', validateStay(day(101), day(108)).ok)
 
+console.log('\n— the agreed rate is locked to the booking —')
+{
+  const nights = P.nightsBetween(IN, OUT)
+  const atBooking = P.quoteInstalment({ checkIn: IN, checkOut: OUT, instalment: 'deposit' })
+  const agreed = atBooking.total
+  check('a new booking uses today\'s rate', agreed === nights * P.NIGHTLY_RATE, `$${agreed}`)
+  check('a new booking is not marked locked', atBooking.rateLocked === false)
+
+  // The whole point: the villa raises the rate after someone has booked.
+  const original = P.NIGHTLY_RATE
+  const raised = original + 900
+
+  const lockedSecond = P.quoteInstalment({ checkIn: IN, checkOut: OUT, instalment: 'second', total: agreed })
+  const lockedFinal = P.quoteInstalment({ checkIn: IN, checkOut: OUT, instalment: 'final', total: agreed })
+  const floatingSecond = P.quoteInstalment({ checkIn: IN, checkOut: OUT, instalment: 'second', total: nights * raised })
+
+  check('locked instalment 2 bills the agreed total', lockedSecond.total === agreed, `$${lockedSecond.total}`)
+  check('locked instalment 3 bills the agreed total', lockedFinal.total === agreed, `$${lockedFinal.total}`)
+  check('locked quotes are flagged as locked', lockedSecond.rateLocked === true)
+  check('a higher rate would have charged more',
+    floatingSecond.amount > lockedSecond.amount,
+    `$${floatingSecond.amount} vs $${lockedSecond.amount}`)
+
+  // Every instalment of a locked booking must still sum to the agreed total —
+  // the rounding remainder rule has to survive the lock.
+  const parts = ['deposit', 'second', 'final']
+    .map(id => P.quoteInstalment({ checkIn: IN, checkOut: OUT, instalment: id, total: agreed }).amount)
+  check('locked instalments sum to the agreed total',
+    parts.reduce((a, b) => a + b, 0) === agreed, `${parts.join(' + ')} = ${agreed}`)
+
+  // A locked total must still be a sane number.
+  const bad = [
+    ['zero', 0], ['negative', -18200], ['not a number', 'abc'],
+    ['fractional', 18200.5], ['absurdly low', 7], ['absurdly high', 99_999_999],
+  ]
+  for (const [label, value] of bad) {
+    let threw = false
+    try { P.quoteInstalment({ checkIn: IN, checkOut: OUT, instalment: 'second', total: value }) }
+    catch { threw = true }
+    check(`rejects a ${label} total`, threw)
+  }
+
+  // A numeric string is what actually arrives over HTTP.
+  const asString = P.quoteInstalment({ checkIn: IN, checkOut: OUT, instalment: 'second', total: String(agreed) })
+  check('accepts the total as a string', asString.total === agreed)
+}
+
 console.log('\n— link signing —')
-const booking = { checkIn: IN, checkOut: OUT, instalment: 'second', email: 'guest@example.com' }
+const booking = { checkIn: IN, checkOut: OUT, instalment: 'second', email: 'guest@example.com', total: '18200' }
 const sig = signBooking(booking)
 check('valid signature accepted', verifyBooking(booking, sig))
 check('tampered checkout rejected', !verifyBooking({ ...booking, checkOut: day(33) }, sig))
 check('tampered instalment rejected', !verifyBooking({ ...booking, instalment: 'final' }, sig))
 check('tampered email rejected', !verifyBooking({ ...booking, email: 'someone@else.com' }, sig))
+// The attack the lock creates: edit the agreed total down in the URL.
+check('tampered total rejected', !verifyBooking({ ...booking, total: '700' }, sig))
+check('removed total rejected', !verifyBooking({ ...booking, total: '' }, sig))
 check('missing signature rejected', !verifyBooking(booking, ''))
 check('garbage signature rejected', !verifyBooking(booking, 'deadbeef'))
 check('truncated signature rejected', !verifyBooking(booking, sig.slice(0, -2)))

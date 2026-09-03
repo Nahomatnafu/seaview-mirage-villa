@@ -123,6 +123,37 @@ export function validateStay(checkIn, checkOut) {
 
 export const villaTotal = nights => nights * NIGHTLY_RATE
 
+// Sanity bounds for a locked total, expressed per night. Wide on purpose: the
+// point is to reject a corrupted or absurd figure, not to second-guess what the
+// villa charged last season.
+const MIN_LOCKED_NIGHTLY = 100
+const MAX_LOCKED_NIGHTLY = 50000
+
+/**
+ * Validates a total agreed at booking time and carried forward.
+ *
+ * A guest agrees a price on the day they book. Instalments 2 and 3 are charged
+ * weeks later, by which point NIGHTLY_RATE may have been edited — so the later
+ * instalments must be quoted from the total that was agreed, never recomputed
+ * at today's rate. Anything else silently reprices a booking that is already
+ * paid into.
+ *
+ * The value is only ever trusted when it arrives inside the villa's HMAC
+ * signature; see api/_lib.mjs. These checks are the second line.
+ */
+export function lockedTotal(value, nights) {
+  const total = typeof value === 'string' ? Number(value.trim()) : value
+  if (!Number.isFinite(total) || total <= 0) throw new Error('Invalid booking total.')
+  if (!Number.isInteger(total)) throw new Error('Invalid booking total.')
+  if (!Number.isFinite(nights) || nights <= 0) throw new Error('Invalid booking total.')
+
+  const perNight = total / nights
+  if (perNight < MIN_LOCKED_NIGHTLY || perNight > MAX_LOCKED_NIGHTLY) {
+    throw new Error('Invalid booking total.')
+  }
+  return total
+}
+
 // Rounds the first two instalments and gives the remainder to the last, so the
 // three parts always sum to the total exactly rather than losing a cent.
 export function instalments(total) {
@@ -136,8 +167,13 @@ export function instalments(total) {
  * returns the amount for one instalment, in cents, ready for Stripe.
  * Throws on anything invalid rather than guessing — an endpoint that takes
  * money should refuse unclear input.
+ *
+ * `total` is the price agreed when the booking was made. Pass it for any
+ * instalment after the deposit, so a later change to NIGHTLY_RATE cannot
+ * reprice a stay someone has already paid into. Omitted, the stay is priced at
+ * today's rate — which is correct for a new booking, and only for that.
  */
-export function quoteInstalment({ checkIn, checkOut, instalment }) {
+export function quoteInstalment({ checkIn, checkOut, instalment, total: agreedTotal }) {
   const stay = validateStay(checkIn, checkOut)
   if (!stay.ok) throw new Error(stay.reason)
   const nights = stay.nights
@@ -145,7 +181,8 @@ export function quoteInstalment({ checkIn, checkOut, instalment }) {
   const index = PAYMENT_SCHEDULE.findIndex(p => p.id === instalment)
   if (index === -1) throw new Error(`Unknown instalment "${instalment}"`)
 
-  const total = villaTotal(nights)
+  const rateLocked = agreedTotal !== undefined && agreedTotal !== null && agreedTotal !== ''
+  const total = rateLocked ? lockedTotal(agreedTotal, nights) : villaTotal(nights)
   const parts = instalments(total)
   const amount = parts[index]
 
@@ -153,6 +190,7 @@ export function quoteInstalment({ checkIn, checkOut, instalment }) {
     nights,
     total,
     index,
+    rateLocked,
     schedule: PAYMENT_SCHEDULE[index],
     amount,
     amountCents: Math.round(amount * 100),

@@ -25,15 +25,26 @@ export default async function handler(req, res) {
     const { checkIn, checkOut, email, name, instalment } = req.body || {}
     if (!email) return json(res, 400, { error: 'email is required' })
 
+    // The total agreed when the guest booked. Pass it for any booking that
+    // already exists — it is on the deposit's Stripe session as `villaTotal`,
+    // and in the confirmation email. Omit it only when quoting a NEW booking,
+    // which then gets today's rate.
+    const total = req.body?.total == null || req.body.total === ''
+      ? undefined
+      : String(req.body.total).trim()
+
     const wanted = instalment
       ? PAYMENT_SCHEDULE.filter(p => p.id === instalment)
       : PAYMENT_SCHEDULE
     if (!wanted.length) return json(res, 400, { error: `Unknown instalment "${instalment}"` })
 
+    // Signed as the empty string when absent, so both sides agree on the shape.
+    const signedTotal = total ?? ''
+
     const base = siteUrl(req)
     const links = wanted.map(p => {
-      const quote = quoteInstalment({ checkIn, checkOut, instalment: p.id })
-      const booking = { checkIn, checkOut, instalment: p.id, email }
+      const quote = quoteInstalment({ checkIn, checkOut, instalment: p.id, total })
+      const booking = { checkIn, checkOut, instalment: p.id, email, total: signedTotal }
       const sig = signBooking(booking)
       const qs = new URLSearchParams({ ...booking, sig })
       if (name) qs.set('name', name)
@@ -48,9 +59,15 @@ export default async function handler(req, res) {
       }
     })
 
-    const first = quoteInstalment({ checkIn, checkOut, instalment: wanted[0].id })
+    const first = quoteInstalment({ checkIn, checkOut, instalment: wanted[0].id, total })
     return json(res, 200, {
-      stay: { checkIn, checkOut, nights: first.nights, total: first.total, totalFormatted: money(first.total) },
+      stay: {
+        checkIn, checkOut,
+        nights: first.nights,
+        total: first.total,
+        totalFormatted: money(first.total),
+        rateLocked: first.rateLocked,
+      },
       links,
     })
   } catch (err) {

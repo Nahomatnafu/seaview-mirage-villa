@@ -17,9 +17,11 @@ import { verifyBooking, requireEnv, json, siteUrl } from './_lib.mjs'
  * Two ways in:
  *   deposit         — a guest booking directly from the site. No signature,
  *                     because they are choosing their own dates; the date
- *                     rules above are what protect us.
- *   second / final  — must carry the villa's HMAC signature, since those links
- *                     are issued against a booking that already exists.
+ *                     rules above are what protect us. Priced at today's rate.
+ *   second / final  — must carry the villa's HMAC signature AND the total
+ *                     agreed when the booking was made, since those links are
+ *                     issued against a booking that already exists and may
+ *                     predate a rate change.
  */
 
 const MAX_LEN = 200
@@ -41,6 +43,7 @@ export default async function handler(req, res) {
     const extras = clean(body.extras, 300)
     const partySize = clean(body.partySize, 20)
     const sig = clean(body.sig, 128)
+    const total = clean(body.total, 20)
 
     if (!PAYMENT_SCHEDULE.some(p => p.id === instalment)) {
       return json(res, 400, { error: 'Unknown instalment.' })
@@ -49,13 +52,24 @@ export default async function handler(req, res) {
       return json(res, 400, { error: 'Please provide a valid email address.' })
     }
 
-    // Later instalments are only ever reached through a link the villa issued.
-    if (instalment !== 'deposit' && !verifyBooking({ checkIn, checkOut, instalment, email }, sig)) {
-      return json(res, 403, { error: 'This payment link is not valid. Please ask the villa for a new one.' })
+    const badLink = { error: 'This payment link is not valid. Please ask the villa for a new one.' }
+    const signed = () => verifyBooking({ checkIn, checkOut, instalment, email, total }, sig)
+
+    if (instalment === 'deposit') {
+      // A guest booking for themselves sends no total, and gets today's rate.
+      // A villa-issued deposit link may carry a held one — but only if signed,
+      // otherwise anyone could name their own price for the deposit.
+      if (total && !signed()) return json(res, 403, badLink)
+    } else {
+      // Instalments 2 and 3 are charged weeks after the price was agreed, so
+      // they must carry that price. Recomputing at today's rate is exactly the
+      // bug this guards against: it would reprice a stay already paid into.
+      if (!total) return json(res, 403, badLink)
+      if (!signed()) return json(res, 403, badLink)
     }
 
     // Throws with a guest-readable reason on any invalid or unavailable dates.
-    const quote = quoteInstalment({ checkIn, checkOut, instalment })
+    const quote = quoteInstalment({ checkIn, checkOut, instalment, total })
 
     // Belt and braces: the schedule can only ever yield a fraction of the
     // total, so anything outside this range means something is badly wrong.
@@ -91,6 +105,9 @@ export default async function handler(req, res) {
         instalmentLabel: quote.schedule.label,
         nights: String(quote.nights),
         villaTotal: String(quote.total),
+        // Which rate this booking was struck at, so instalments 2 and 3 can be
+        // issued against it later even if NIGHTLY_RATE has moved since.
+        rateLocked: quote.rateLocked ? 'yes' : 'no',
         guestName: name,
         guestPhone: phone,
         partySize,

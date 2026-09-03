@@ -9,7 +9,10 @@ import crypto from 'node:crypto'
  * which dates a link is for.
  */
 
-export const SIGNED_FIELDS = ['checkIn', 'checkOut', 'instalment', 'email']
+// `total` is the price agreed at booking. It is signed for the same reason the
+// dates are: a guest who could edit it in the URL could pay a fraction of what
+// they owe. Empty string when the stay is being priced at today's rate.
+export const SIGNED_FIELDS = ['checkIn', 'checkOut', 'instalment', 'email', 'total']
 
 export function requireEnv(name) {
   const v = process.env[name]

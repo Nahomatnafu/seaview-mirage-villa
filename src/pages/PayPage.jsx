@@ -21,17 +21,21 @@ export default function PayPage() {
   const email = params.get('email') || ''
   const name = params.get('name') || ''
   const sig = params.get('sig') || ''
+  // The price agreed when the booking was made. Carried in the link so a rate
+  // change between booking and this instalment cannot alter what is owed.
+  const total = params.get('total') || ''
   const cancelled = params.get('cancelled') === '1'
 
-  // Shown for confirmation only. The server recomputes all of this from the
-  // dates before charging anything, so nothing here can change the amount.
+  // Shown for confirmation only. The server re-derives all of this and verifies
+  // the signature before charging, so nothing here can change the amount.
   const quote = useMemo(() => {
     const nights = nightsBetween(checkIn, checkOut)
     const index = PAYMENT_SCHEDULE.findIndex(p => p.id === instalment)
     if (!nights || index === -1) return null
-    const total = villaTotal(nights)
-    return { nights, total, index, schedule: PAYMENT_SCHEDULE[index], amount: instalments(total)[index] }
-  }, [checkIn, checkOut, instalment])
+    const agreed = Number(total)
+    const stayTotal = total && Number.isFinite(agreed) && agreed > 0 ? agreed : villaTotal(nights)
+    return { nights, total: stayTotal, index, schedule: PAYMENT_SCHEDULE[index], amount: instalments(stayTotal)[index] }
+  }, [checkIn, checkOut, instalment, total])
 
   const linkLooksComplete = checkIn && checkOut && instalment && sig
 
@@ -42,7 +46,7 @@ export default function PayPage() {
       const res = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ checkIn, checkOut, instalment, email, name, sig }),
+        body: JSON.stringify({ checkIn, checkOut, instalment, email, name, sig, total }),
       })
       const data = await res.json()
       if (!res.ok || !data.url) throw new Error(data.error || 'Could not start the payment.')

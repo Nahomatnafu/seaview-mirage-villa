@@ -366,15 +366,32 @@ An admin page for the client to set rates himself is wanted **later**. Worth
 doing after availability, not before — a pricing dashboard for someone with no
 booking system solves the second problem first.
 
-**Before rates ever change, fix this:** `quoteInstalment()` recomputes the total
-from the dates every time it is called. Instalments 2 and 3 are quoted when they
-are paid, weeks after booking. So raising `NIGHTLY_RATE` silently raises the
-outstanding instalments of guests who have **already booked at the old rate**,
-and nobody would notice until a guest was overcharged.
+### The rate is locked to the booking — done
 
-The fix is to store the agreed total on the booking at deposit time and quote
-instalments from that, rather than recomputing. It is latent today because the
-rate has never changed. It stops being latent the first time it does.
+Changing `NIGHTLY_RATE` used to silently reprice guests who had already booked,
+because `quoteInstalment()` recomputed the total from the dates every time and
+instalments 2 and 3 are quoted weeks later. Fixed 3 September.
+
+- `quoteInstalment()` takes an optional `total` — the price agreed at booking.
+  Given it, that figure is used; omitted, the stay is priced at today's rate,
+  which is correct for a **new** booking and only for that.
+- `total` is part of `SIGNED_FIELDS`, so it cannot be edited in a payment link.
+  Without that, locking the rate would have handed guests a way to name their
+  own price.
+- Instalments 2 and 3 now **require** a signed total. They 403 without one,
+  rather than falling back to today's rate — a silent fallback is the bug.
+- The deposit accepts a total only if signed, so a guest cannot inject one into
+  their own booking.
+- Stripe metadata carries `villaTotal` and `rateLocked`, so any booking can be
+  reconciled to the rate it was struck at.
+
+Where the villa gets the agreed total when issuing a later link: the deposit's
+Stripe session metadata (`villaTotal`), or the confirmation email.
+
+Covered by `check:pricing` (locked instalments still sum to the agreed total,
+absurd totals rejected, edited totals fail the signature) and by `check:stripe`,
+which bills a booking made at $2,200/night as $6,160 while today's rate would
+have charged $7,280.
 
 ---
 

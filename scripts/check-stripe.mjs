@@ -102,7 +102,10 @@ const cases = [
   ['rejects a bad email', { checkIn: day(30), checkOut: day(37), instalment: 'deposit', email: 'not-an-email' }, 400],
   ['rejects an unknown instalment', { checkIn: day(30), checkOut: day(37), instalment: 'fourth', email: `a-${stamp}@example.com` }, 400],
   ['rejects unsigned second instalment', { checkIn: day(30), checkOut: day(37), instalment: 'second', email: `a-${stamp}@example.com` }, 403],
-  ['rejects a forged signature', { checkIn: day(30), checkOut: day(37), instalment: 'final', email: `a-${stamp}@example.com`, sig: 'deadbeef' }, 403],
+  ['rejects a forged signature', { checkIn: day(30), checkOut: day(37), instalment: 'final', email: `a-${stamp}@example.com`, total: '18200', sig: 'deadbeef' }, 403],
+  // Instalments 2 and 3 must carry the price agreed at booking. Without it the
+  // endpoint would have to recompute at today's rate, which is the bug.
+  ['rejects a later instalment with no agreed total', { checkIn: day(30), checkOut: day(37), instalment: 'final', email: `a-${stamp}@example.com`, sig: signBooking({ checkIn: day(30), checkOut: day(37), instalment: 'final', email: `a-${stamp}@example.com`, total: '' }) }, 403],
 ]
 for (const [name, body, want] of cases) {
   const r = await call(body)
@@ -120,12 +123,32 @@ if (injected.status === 200) {
 }
 
 console.log('\n— a villa-signed link works —')
-const signed = { checkIn: day(30), checkOut: day(37), instalment: 'final', email: `signed-${stamp}@example.com` }
+const signed = { checkIn: day(30), checkOut: day(37), instalment: 'final', email: `signed-${stamp}@example.com`, total: '18200' }
 const r = await call({ ...signed, sig: signBooking(signed) })
 check('signed final instalment accepted', r.status === 200, `got ${r.status} ${r.body?.error || ''}`)
 if (r.status === 200) {
   const s = (await stripe.checkout.sessions.list({ limit: 1 })).data[0]
   check('final instalment is $7,280', s.amount_total === 728000, `Stripe says ${money((s.amount_total || 0) / 100)}`)
+}
+
+console.log('\n— a rate change cannot reprice an existing booking —')
+{
+  // A guest who booked 7 nights when the rate was $2,200 agreed $15,400. Today
+  // the rate is $2,600, so recomputing would bill them 40% of $18,200 = $7,280.
+  // The agreed total must win: 40% of $15,400 = $6,160.
+  const old = { checkIn: day(30), checkOut: day(37), instalment: 'final', email: `locked-${stamp}@example.com`, total: '15400' }
+  const res = await call({ ...old, sig: signBooking(old) })
+  check('a booking at the old rate is accepted', res.status === 200, `got ${res.status} ${res.body?.error || ''}`)
+  if (res.status === 200) {
+    const s = (await stripe.checkout.sessions.list({ limit: 1 })).data[0]
+    check('charged $6,160, not $7,280', s.amount_total === 616000, `Stripe says ${money((s.amount_total || 0) / 100)}`)
+    check('metadata records the agreed total', s.metadata?.villaTotal === '15400', s.metadata?.villaTotal)
+    check('metadata flags the locked rate', s.metadata?.rateLocked === 'yes', s.metadata?.rateLocked)
+  }
+
+  // Editing the agreed total down in the URL must not survive the signature.
+  const edited = await call({ ...old, total: '7000', sig: signBooking(old) })
+  check('an edited total is refused', edited.status === 403, `got ${edited.status}`)
 }
 
 console.log(fails ? `\n${fails} FAILURE(S)\n` : '\nall Stripe checks passed\n')
