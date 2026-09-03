@@ -201,7 +201,7 @@ export const FAQ = [
   },
   {
     q: 'Can we move our dates instead of cancelling?',
-    a: `We will always try to accommodate a change of dates, though we cannot guarantee it. A shortened stay must still meet the ${VILLA.minNights}-night minimum, and rescheduled dates are non-refundable. Ask us as early as you can — the further out you are, the more we can do.`,
+    a: `Yes, and there is no fee to do it — everything you have already paid moves across to the new dates. The new week needs to be available and within 12 months of your original arrival date, and must still meet the ${VILLA.minNights}-night minimum. If it falls in a higher-priced season, the difference is payable. Ask us as early as you can.`,
   },
   {
     q: 'Is the villa suitable for children?',
