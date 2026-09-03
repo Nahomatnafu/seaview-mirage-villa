@@ -183,7 +183,7 @@ export default function FaqPolicies() {
 
             <p style={{ color: 'var(--gray)', fontSize: '0.875rem', lineHeight: 1.75, marginTop: '18px', maxWidth: '64ch' }}>
               {CANCELLATION.feeStandard
-                ? `Cancellations made in the refundable window are returned less a ${CANCELLATION.feeStandard} cancellation fee (${CANCELLATION.feeHoliday} over holiday periods).`
+                ? `Cancellations made in the refundable window are returned less a ${CANCELLATION.feeStandard} cancellation fee (${CANCELLATION.feeHoliday} over holiday periods). ${CANCELLATION.refundNote}`
                 : 'Cancellations made in the refundable window are returned less a cancellation fee, set out in your written quote before any payment is taken.'}
             </p>
 

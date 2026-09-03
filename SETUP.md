@@ -302,52 +302,79 @@ once he is busy.
 
 ---
 
-## 4. Cancellation policy — PARTIALLY BLOCKED
+## 4. Cancellation policy — RESOLVED 3 September
 
-The client supplied four answers about cancellation. They agree on the notice
-windows, which are published. **They contradict each other on three points,
-which are not published.** Do not resolve these by picking one — a cancellation
-policy is a binding term on an $18,200 booking.
+The client's original four answers contradicted each other on three points.
+Asked again he confirmed two of them and, on the third, said he had no view and
+we should set whatever made sense. So the fees below are **ours**, chosen
+deliberately, and he has the short list to object to — `cancellation-policy-draft.md`.
 
-### Published (all four answers agree)
+### Published
 
-| Period                | Refund possible | Non-refundable |
-| --------------------- | --------------- | -------------- |
-| Standard dates        | 61+ days before | ≤ 60 days      |
-| Easter & Thanksgiving | 91+ days before | ≤ 90 days      |
-| Christmas & New Year  | 121+ days before| ≤ 120 days     |
+| Period                | Refund possible | Non-refundable | Fee |
+| --------------------- | --------------- | -------------- | --- |
+| Standard dates        | 61+ days before | ≤ 60 days      | 20% |
+| Easter & Thanksgiving | 91+ days before | ≤ 90 days      | 30% |
+| Christmas & New Year  | 121+ days before| ≤ 120 days     | 30% |
 
-Also published: no refund for unused goods/services, no-shows, late arrival or
-early departure; a shortened rescheduled stay must still meet the 7-night
-minimum; rescheduled dates are non-refundable.
+Moving dates carries **no fee**; everything paid moves across, provided the new
+dates are within 12 months, still meet the 7-night minimum, and are available.
+A move into a higher season is payable. Refunds go to the original card in 5–10
+business days.
 
-### Unresolved — three direct conflicts
+Also published, unchanged: no refund for unused goods/services, no-shows, late
+arrival or early departure.
 
-1. **The standard cancellation fee.** Answer 1 says *"a one-time cancellation
-   fee of 5%"* for cancellations 60+ days out. Answer 2 says *"refund all
-   deposits, with a 20% cancellation fee deducted"* for 61+ days out. Same
-   window, two different numbers. Answer 3 separately gives 30% for holiday
-   periods, which nothing contradicts but which should be confirmed alongside.
-2. **Christmas and New Year.** Answer 1 says festive bookings are
-   *non-refundable* outright. Answer 3 says they are refundable at 121+ days
-   less a 30% fee. These cannot both be true.
-3. **Rescheduling.** Answer 1 says a reschedule *"will be treated as a new
-   booking"*. Answer 4 says guests may move dates within 365 days *"with full
-   credit applied towards the new reservation"*. Losing the money versus
-   carrying it over is a large difference to a guest.
+### How each conflict was closed
 
-Until these are settled, `CANCELLATION.feeStandard` and `feeHoliday` in
-`content.js` stay `null` and the page reads "less a cancellation fee, set out in
-your written quote". Filling in those two values is the only change needed.
+1. **Standard fee — 5% or 20%?** He didn't know. Set to **20%**: it was one of
+   his own two figures, and it sits under the 25% deposit, so a cancelling guest
+   never owes more than they have already paid. 5% remains a fine alternative if
+   he ever asks — it just means absorbing most of the loss.
+2. **Are festive bookings refundable?** Yes. "Holiday — 30% yes" settles it
+   against the "never refundable" version. Applied to all three holiday windows,
+   since he said "holiday" without distinguishing them.
+3. **Rescheduling.** No fee, full carry-over. The 12-month limit is ours; he
+   gave no expiry and an open-ended credit never stops being a liability.
 
-### Also worth raising
+### One correction he needed
 
-The supplied text names **"Seaview Mirage Villa Paradise"** and **"Seaview
-Mirage View"** — two names, neither matching the villa's actual name used
-everywhere else on the site. It reads as though it was copied from another
-property's website. Worth confirming with the client that these are genuinely
-his terms and the numbers are what he wants, rather than someone else's policy
-pasted over. Publishing another business's terms verbatim is its own problem.
+He planned to "set the return percentage on Stripe". **Stripe has no such
+setting** — it is a payment processor, not a booking system. It has a Refund
+button and an amount field. The percentage has to be published on the site,
+which is what section "Published" above now is, and applied by hand.
+
+### Name
+
+Settled: **Sea View Mirage Villa** everywhere, which is what the site already
+said. The "Seaview Mirage Villa Paradise" / "Seaview Mirage View" strings in his
+original text were another property's, and are not used anywhere.
+
+Still outstanding: the **Stripe account's public business name is lower-case
+"seaview mirage villa"**, which guests see on the checkout page. Settings →
+Business → Public details.
+
+---
+
+## 4a. Rates — changed by hand, for now
+
+`NIGHTLY_RATE` in `shared/pricing.mjs` is the single source for both the site and
+the payment API. The client emails a new rate, the developer edits that constant
+and deploys. Seasonal pricing was considered and **deliberately deferred**.
+
+An admin page for the client to set rates himself is wanted **later**. Worth
+doing after availability, not before — a pricing dashboard for someone with no
+booking system solves the second problem first.
+
+**Before rates ever change, fix this:** `quoteInstalment()` recomputes the total
+from the dates every time it is called. Instalments 2 and 3 are quoted when they
+are paid, weeks after booking. So raising `NIGHTLY_RATE` silently raises the
+outstanding instalments of guests who have **already booked at the old rate**,
+and nobody would notice until a guest was overcharged.
+
+The fix is to store the agreed total on the booking at deposit time and quote
+instalments from that, rather than recomputing. It is latent today because the
+rate has never changed. It stops being latent the first time it does.
 
 ---
 

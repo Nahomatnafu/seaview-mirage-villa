@@ -130,8 +130,9 @@ export { PAYMENT_SCHEDULE, money, villaTotal, instalments }
 
 // ---------------------------------------------------------------------------
 // FAQ. Every answer below is drawn from something the client has confirmed in
-// writing. The one thing still unstated is the cancellation fee percentage,
-// where his answers conflict — left out rather than guessed at. See SETUP.md §4.
+// writing, except the cancellation fees, which he asked us to set — see the
+// reasoning above CANCELLATION and the sign-off list in
+// cancellation-policy-draft.md.
 // ---------------------------------------------------------------------------
 export const FAQ = [
   {
@@ -196,7 +197,7 @@ export const FAQ = [
   },
   {
     q: 'What is the cancellation policy?',
-    a: 'It depends how close to arrival you cancel. On standard dates, cancellations 61 or more days before arrival can be refunded less a cancellation fee; 60 days or less before arrival is non-refundable. Holiday periods need longer notice — 91 days for Easter and Thanksgiving, 121 days for Christmas and New Year. The full terms, including the exact fee, are set out in your written quote before any payment is taken.',
+    a: 'It depends how close to arrival you cancel. On standard dates, cancellations 61 or more days before arrival are refunded less a 20% fee; 60 days or less before arrival is non-refundable. Holiday periods need longer notice and carry a 30% fee — 91 days for Easter and Thanksgiving, 121 days for Christmas and New Year. Moving your dates is different: there is no fee to reschedule, and everything you have paid moves with you.',
   },
   {
     q: 'Can we move our dates instead of cancelling?',
@@ -209,16 +210,26 @@ export const FAQ = [
 ]
 
 // ---------------------------------------------------------------------------
-// Cancellation. The client supplied four answers that agree on the cut-off
-// windows below but CONTRADICT each other on the fee and on rescheduling:
-//   * standard cancellation fee is given as both 5% and 20%
-//   * Christmas/New Year is called "non-refundable" in one answer and
-//     refundable at 121+ days less 30% in another
-//   * rescheduling is "treated as a new booking" in one answer and "full
-//     credit within 365 days" in another
-// Only the agreed parts are published. The contested figures stay null and
-// render as "set out in your written quote" until the client resolves them —
-// see SETUP.md §4. Do not fill these in by guessing; this is a binding term.
+// Cancellation.
+//
+// The client's original four answers contradicted each other on the fee and on
+// rescheduling. Asked again (3 Sep) he confirmed the 30% holiday fee and that
+// moving dates is free, then said he has no view on the rest and we should set
+// whatever makes sense. So these are OUR numbers, chosen to industry norm and
+// to his own instalment structure, and he has been sent the short list to
+// confirm — see cancellation-policy-draft.md.
+//
+// The reasoning, so nobody has to re-derive it:
+//   * 20% standard. One of the two figures in his own text, and it sits under
+//     the 25% deposit, so a guest who cancels never owes more than they have
+//     already paid — there is nothing to chase.
+//   * 30% for every holiday window, not just Christmas. He said "Holiday - 30%
+//     yes"; splitting Easter/Thanksgiving off at a different rate would be
+//     inventing a distinction he never made.
+//   * 12 months to use moved dates. He said he would always find another week;
+//     an open-ended credit is a liability that never expires.
+//
+// These are binding terms. Change them only on his written say-so.
 // ---------------------------------------------------------------------------
 export const CANCELLATION = {
   windows: [
@@ -242,25 +253,21 @@ export const CANCELLATION = {
     },
   ],
   // Percentage retained on an in-window (refundable) cancellation.
-  //
-  // The holiday figure is confirmed (client, 3 Sep: "Holiday - 30% yes"). The
-  // standard one is still contested — his own text said both 5% and 20%, and
-  // asking again produced "there will be a percentage cut" without a number.
-  //
-  // Both must be set before either is shown. Publishing the holiday rate on its
-  // own would imply standard dates carry no fee, which is not what he means.
-  // See cancellation-policy-draft.md — awaiting his yes.
-  feeStandard: null,
+  feeStandard: '20%',
   feeHoliday: '30%',
+  // Applies to every window in `windows` whose id is not 'standard'.
+  refundNote: 'Refunds are returned to the card used to pay, within 5–10 business days.',
   noRefundFor: [
     'Goods or services booked but not used',
     'Guests who do not arrive',
     'Late arrival or early departure during the rental period',
   ],
   reschedule: [
-    `A shortened stay must still meet the ${VILLA.minNights}-night minimum.`,
-    'Rescheduled dates are non-refundable.',
-    'We will always try to accommodate a date change, but cannot guarantee it.',
+    'There is no fee to move your dates.',
+    'Everything you have already paid moves across to the new dates.',
+    `New dates must fall within 12 months of your original arrival date and must still meet the ${VILLA.minNights}-night minimum.`,
+    'Date changes are subject to availability. If the new dates fall in a higher-priced season, the difference is payable.',
+    'Once moved, your original dates are released and the deadlines above apply to the new dates.',
   ],
 }
 
