@@ -1,6 +1,6 @@
 import React from 'react'
 import { Home, UtensilsCrossed, Plane, Compass, Check, CalendarCheck, Wallet, Receipt, ChefHat, ShoppingBasket, ClipboardList } from 'lucide-react'
-import { VILLA, RATES, MEAL_PLAN, PAYMENT_SCHEDULE, money, villaTotal, instalments } from '../content'
+import { VILLA, RATES, MEAL_PLAN, PAYMENT_SCHEDULE, money, villaTotal, payableInstalments, INCIDENTAL_DEPOSIT } from '../content'
 
 const PROCESS_ICONS = [<ClipboardList size={18} />, <ChefHat size={18} />, <ShoppingBasket size={18} />, <Receipt size={18} />]
 
@@ -13,7 +13,8 @@ const PAYMENT_ICONS = {
 export default function Rates({ onBookNow }) {
   // Worked examples use the minimum stay, which is also the most common one.
   const minTotal = villaTotal(VILLA.minNights)
-  const minParts = instalments(minTotal)
+  // Charged amounts, so the last card matches what Stripe will actually take.
+  const minParts = payableInstalments(minTotal)
 
   const cards = [
     {
@@ -199,6 +200,8 @@ export default function Rates({ onBookNow }) {
         <p style={{ textAlign: 'center', color: 'var(--gray)', fontSize: '0.9375rem', lineHeight: 1.7, maxWidth: '560px', margin: '0 auto 36px' }}>
           Three instalments, spread across the run-up to your stay. The amounts below are worked out
           on a {VILLA.minNights}-night stay at {money(minTotal)} — your quote shows the exact figures for your dates.
+          The final instalment includes a {money(INCIDENTAL_DEPOSIT)} refundable incidental deposit, returned
+          within {VILLA.incidentalReturnDays} days of departure.
         </p>
 
         <div className="rates-terms" style={{

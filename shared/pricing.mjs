@@ -9,6 +9,16 @@ export const NIGHTLY_RATE = 2600
 export const CURRENCY = 'usd'
 export const MIN_NIGHTS = 7
 
+// Refundable damage deposit. Charged with the FINAL instalment, not held on a
+// card — the villa asked for it this way, and it is returned after departure.
+//
+// It is not part of the villa total: the total is what the stay costs, this is
+// money passing through. Keeping them separate is what stops the deposit being
+// treated as revenue, split across instalments, or fed into the 20%/30%
+// cancellation fee, all of which would be wrong.
+export const INCIDENTAL_DEPOSIT = 200
+export const INCIDENTAL_RETURN_DAYS = 7
+
 // Sanity ceiling. Nothing legitimate books three months in one go, and it stops
 // a mistyped year turning into a six-figure charge.
 export const MAX_NIGHTS = 90
@@ -156,10 +166,26 @@ export function lockedTotal(value, nights) {
 
 // Rounds the first two instalments and gives the remainder to the last, so the
 // three parts always sum to the total exactly rather than losing a cent.
+//
+// This is the split of the VILLA TOTAL only. It deliberately excludes the
+// incidental deposit — see payableInstalments for what a guest actually pays.
 export function instalments(total) {
   const first = Math.round(total * PAYMENT_SCHEDULE[0].pct)
   const second = Math.round(total * PAYMENT_SCHEDULE[1].pct)
   return [first, second, total - first - second]
+}
+
+/**
+ * What the guest is actually charged at each instalment: the villa split, with
+ * the refundable incidental deposit added to the last one.
+ *
+ * Use this for anything shown to a guest or sent to Stripe. Use `instalments`
+ * only when you specifically mean the villa's share.
+ */
+export function payableInstalments(total) {
+  const parts = instalments(total)
+  parts[parts.length - 1] += INCIDENTAL_DEPOSIT
+  return parts
 }
 
 /**
@@ -183,8 +209,11 @@ export function quoteInstalment({ checkIn, checkOut, instalment, total: agreedTo
 
   const rateLocked = agreedTotal !== undefined && agreedTotal !== null && agreedTotal !== ''
   const total = rateLocked ? lockedTotal(agreedTotal, nights) : villaTotal(nights)
-  const parts = instalments(total)
-  const amount = parts[index]
+
+  const villaShare = instalments(total)[index]
+  const isFinal = index === PAYMENT_SCHEDULE.length - 1
+  const incidental = isFinal ? INCIDENTAL_DEPOSIT : 0
+  const amount = villaShare + incidental
 
   return {
     nights,
@@ -192,6 +221,11 @@ export function quoteInstalment({ checkIn, checkOut, instalment, total: agreedTo
     index,
     rateLocked,
     schedule: PAYMENT_SCHEDULE[index],
+    // The stay itself, before the refundable deposit.
+    villaShare,
+    // Refundable, and only ever on the final instalment.
+    incidental,
+    // What Stripe charges.
     amount,
     amountCents: Math.round(amount * 100),
     currency: CURRENCY,

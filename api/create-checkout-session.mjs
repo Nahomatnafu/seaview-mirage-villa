@@ -93,7 +93,10 @@ export default async function handler(req, res) {
             name: `Sea View Mirage Villa — ${quote.schedule.label}`,
             description:
               `${Math.round(quote.schedule.pct * 100)}% of ${money(quote.total)} · ` +
-              `${quote.nights} nights, ${checkIn} to ${checkOut}`,
+              `${quote.nights} nights, ${checkIn} to ${checkOut}` +
+              // Spelled out on the receipt, so the larger final payment is not
+              // a surprise and the guest has it in writing that it comes back.
+              (quote.incidental ? ` · includes ${money(quote.incidental)} refundable incidental deposit` : ''),
           },
         },
       }],
@@ -108,6 +111,10 @@ export default async function handler(req, res) {
         // Which rate this booking was struck at, so instalments 2 and 3 can be
         // issued against it later even if NIGHTLY_RATE has moved since.
         rateLocked: quote.rateLocked ? 'yes' : 'no',
+        // Split out so the villa knows how much of this payment is refundable
+        // when the guest leaves, without having to recompute it.
+        villaShare: String(quote.villaShare),
+        incidentalDeposit: String(quote.incidental),
         guestName: name,
         guestPhone: phone,
         partySize,

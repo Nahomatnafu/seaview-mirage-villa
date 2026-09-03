@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { Lock, LoaderCircle, AlertCircle, CalendarDays, Moon, Receipt } from 'lucide-react'
 import { VILLA } from '../content'
-import { PAYMENT_SCHEDULE, nightsBetween, villaTotal, instalments, money } from '../../shared/pricing.mjs'
+import { PAYMENT_SCHEDULE, nightsBetween, villaTotal, payableInstalments, INCIDENTAL_DEPOSIT, money } from '../../shared/pricing.mjs'
 
 function formatDate(d) {
   if (!d) return '—'
@@ -34,7 +34,13 @@ export default function PayPage() {
     if (!nights || index === -1) return null
     const agreed = Number(total)
     const stayTotal = total && Number.isFinite(agreed) && agreed > 0 ? agreed : villaTotal(nights)
-    return { nights, total: stayTotal, index, schedule: PAYMENT_SCHEDULE[index], amount: instalments(stayTotal)[index] }
+    const isFinal = index === PAYMENT_SCHEDULE.length - 1
+    return {
+      nights, total: stayTotal, index,
+      schedule: PAYMENT_SCHEDULE[index],
+      amount: payableInstalments(stayTotal)[index],
+      incidental: isFinal ? INCIDENTAL_DEPOSIT : 0,
+    }
   }, [checkIn, checkOut, instalment, total])
 
   const linkLooksComplete = checkIn && checkOut && instalment && sig
@@ -90,6 +96,11 @@ export default function PayPage() {
     { icon: <CalendarDays size={15} />, label: 'Your stay', value: `${formatDate(checkIn)} → ${formatDate(checkOut)}` },
     { icon: <Moon size={15} />, label: 'Nights', value: `${quote.nights}` },
     { icon: <Receipt size={15} />, label: 'Villa total', value: money(quote.total) },
+    // Only on the final instalment, so the guest can see why this payment is
+    // larger than the percentage alone would suggest.
+    ...(quote.incidental
+      ? [{ icon: <Receipt size={15} />, label: 'Refundable deposit', value: `+ ${money(quote.incidental)}` }]
+      : []),
   ]
 
   return (

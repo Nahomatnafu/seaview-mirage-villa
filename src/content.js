@@ -2,6 +2,7 @@
 // bare `export { x } from '...'` creates no local binding.
 import {
   NIGHTLY_RATE, MIN_NIGHTS, money, villaTotal, instalments, PAYMENT_SCHEDULE,
+  INCIDENTAL_DEPOSIT, INCIDENTAL_RETURN_DAYS, payableInstalments,
 } from '../shared/pricing.mjs'
 
 // Single source of truth for all villa facts and copy.
@@ -29,11 +30,13 @@ export const VILLA = {
   checkIn: '3:00 PM',
   checkOut: '11:00 AM',
   minNights: MIN_NIGHTS,
-  // Confirmed Aug 2026: taxes are inside the nightly rate, and a $200
-  // incidental deposit applies. Whether the $200 is charged or held, and when,
-  // is still open — see ask-clients.md Q14.
+  // Confirmed Aug 2026: taxes are inside the nightly rate. Confirmed 3 Sep: the
+  // incidental deposit is CHARGED with the final instalment (not held on the
+  // card) and returned after departure.
   taxIncluded: true,
-  incidentalDeposit: 200,
+  // Mirrors INCIDENTAL_DEPOSIT in shared/pricing.mjs — change it there, not here.
+  incidentalDeposit: INCIDENTAL_DEPOSIT,
+  incidentalReturnDays: INCIDENTAL_RETURN_DAYS,
   airport: 'Montego Bay Airport (MBJ)',
   airportDrive: '45 min drive',
 }
@@ -126,7 +129,7 @@ export const MEAL_PLAN = {
 // The booking maths lives in shared/pricing.mjs because the Stripe functions in
 // /api need exactly the same numbers. Re-exported here so components keep
 // importing from content.js as before.
-export { PAYMENT_SCHEDULE, money, villaTotal, instalments }
+export { PAYMENT_SCHEDULE, money, villaTotal, instalments, payableInstalments, INCIDENTAL_DEPOSIT }
 
 // ---------------------------------------------------------------------------
 // FAQ. Every answer below is drawn from something the client has confirmed in
@@ -149,11 +152,11 @@ export const FAQ = [
   },
   {
     q: 'Is tax added on top of the rate?',
-    a: `No. Tax is included in the ${RATES.nightlyRate} ${RATES.nightlyUnit} rate, so the figure you see is the figure you pay for the villa. A $${VILLA.incidentalDeposit} incidental deposit also applies to your stay, and anything settled at the villa — special meals, Kingston transfers, excursions, spa treatments and the bar — is separate.`,
+    a: `No. Tax is included in the ${RATES.nightlyRate} ${RATES.nightlyUnit} rate, so the figure you see is the figure you pay for the villa. A $${VILLA.incidentalDeposit} refundable incidental deposit is added to your final instalment and returned after you leave, and anything settled at the villa — special meals, Kingston transfers, excursions, spa treatments and the bar — is separate.`,
   },
   {
     q: 'Is there a security or damage deposit?',
-    a: `Yes — a $${VILLA.incidentalDeposit} incidental deposit covers your stay. Your concierge will confirm how and when it is taken when you book.`,
+    a: `Yes — a $${VILLA.incidentalDeposit} refundable incidental deposit. It is added to your final instalment, so there is nothing separate to pay, and it is returned to your card within ${VILLA.incidentalReturnDays} days of departure once the villa has checked the property.`,
   },
   {
     q: 'Can we bring pets?',
@@ -282,7 +285,7 @@ export const POLICIES = [
       'Enquiries are free. Your dates are only held once the first instalment is received.',
       'The instalments cover the villa, its staff and your meals. Special meal packages, Kingston transfers, excursions, spa treatments and bar items are settled directly with the villa.',
       'Rates are quoted in US dollars, with tax included — the nightly rate is the final price.',
-      `A $${VILLA.incidentalDeposit} incidental deposit applies to your stay.`,
+      `A $${VILLA.incidentalDeposit} refundable incidental deposit is added to the final instalment and returned within ${VILLA.incidentalReturnDays} days of departure.`,
       'Cancellation terms depend on how far ahead you cancel and on the season — see the cancellation table below.',
     ],
   },

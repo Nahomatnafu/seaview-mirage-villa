@@ -128,20 +128,27 @@ const r = await call({ ...signed, sig: signBooking(signed) })
 check('signed final instalment accepted', r.status === 200, `got ${r.status} ${r.body?.error || ''}`)
 if (r.status === 200) {
   const s = (await stripe.checkout.sessions.list({ limit: 1 })).data[0]
-  check('final instalment is $7,280', s.amount_total === 728000, `Stripe says ${money((s.amount_total || 0) / 100)}`)
+  // 40% of $18,200 = $7,280, plus the $200 refundable incidental deposit.
+  check('final instalment is $7,480', s.amount_total === 748000, `Stripe says ${money((s.amount_total || 0) / 100)}`)
+  check('the deposit is split out in metadata',
+    s.metadata?.villaShare === '7280' && s.metadata?.incidentalDeposit === '200',
+    `villaShare=${s.metadata?.villaShare} incidental=${s.metadata?.incidentalDeposit}`)
 }
 
 console.log('\n— a rate change cannot reprice an existing booking —')
 {
   // A guest who booked 7 nights when the rate was $2,200 agreed $15,400. Today
   // the rate is $2,600, so recomputing would bill them 40% of $18,200 = $7,280.
-  // The agreed total must win: 40% of $15,400 = $6,160.
+  // The agreed total must win: 40% of $15,400 = $6,160, plus the $200 deposit.
   const old = { checkIn: day(30), checkOut: day(37), instalment: 'final', email: `locked-${stamp}@example.com`, total: '15400' }
   const res = await call({ ...old, sig: signBooking(old) })
   check('a booking at the old rate is accepted', res.status === 200, `got ${res.status} ${res.body?.error || ''}`)
   if (res.status === 200) {
     const s = (await stripe.checkout.sessions.list({ limit: 1 })).data[0]
-    check('charged $6,160, not $7,280', s.amount_total === 616000, `Stripe says ${money((s.amount_total || 0) / 100)}`)
+    check('charged $6,360, not $7,480', s.amount_total === 636000, `Stripe says ${money((s.amount_total || 0) / 100)}`)
+    check('the deposit rides on top of the locked rate',
+      s.metadata?.villaShare === '6160' && s.metadata?.incidentalDeposit === '200',
+      `villaShare=${s.metadata?.villaShare}`)
     check('metadata records the agreed total', s.metadata?.villaTotal === '15400', s.metadata?.villaTotal)
     check('metadata flags the locked rate', s.metadata?.rateLocked === 'yes', s.metadata?.rateLocked)
   }

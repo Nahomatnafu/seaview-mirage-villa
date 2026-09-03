@@ -5,7 +5,7 @@ Everything here is about running the live site. Content facts live in
 
 ---
 
-## 1. Where the booking form goes — ACTION REQUIRED
+## 1. Where the booking form goes — WORKING
 
 The booking wizard posts to **FormSubmit**, a third-party relay that forwards
 submissions to an email address. No backend, no database.
@@ -13,23 +13,17 @@ submissions to an email address. No backend, no database.
 - Endpoint: `https://formsubmit.co/ajax/seaviewmirage.info@gmail.com`
 - Defined in `src/content.js` as `INQUIRY_ENDPOINT`, built from `VILLA.email`.
 
-### The activation step
+### Activation — done
 
-**FormSubmit will not deliver anything until the address is activated, and this
-has not been done yet.** The first submission triggers a confirmation email to
-`seaviewmirage.info@gmail.com` containing a link. Until someone clicks that
-link, every enquiry is silently dropped — the site still shows "Inquiry Sent!"
-because FormSubmit returns success.
+**Activated and confirmed delivering, 3 September.** The client clicked the
+FormSubmit link and confirmed enquiries arrive, along with the Stripe receipt
+from the test booking.
 
-To activate, once, before launch:
-
-1. Open the live site and submit a real enquiry through the booking wizard.
-2. Open the `seaviewmirage.info@gmail.com` inbox (check spam).
-3. Click the FormSubmit activation link.
-4. Submit a second test enquiry and confirm it arrives.
-
-Do this on the production domain — activation is tied to the address, but
-testing from production also confirms the deployed build works.
+Worth knowing if this ever needs redoing: FormSubmit returns
+`{"success":"true"}` whether or not the address is activated, so an accepted
+submission is **not** proof of delivery. The only proof is the inbox. Re-activate
+by submitting an enquiry, opening `seaviewmirage.info@gmail.com` (check spam),
+and clicking the link.
 
 ### What each enquiry contains
 
@@ -58,22 +52,46 @@ page, the booking wizard, the FAQ and the policies section.
 | ---------- | ----- | ------------------------------- | ----------------- |
 | First      | 25%   | On booking                      | $4,550            |
 | Second     | 35%   | Within one month of booking     | $6,370            |
-| Third      | 40%   | 20–30 days before arrival       | $7,280            |
-| **Total**  |       |                                 | **$18,200**       |
+| Third      | 40%   | 20–30 days before arrival       | $7,280 + $200     |
+| **Total**  |       |                                 | **$18,400**       |
 
 `instalments(total)` rounds the first two and gives the remainder to the third,
 so the parts always sum to the total exactly — no missing dollar from rounding.
+
+### The $200 incidental deposit
+
+Confirmed 3 September: **charged** with the third instalment, not held on the
+card, and returned within `INCIDENTAL_RETURN_DAYS` (7) of departure.
+
+It is kept out of the villa total on purpose. The total is what the stay costs;
+the deposit is money passing through. Conflating them would quietly make it
+revenue, split it across all three instalments, and — worst — feed it into the
+20%/30% cancellation fee, so a guest cancelling would forfeit part of a deposit
+that was never the villa's.
+
+So there are two figures per instalment and they are not interchangeable:
+
+- `instalments(total)` / `quote.villaShare` — the stay. Use for the cancellation
+  fee, revenue, and anything describing what the villa charges.
+- `payableInstalments(total)` / `quote.amount` — what the card is charged. Use
+  for anything shown to a guest or sent to Stripe.
+
+Stripe metadata carries `villaShare` and `incidentalDeposit` separately, so the
+villa can see how much of the final payment is refundable without recomputing.
 
 Rate is `RATES.nightly` (2600). Changing that one number updates the published
 rate, the live booking total, the instalment amounts, and the FAQ.
 
 ---
 
-## 3. Stripe — built, needs keys and two decisions
+## 3. Stripe — working in test, needs live keys
 
-Lives on the `stripe-payments` branch. **Nothing is wired into the public
-booking flow yet** — the enquiry form still works exactly as before. What
-exists is the payment machinery, reachable only from a link the villa sends.
+Lives on the `stripe-payments` branch, not yet merged. The booking flow ends in
+a real payment and the whole path has been proven end to end in test mode: a
+card was charged, the webhook fired, and the client received the Stripe receipt.
+
+What remains is go-live configuration — live keys, a production webhook
+endpoint with its own signing secret — not code.
 
 ### How it works today
 

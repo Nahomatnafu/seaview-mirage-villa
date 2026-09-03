@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { X, ChevronRight, ChevronLeft, Check, Calendar, ChefHat, Car, Leaf, Waves, PartyPopper, Star, LoaderCircle, Wallet, Lock } from 'lucide-react'
 import {
   VILLA, RATES, BOOKING_SERVICES, PAYMENT_SCHEDULE, INQUIRY_ENDPOINT,
-  money, villaTotal, instalments,
+  money, villaTotal, payableInstalments, INCIDENTAL_DEPOSIT,
 } from '../content'
 import { earliestArrival, toISODate, validateStay } from '../../shared/pricing.mjs'
 
@@ -55,7 +55,9 @@ export default function BookingFlow({ onClose, initialService = null }) {
 
   const nights = diffDays(checkIn, checkOut)
   const total = villaTotal(nights)
-  const parts = instalments(total)
+  // What the guest is actually charged — the last one carries the refundable
+  // incidental deposit, so these are the figures Stripe will show.
+  const parts = payableInstalments(total)
   const selectedServices = BOOKING_SERVICES.filter(s => selected[s.id])
 
   const toggleService = (id) => {
@@ -517,7 +519,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                       <p style={{ color: 'var(--gray)', fontSize: '0.6875rem', marginTop: '14px', lineHeight: 1.6 }}>
                         * The villa total above covers exclusive use of the property, its staff and your meals, with
                         tax included. Special meals, Kingston transfers, excursions, spa treatments and the bar are
-                        settled directly with the villa during your stay, along with a ${VILLA.incidentalDeposit} incidental deposit.
+                        settled directly with the villa during your stay.
                       </p>
                     </div>
                   </div>
@@ -546,6 +548,10 @@ export default function BookingFlow({ onClose, initialService = null }) {
                       ))}
                     </div>
                     <p style={{ color: 'var(--gray)', fontSize: '0.6875rem', marginTop: '12px', lineHeight: 1.6 }}>
+                      The final instalment includes a {money(INCIDENTAL_DEPOSIT)} refundable incidental deposit,
+                      returned to your card within {VILLA.incidentalReturnDays} days of departure.
+                    </p>
+                    <p style={{ color: 'var(--gray)', fontSize: '0.6875rem', marginTop: '8px', lineHeight: 1.6 }}>
                       Only the first instalment is taken today. The villa will confirm your booking and arrange
                       the remaining two payments with you.
                     </p>

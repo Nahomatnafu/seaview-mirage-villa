@@ -30,8 +30,12 @@ check('7 nights', q[0].nights === 7)
 check('total is $18,200', q[0].total === 18200, `got ${q[0].total}`)
 check('25% = $4,550', q[0].amount === 4550, `got ${q[0].amount}`)
 check('35% = $6,370', q[1].amount === 6370, `got ${q[1].amount}`)
-check('40% = $7,280', q[2].amount === 7280, `got ${q[2].amount}`)
-check('parts sum to total', q[0].amount + q[1].amount + q[2].amount === 18200)
+// villaShare is the stay; amount is what Stripe charges. They differ only on
+// the final instalment, which carries the refundable incidental deposit.
+check('40% = $7,280', q[2].villaShare === 7280, `got ${q[2].villaShare}`)
+check('villa shares sum to total', q[0].villaShare + q[1].villaShare + q[2].villaShare === 18200)
+check('charges sum to total + deposit',
+  q[0].amount + q[1].amount + q[2].amount === 18200 + P.INCIDENTAL_DEPOSIT)
 check('cents for Stripe', q[0].amountCents === 455000, `got ${q[0].amountCents}`)
 const long = quoteInstalment({ checkIn: IN, checkOut: OUT_LONG, instalment: 'deposit' })
 check('14 nights = $36,400 total', long.total === 36400, `got ${long.total}`)
@@ -102,7 +106,7 @@ console.log('\n— the agreed rate is locked to the booking —')
   // Every instalment of a locked booking must still sum to the agreed total —
   // the rounding remainder rule has to survive the lock.
   const parts = ['deposit', 'second', 'final']
-    .map(id => P.quoteInstalment({ checkIn: IN, checkOut: OUT, instalment: id, total: agreed }).amount)
+    .map(id => P.quoteInstalment({ checkIn: IN, checkOut: OUT, instalment: id, total: agreed }).villaShare)
   check('locked instalments sum to the agreed total',
     parts.reduce((a, b) => a + b, 0) === agreed, `${parts.join(' + ')} = ${agreed}`)
 
@@ -121,6 +125,40 @@ console.log('\n— the agreed rate is locked to the booking —')
   // A numeric string is what actually arrives over HTTP.
   const asString = P.quoteInstalment({ checkIn: IN, checkOut: OUT, instalment: 'second', total: String(agreed) })
   check('accepts the total as a string', asString.total === agreed)
+}
+
+console.log('\n— the refundable incidental deposit —')
+{
+  const D = P.INCIDENTAL_DEPOSIT
+  const villa = P.instalments(18200)
+  const payable = P.payableInstalments(18200)
+
+  check('villa split still sums to the total', villa.reduce((a, b) => a + b, 0) === 18200)
+  check('only the final instalment carries it',
+    payable[0] === villa[0] && payable[1] === villa[1] && payable[2] === villa[2] + D,
+    payable.join(' / '))
+  check('the guest pays the total plus the deposit',
+    payable.reduce((a, b) => a + b, 0) === 18200 + D, `$${payable.reduce((a, b) => a + b, 0)}`)
+
+  // instalments() must stay clean — the deposit is not villa revenue, and the
+  // cancellation fee is a percentage of the villa total, not of the deposit.
+  check('instalments() is unchanged by the deposit', P.instalments(18200)[2] === villa[2])
+
+  const dep = P.quoteInstalment({ checkIn: IN, checkOut: OUT, instalment: 'deposit' })
+  const sec = P.quoteInstalment({ checkIn: IN, checkOut: OUT, instalment: 'second' })
+  const fin = P.quoteInstalment({ checkIn: IN, checkOut: OUT, instalment: 'final' })
+
+  check('deposit carries no incidental', dep.incidental === 0 && dep.amount === dep.villaShare)
+  check('second carries no incidental', sec.incidental === 0 && sec.amount === sec.villaShare)
+  check('final carries exactly one', fin.incidental === D && fin.amount === fin.villaShare + D, `$${fin.amount}`)
+  check('final is $7,480 on a 7-night stay', fin.amount === 7480, `$${fin.amount}`)
+  check('final amountCents matches', fin.amountCents === 748000, String(fin.amountCents))
+  check('villa total excludes the deposit', fin.total === 18200, `$${fin.total}`)
+
+  // The deposit must ride on top of a locked rate, not be swallowed by it.
+  const locked = P.quoteInstalment({ checkIn: IN, checkOut: OUT, instalment: 'final', total: 15400 })
+  check('deposit applies to a locked-rate booking too',
+    locked.amount === P.instalments(15400)[2] + D, `$${locked.amount}`)
 }
 
 console.log('\n— link signing —')
