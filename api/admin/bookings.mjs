@@ -80,6 +80,7 @@ export default async function handler(req, res) {
     const bookings = [...byStay.values()].map(b => {
       const id = b.depositSessionId || b.payments[0]?.sessionId || b.key
       const paidIds = new Set(b.payments.map(p => p.instalment))
+      const payments = b.payments.sort((x, y) => String(x.at).localeCompare(String(y.at)))
       return {
         ...b,
         id,
@@ -88,11 +89,16 @@ export default async function handler(req, res) {
         outstanding: Math.max(0, b.villaTotal - (b.paid - b.incidentalHeld)),
         // Which instalments are still owed, for the invoicing view.
         due: PAYMENT_SCHEDULE.filter(p => !paidIds.has(p.id)).map(p => p.id),
-        payments: b.payments.sort((x, y) => String(x.at).localeCompare(String(y.at))),
+        // When the booking was made — the first payment against it. Not the
+        // arrival date: the villa wants to see what just came in.
+        bookedAt: payments[0]?.at || null,
+        payments,
       }
     })
 
-    bookings.sort((a, b) => a.checkIn.localeCompare(b.checkIn))
+    // Newest booking first. Sorting by arrival buried a booking made this
+    // morning underneath one made weeks ago for an earlier date.
+    bookings.sort((a, b) => String(b.bookedAt).localeCompare(String(a.bookedAt)))
     return json(res, 200, { bookings })
   } catch (err) {
     console.error('Loading bookings failed:', err)

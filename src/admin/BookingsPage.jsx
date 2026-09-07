@@ -8,6 +8,14 @@ const STATUS = {
   declined: { label: 'Declined', bg: '#fdecea', fg: '#8c1d18', border: '#f5c6c2' },
 }
 
+// Anything needing a decision comes first; settled bookings sit below it.
+// Within each section the API returns newest booking first.
+const SECTIONS = [
+  { key: 'pending', title: 'Needs confirming' },
+  { key: 'confirmed', title: 'Confirmed' },
+  { key: 'declined', title: 'Declined', hint: 'These weeks are back on sale.' },
+]
+
 export default function BookingsPage() {
   const [bookings, setBookings] = useState(null)
   const [error, setError] = useState(null)
@@ -68,7 +76,21 @@ export default function BookingsPage() {
         </div>
       )}
 
-      {bookings?.map(b => {
+      {SECTIONS.map(section => {
+        const inSection = (bookings || []).filter(b => (b.status || 'pending') === section.key)
+        if (!inSection.length) return null
+        return (
+          <section key={section.key} style={{ marginBottom: '26px' }}>
+            <h2 style={{
+              fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em',
+              color: '#6b6b70', fontWeight: 600, margin: '0 0 10px',
+            }}>
+              {section.title} · {inSection.length}
+            </h2>
+            {section.hint && inSection.length > 0 && (
+              <p style={{ ...ui.muted, margin: '-4px 0 12px' }}>{section.hint}</p>
+            )}
+            {inSection.map(b => {
         const s = STATUS[b.status] || STATUS.pending
         return (
           <div key={b.id} style={ui.card}>
@@ -157,6 +179,9 @@ export default function BookingsPage() {
               </p>
             )}
           </div>
+        )
+            })}
+          </section>
         )
       })}
 

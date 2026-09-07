@@ -139,7 +139,19 @@ export default async function handler(req, res) {
         notes: notes.slice(0, 480),
       },
       payment_intent_data: {
-        statement_descriptor_suffix: (process.env.STATEMENT_DESCRIPTOR || 'VILLA').slice(0, 22),
+        // Without this the charge carries no receipt_email and Stripe issues no
+        // receipt at all — the first test booking came back with receipt_number
+        // null. `customer_email` above only prefills the Checkout form; it is
+        // not what receipts are sent to. The thank-you page promises the guest
+        // an email, so this is what makes that true.
+        receipt_email: email,
+        // A suffix is only sent when one is explicitly configured. The account's
+        // own descriptor is already "SEAVIEW MIRAGE"; adding a suffix made
+        // Stripe render "SEAVIEW MI* SEA VIEW M" on the statement, which is the
+        // garbled kind of line that gets reported as fraud.
+        ...(process.env.STATEMENT_DESCRIPTOR
+          ? { statement_descriptor_suffix: process.env.STATEMENT_DESCRIPTOR.slice(0, 22) }
+          : {}),
         metadata: { checkIn, checkOut, instalment: quote.schedule.id },
       },
       // No custom expires_at on purpose: it moves every call, and Stripe rejects

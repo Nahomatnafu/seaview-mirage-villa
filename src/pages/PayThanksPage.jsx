@@ -8,8 +8,14 @@ import { VILLA } from '../content'
  *
  * Deliberately does not claim a specific amount was received. Stripe redirects
  * here as soon as the guest finishes, but the payment is only truly confirmed
- * by the webhook, so stating figures here could be wrong. Stripe's own receipt
- * email is the record.
+ * by the webhook, so stating figures here could be wrong. The receipt email is
+ * the record.
+ *
+ * The copy says "we" rather than naming Stripe: the guest bought from the villa,
+ * not from a payment processor, and the receipt they get is branded with the
+ * villa's business name. That promise depends on receipts being switched on in
+ * Stripe (Settings -> Customer emails -> Successful payments). If they are ever
+ * turned off, this sentence becomes a lie and has to change with them.
  */
 export default function PayThanksPage() {
   return (
@@ -28,8 +34,8 @@ export default function PayThanksPage() {
             Thank you
           </h1>
           <p style={{ color: 'var(--gray)', fontSize: '0.9375rem', lineHeight: 1.85, marginBottom: '10px' }}>
-            Your payment has gone through. Stripe will email you a receipt, and the villa will be in
-            touch to confirm the next step.
+            Your payment has gone through. We'll email you a receipt and be in touch to confirm
+            the next step.
           </p>
           <p style={{ color: 'var(--gray)', fontSize: '0.875rem', lineHeight: 1.85 }}>
             If anything looks wrong, call{' '}
