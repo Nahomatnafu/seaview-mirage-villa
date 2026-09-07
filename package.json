@@ -11,7 +11,8 @@
     "check:stripe": "node scripts/check-stripe.mjs",
     "check:webhook": "node scripts/check-webhook.mjs",
     "check:admin": "node scripts/check-admin.mjs",
-    "admin:password": "node scripts/make-admin-password.mjs"
+    "admin:password": "node scripts/make-admin-password.mjs",
+    "check:invoices": "node scripts/check-invoices.mjs"
   },
   "keywords": [],
   "author": "",
