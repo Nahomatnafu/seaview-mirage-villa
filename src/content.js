@@ -106,7 +106,7 @@ export const RATES = {
 export const MEAL_PLAN = {
   // Covered by the nightly rate
   includes: [
-    'Breakfast, lunch, and dinner',
+    'Breakfast and dinner',
     'Dessert',
     'Bottled water throughout the day',
     'Fresh juices — pineapple, orange, and fruit punch',
@@ -164,11 +164,11 @@ export const FAQ = [
   },
   {
     q: 'What is included in the nightly rate?',
-    a: 'Exclusive use of the whole villa and its staff: your private chef, butler, housekeepers and caretakers, groundskeeper, concierge, and on-site security. Your meals are included — breakfast, lunch, dinner, dessert, water and juices — as is airport pickup and drop-off at Montego Bay.',
+    a: 'Exclusive use of the whole villa and its staff: your private chef, butler, housekeepers and caretakers, groundskeeper, concierge, and on-site security. Your meals are included — breakfast, dinner, dessert, water and juices — as is airport pickup and drop-off at Montego Bay.',
   },
   {
     q: 'Is food included?',
-    a: `Yes. Breakfast, lunch, dinner, dessert, bottled water and fresh juices are included in the nightly rate and cooked for you by the villa chef. He contacts you before you travel to plan the menu around your group and does the grocery shopping in advance.`,
+    a: `Yes. Breakfast, dinner, dessert, bottled water and fresh juices are included in the nightly rate and cooked for you by the villa chef. He contacts you before you travel to plan the menu around your group and does the grocery shopping in advance.`,
   },
   {
     q: 'What if we want something outside the standard menu?',
@@ -303,7 +303,7 @@ export const POLICIES = [
     id: 'food',
     title: 'Food & Drink',
     points: [
-      "The chef is part of the villa's staff, and your meals are included in the rate: breakfast, lunch, dinner, dessert, bottled water and fresh juices.",
+      "The chef is part of the villa's staff, and your meals are included in the rate: breakfast, dinner, dessert, bottled water and fresh juices.",
       'Your chef contacts you before you travel to plan the menu, and does the grocery shopping in advance.',
       `Special or custom meals beyond the standard menu are arranged with the chef as a ${RATES.mealPlan} ${RATES.mealPlanUnit} package, settled with the villa rather than through this website.`,
       'Please tell us about allergies and dietary restrictions in advance.',
@@ -328,7 +328,7 @@ export const INCLUDED_SERVICES = [
   {
     id: 'chef',
     title: 'Private Chef',
-    desc: `The chef is part of the villa's staff, and your meals are included in the rate — breakfast, lunch, dinner, dessert, bottled water and fresh juices. He contacts you before arrival to plan the menu and does the grocery shopping for you. Anything beyond the standard menu is arranged with him as a ${RATES.mealPlan} ${RATES.mealPlanUnit} package.`,
+    desc: `The chef is part of the villa's staff, and your meals are included in the rate — breakfast, dinner, dessert, bottled water and fresh juices. He contacts you before arrival to plan the menu and does the grocery shopping for you. Anything beyond the standard menu is arranged with him as a ${RATES.mealPlan} ${RATES.mealPlanUnit} package.`,
   },
   {
     id: 'butler',

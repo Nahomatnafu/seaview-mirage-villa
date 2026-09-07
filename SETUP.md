@@ -529,9 +529,16 @@ Answers we do not have, so the site deliberately says nothing about them:
 ## 6. Dining — one thing to confirm
 
 **August 2026: the client reversed the meal arrangement.** He now says the
-standard menu — breakfast, lunch, dinner, dessert, fresh juice and water — is
+standard menu — breakfast, dinner, dessert, fresh juice and water — is
 *included in the price*, and the $70 per person figure applies only to special
 or custom meals arranged with the chef.
+
+**September 2026: lunch was dropped from the package.** The chef no longer
+offers it as part of the rate. The Lunch courses stay on the menu page — he will
+still cook them as a special meal — and `MENU_NOTICES` in `src/menu.js` carries
+the line that says so. If lunch ever goes back into the rate, that notice and
+the inclusion wording in `content.js`, `menu.js` and `Rates.jsx` all move
+together.
 
 This contradicts both his earlier written answer and the menu PDF, which framed
 $70 per person per day as the cost of *all* meals. The site follows the newer

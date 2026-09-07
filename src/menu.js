@@ -10,9 +10,13 @@ import { RATES } from './content'
 
 // The standard menu below is included in the nightly rate. The $70 per person
 // figure applies only to special or custom meals — see MEAL_PLAN in content.js.
+//
+// September 2026: lunch is no longer part of the package. The Lunch courses are
+// deliberately left in the collections below — the chef still cooks them, but as
+// a special meal rather than something the rate covers. See MENU_NOTICES.
 export const MENU_INTRO = {
   included: 'Included in your rate',
-  note: 'Breakfast, lunch, dinner, dessert, bottled water and fresh juices, cooked by your villa chef.',
+  note: 'Breakfast, dinner, dessert, bottled water and fresh juices, cooked by your villa chef.',
   special: `${RATES.mealPlan} ${RATES.mealPlanUnit}`,
   specialNote: 'For special or custom meals beyond the standard menu, arranged with the chef.',
 }
@@ -20,7 +24,7 @@ export const MENU_INTRO = {
 // Numbered steps the guest follows before arrival.
 export const ORDERING_STEPS = [
   { step: 'Review the menu as a group', desc: 'Look through the collections together before you travel.' },
-  { step: 'Choose your meals for each day', desc: "Pick breakfast, lunch, dinner, and dessert. Don't see something you want? Just ask the chef." },
+  { step: 'Choose your meals for each day', desc: "Pick breakfast, dinner, and dessert. Don't see something you want? Just ask the chef." },
   { step: 'Note allergies and preparation', desc: 'Flag any allergies, dietary restrictions, and specific preparation requirements.' },
   { step: 'Send your selections', desc: 'Email, text, or WhatsApp your day-by-day choices to the villa.' },
   { step: 'The chef calls you', desc: 'Your chef reaches out to review and finalise the menu with you.' },
@@ -28,12 +32,15 @@ export const ORDERING_STEPS = [
 ]
 
 export const HOW_IT_WORKS = [
-  'Your everyday meals are covered by the nightly rate — there is no separate food bill for the standard menu.',
+  'Your everyday meals are covered by the nightly rate — there is no separate food bill for the standard menu. Lunch is not included; the chef arranges it as a special meal.',
   'Once the menu is finalised, your chef shops for the entire length of your stay before you arrive.',
   `Special or custom meals are a ${RATES.mealPlan} ${RATES.mealPlanUnit} package, agreed with the chef and settled with the villa.`,
 ]
 
 export const MENU_NOTICES = [
+  // Added Sept 2026 when lunch left the package. Without this the Lunch courses
+  // read as included; delete this line if lunch is ever put back in the rate.
+  { id: 'lunch', label: 'Lunch is not included in the nightly rate. The chef is happy to cook it as a special meal — just arrange it with him.' },
   { id: 'tea', label: 'Teas are on the house.' },
   { id: 'coffee', label: 'Let us know before you arrive if you would like coffee, and your preferred sweetener.' },
   { id: 'kids', label: "Kids' meals are made to parents' requests — speak to the manager or chef." },
