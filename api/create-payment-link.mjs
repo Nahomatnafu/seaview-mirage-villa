@@ -1,6 +1,7 @@
 import crypto from 'node:crypto'
 import { quoteInstalment, money, PAYMENT_SCHEDULE } from '../shared/pricing.mjs'
 import { signBooking, requireEnv, json, siteUrl } from './_lib.mjs'
+import { readSettings } from './_store.mjs'
 
 /**
  * Villa-side endpoint. Given a booking, returns signed payment links the villa
@@ -41,9 +42,13 @@ export default async function handler(req, res) {
     // Signed as the empty string when absent, so both sides agree on the shape.
     const signedTotal = total ?? ''
 
+    // Links are issued against a booking that already exists, so availability
+    // is deliberately not re-checked here — the guest's own week would clash.
+    const settings = await readSettings()
+
     const base = siteUrl(req)
     const links = wanted.map(p => {
-      const quote = quoteInstalment({ checkIn, checkOut, instalment: p.id, total })
+      const quote = quoteInstalment({ checkIn, checkOut, instalment: p.id, total, settings })
       const booking = { checkIn, checkOut, instalment: p.id, email, total: signedTotal }
       const sig = signBooking(booking)
       const qs = new URLSearchParams({ ...booking, sig })
@@ -59,7 +64,7 @@ export default async function handler(req, res) {
       }
     })
 
-    const first = quoteInstalment({ checkIn, checkOut, instalment: wanted[0].id, total })
+    const first = quoteInstalment({ checkIn, checkOut, instalment: wanted[0].id, total, settings })
     return json(res, 200, {
       stay: {
         checkIn, checkOut,

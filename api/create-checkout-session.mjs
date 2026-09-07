@@ -2,6 +2,8 @@ import crypto from 'node:crypto'
 import Stripe from 'stripe'
 import { quoteInstalment, money, PAYMENT_SCHEDULE } from '../shared/pricing.mjs'
 import { verifyBooking, requireEnv, json, siteUrl } from './_lib.mjs'
+import { readSettings } from './_store.mjs'
+import { blockedRanges } from './_availability.mjs'
 
 /**
  * Creates a Stripe Checkout Session for one instalment of a booking.
@@ -68,8 +70,19 @@ export default async function handler(req, res) {
       if (!signed()) return json(res, 403, badLink)
     }
 
+    // Availability is re-checked HERE, against live data, not just in the
+    // browser. This is the only check that actually stops two guests paying for
+    // the same week — the date picker is a courtesy.
+    //
+    // Instalments 2 and 3 skip it: those dates are already this guest's, and
+    // their own booking would otherwise read as a clash.
+    const settings = await readSettings()
+    const blocks = instalment === 'deposit'
+      ? await blockedRanges({ excludeEmail: email })
+      : []
+
     // Throws with a guest-readable reason on any invalid or unavailable dates.
-    const quote = quoteInstalment({ checkIn, checkOut, instalment, total })
+    const quote = quoteInstalment({ checkIn, checkOut, instalment, total, settings, blocks })
 
     // Belt and braces: the schedule can only ever yield a fraction of the
     // total, so anything outside this range means something is badly wrong.

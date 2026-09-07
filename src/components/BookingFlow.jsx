@@ -4,7 +4,8 @@ import {
   VILLA, RATES, BOOKING_SERVICES, PAYMENT_SCHEDULE, INQUIRY_ENDPOINT,
   money, villaTotal, payableInstalments, INCIDENTAL_DEPOSIT,
 } from '../content'
-import { earliestArrival, toISODate, validateStay } from '../../shared/pricing.mjs'
+import { earliestArrival, toISODate, validateStay, seasonSummary } from '../../shared/pricing.mjs'
+import { useSettings } from '../useSettings'
 
 const SERVICE_ICONS = {
   mealplan: <ChefHat size={24} />,
@@ -53,8 +54,15 @@ export default function BookingFlow({ onClose, initialService = null }) {
   const [error, setError] = useState(null)
   const [submitted, setSubmitted] = useState(false)
 
+  // Live rates, so a season the villa added after this bundle was built is
+  // priced correctly. Falls back to the defaults if the fetch fails.
+  const { settings } = useSettings()
+
+  const minNights = settings.minNights
   const nights = diffDays(checkIn, checkOut)
-  const total = villaTotal(nights)
+  const total = villaTotal(checkIn, checkOut, settings)
+  // Only meaningful when a stay crosses a season boundary; one entry otherwise.
+  const bySeason = seasonSummary(checkIn, checkOut, settings)
   // What the guest is actually charged — the last one carries the refundable
   // incidental deposit, so these are the figures Stripe will show.
   const parts = payableInstalments(total)
@@ -75,13 +83,13 @@ export default function BookingFlow({ onClose, initialService = null }) {
   const pickCheckIn = (value) => {
     setCheckIn(value)
     if (!value) { setCheckOut(''); return }
-    if (checkOut && diffDays(value, checkOut) < VILLA.minNights) setCheckOut('')
+    if (checkOut && diffDays(value, checkOut) < minNights) setCheckOut('')
   }
 
   // The villa is booked out until a fixed date, so the calendar cannot offer
   // anything earlier. Re-checked on the server before any charge.
-  const openFrom = toISODate(earliestArrival())
-  const stayCheck = validateStay(checkIn, checkOut)
+  const openFrom = toISODate(earliestArrival(settings))
+  const stayCheck = validateStay(checkIn, checkOut, { settings })
 
   const canProceed = () => {
     if (step === 1) return stayCheck.ok
@@ -309,7 +317,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                     </h3>
                     <p style={{ color: 'var(--gray)', fontSize: '0.875rem', lineHeight: 1.65 }}>
                       The villa is booked whole-house at {RATES.nightlyRate} {RATES.nightlyUnit}, for up to {VILLA.sleeps} guests.
-                      Minimum stay is {VILLA.minNights} nights — once you pick an arrival date, any departure
+                      Minimum stay is {minNights} nights — once you pick an arrival date, any departure
                       shorter than that is greyed out in the calendar.
                     </p>
                     <p style={{ color: 'var(--gold-dark)', fontSize: '0.8125rem', lineHeight: 1.65, marginTop: '10px', fontWeight: '500' }}>
@@ -349,7 +357,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
                         <input
                           id="bf-checkout"
                           type="date"
-                          min={checkIn ? addDays(checkIn, VILLA.minNights) : openFrom}
+                          min={checkIn ? addDays(checkIn, minNights) : openFrom}
                           value={checkOut}
                           onChange={e => setCheckOut(e.target.value)}
                           disabled={!checkIn}
@@ -368,7 +376,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
 
                   {/* Dates only — the cost is shown once on the review step, so
                       guests are picking dates here rather than watching a total. */}
-                  {nights >= VILLA.minNights && (
+                  {nights >= minNights && (
                     <div style={{
                       border: '1px solid rgba(201,168,76,0.3)', background: 'var(--cream)',
                       padding: '18px 22px', display: 'flex', alignItems: 'center', gap: '12px',
@@ -387,7 +395,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
 
                   {checkIn && !checkOut && (
                     <p style={{ color: 'var(--gray)', fontSize: '0.8125rem', lineHeight: 1.65 }}>
-                      Now choose your departure date. Anything less than {VILLA.minNights} nights
+                      Now choose your departure date. Anything less than {minNights} nights
                       after {formatDate(checkIn)} is unavailable.
                     </p>
                   )}
@@ -497,6 +505,22 @@ export default function BookingFlow({ onClose, initialService = null }) {
                         </div>
                       ))}
                     </div>
+
+                    {/* Only when the stay crosses a season — otherwise the total
+                        is just nights x rate and spelling it out is noise. */}
+                    {bySeason.length > 1 && (
+                      <div style={{ padding: '18px 20px', borderBottom: '1px solid var(--light-gray)', background: 'var(--cream)' }}>
+                        <div style={{ fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '10px' }}>
+                          How this total is worked out
+                        </div>
+                        {bySeason.map((g, i) => (
+                          <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', fontSize: '0.8125rem', color: 'var(--gray)', padding: '3px 0' }}>
+                            <span>{g.nights} {g.nights === 1 ? 'night' : 'nights'}{g.season ? ` · ${g.season}` : ''} at {money(g.rate)}</span>
+                            <span style={{ color: 'var(--charcoal)', fontWeight: 500, whiteSpace: 'nowrap' }}>{money(g.nights * g.rate)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                     <div style={{ padding: '20px' }}>
                       <div style={{ fontSize: '0.6875rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '10px' }}>Requested Extras</div>

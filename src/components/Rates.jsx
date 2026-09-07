@@ -1,6 +1,6 @@
 import React from 'react'
 import { Home, UtensilsCrossed, Plane, Compass, Check, CalendarCheck, Wallet, Receipt, ChefHat, ShoppingBasket, ClipboardList } from 'lucide-react'
-import { VILLA, RATES, MEAL_PLAN, PAYMENT_SCHEDULE, money, villaTotal, payableInstalments, INCIDENTAL_DEPOSIT } from '../content'
+import { VILLA, RATES, MEAL_PLAN, PAYMENT_SCHEDULE, money, baseTotal, payableInstalments, INCIDENTAL_DEPOSIT } from '../content'
 
 const PROCESS_ICONS = [<ClipboardList size={18} />, <ChefHat size={18} />, <ShoppingBasket size={18} />, <Receipt size={18} />]
 
@@ -12,7 +12,9 @@ const PAYMENT_ICONS = {
 
 export default function Rates({ onBookNow }) {
   // Worked examples use the minimum stay, which is also the most common one.
-  const minTotal = villaTotal(VILLA.minNights)
+  // Headline figure only — always the base rate, never a season. Real dates are
+  // priced per night in the booking form.
+  const minTotal = baseTotal(VILLA.minNights)
   // Charged amounts, so the last card matches what Stripe will actually take.
   const minParts = payableInstalments(minTotal)
 

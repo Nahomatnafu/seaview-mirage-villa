@@ -1,7 +1,7 @@
 // Imported (not just re-exported) because content.js uses these itself — a
 // bare `export { x } from '...'` creates no local binding.
 import {
-  NIGHTLY_RATE, MIN_NIGHTS, money, villaTotal, instalments, PAYMENT_SCHEDULE,
+  NIGHTLY_RATE, MIN_NIGHTS, money, villaTotal, baseTotal, instalments, PAYMENT_SCHEDULE,
   INCIDENTAL_DEPOSIT, INCIDENTAL_RETURN_DAYS, payableInstalments,
 } from '../shared/pricing.mjs'
 
@@ -129,7 +129,7 @@ export const MEAL_PLAN = {
 // The booking maths lives in shared/pricing.mjs because the Stripe functions in
 // /api need exactly the same numbers. Re-exported here so components keep
 // importing from content.js as before.
-export { PAYMENT_SCHEDULE, money, villaTotal, instalments, payableInstalments, INCIDENTAL_DEPOSIT }
+export { PAYMENT_SCHEDULE, money, villaTotal, baseTotal, instalments, payableInstalments, INCIDENTAL_DEPOSIT }
 
 // ---------------------------------------------------------------------------
 // FAQ. Every answer below is drawn from something the client has confirmed in
@@ -148,7 +148,7 @@ export const FAQ = [
   },
   {
     q: 'Is there a minimum stay?',
-    a: `Yes, ${VILLA.minNights} nights. At ${RATES.nightlyRate} ${RATES.nightlyUnit}, a ${VILLA.minNights}-night stay comes to ${money(villaTotal(VILLA.minNights))}. Longer stays are welcome — the booking form will price any length from ${VILLA.minNights} nights upward.`,
+    a: `Yes, ${VILLA.minNights} nights. At ${RATES.nightlyRate} ${RATES.nightlyUnit}, a ${VILLA.minNights}-night stay comes to ${money(baseTotal(VILLA.minNights))}. Some dates — Christmas and New Year in particular — are priced higher, and the booking form shows the exact figure for your dates. Longer stays are welcome.`,
   },
   {
     q: 'Is tax added on top of the rate?',

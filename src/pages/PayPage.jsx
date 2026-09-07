@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom'
 import { Lock, LoaderCircle, AlertCircle, CalendarDays, Moon, Receipt } from 'lucide-react'
 import { VILLA } from '../content'
 import { PAYMENT_SCHEDULE, nightsBetween, villaTotal, payableInstalments, INCIDENTAL_DEPOSIT, money } from '../../shared/pricing.mjs'
+import { useSettings } from '../useSettings'
 
 function formatDate(d) {
   if (!d) return '—'
@@ -12,6 +13,9 @@ function formatDate(d) {
 
 export default function PayPage() {
   const [params] = useSearchParams()
+  // Only used when a link carries no agreed total, which in practice means a
+  // deposit link. Instalments 2 and 3 always carry one.
+  const { settings } = useSettings()
   const [sending, setSending] = useState(false)
   const [error, setError] = useState(null)
 
@@ -33,7 +37,7 @@ export default function PayPage() {
     const index = PAYMENT_SCHEDULE.findIndex(p => p.id === instalment)
     if (!nights || index === -1) return null
     const agreed = Number(total)
-    const stayTotal = total && Number.isFinite(agreed) && agreed > 0 ? agreed : villaTotal(nights)
+    const stayTotal = total && Number.isFinite(agreed) && agreed > 0 ? agreed : villaTotal(checkIn, checkOut, settings)
     const isFinal = index === PAYMENT_SCHEDULE.length - 1
     return {
       nights, total: stayTotal, index,
@@ -41,7 +45,7 @@ export default function PayPage() {
       amount: payableInstalments(stayTotal)[index],
       incidental: isFinal ? INCIDENTAL_DEPOSIT : 0,
     }
-  }, [checkIn, checkOut, instalment, total])
+  }, [checkIn, checkOut, instalment, total, settings])
 
   const linkLooksComplete = checkIn && checkOut && instalment && sig
 
