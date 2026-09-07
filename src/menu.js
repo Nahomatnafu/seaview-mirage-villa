@@ -11,9 +11,10 @@ import { RATES } from './content'
 // The standard menu below is included in the nightly rate. The $70 per person
 // figure applies only to special or custom meals — see MEAL_PLAN in content.js.
 //
-// September 2026: lunch is no longer part of the package. The Lunch courses are
-// deliberately left in the collections below — the chef still cooks them, but as
-// a special meal rather than something the rate covers. See MENU_NOTICES.
+// September 2026: the chef stopped serving lunch. Every Lunch course was removed
+// from the collections below at the client's request — breakfast, dinner and
+// dessert are what he cooks now. The dishes are in git history if lunch ever
+// comes back.
 export const MENU_INTRO = {
   included: 'Included in your rate',
   note: 'Breakfast, dinner, dessert, bottled water and fresh juices, cooked by your villa chef.',
@@ -32,15 +33,12 @@ export const ORDERING_STEPS = [
 ]
 
 export const HOW_IT_WORKS = [
-  'Your everyday meals are covered by the nightly rate — there is no separate food bill for the standard menu. Lunch is not included; the chef arranges it as a special meal.',
+  'Your everyday meals are covered by the nightly rate — there is no separate food bill for the standard menu.',
   'Once the menu is finalised, your chef shops for the entire length of your stay before you arrive.',
   `Special or custom meals are a ${RATES.mealPlan} ${RATES.mealPlanUnit} package, agreed with the chef and settled with the villa.`,
 ]
 
 export const MENU_NOTICES = [
-  // Added Sept 2026 when lunch left the package. Without this the Lunch courses
-  // read as included; delete this line if lunch is ever put back in the rate.
-  { id: 'lunch', label: 'Lunch is not included in the nightly rate. The chef is happy to cook it as a special meal — just arrange it with him.' },
   { id: 'tea', label: 'Teas are on the house.' },
   { id: 'coffee', label: 'Let us know before you arrive if you would like coffee, and your preferred sweetener.' },
   { id: 'kids', label: "Kids' meals are made to parents' requests — speak to the manager or chef." },
@@ -94,20 +92,9 @@ export const COLLECTIONS = [
         ],
       },
       {
-        name: 'Lunch',
+        name: 'Dinner',
         image: '/assets/menu/patty.jpg',
         imageAlt: 'Golden Jamaican beef patties on a plate',
-        groups: [
-          { title: 'Burgers & Sandwiches', items: ['Hamburger with fries', 'Grilled cheese sandwich', 'Ham sandwich', 'Lobster sandwich', 'Shrimp sandwich', 'Tuna sandwich', 'Turkey sandwich', 'Hot dog'] },
-          { title: 'Jerk', items: ['Jerk chicken', 'Jerk pork'] },
-          { title: 'Patties', items: ['Beef', 'Chicken', 'Cheese', 'Fish', 'Soy', 'Vegetable', 'Shrimp'] },
-          { title: 'Pasta', items: ['Spaghetti with chicken', 'Spaghetti with fish', 'Spaghetti with meatballs'] },
-          { title: 'Quiches', items: ['Jerk sausage quiche', 'Shrimp quiche', 'Vegetable quiche'] },
-          { title: 'Vegetarian', items: ['Vegetable wrap'] },
-        ],
-      },
-      {
-        name: 'Dinner',
         groups: [
           { title: 'Traditional Jamaican', items: ['Jamaican oxtail', 'Jamaican curry goat'] },
           { title: 'Chicken', items: ['Fricassee chicken', 'Fried chicken', 'Brown stew chicken', 'Baked chicken', 'Jerk chicken', 'Roasted chicken'] },
@@ -160,14 +147,6 @@ export const COLLECTIONS = [
         ],
       },
       {
-        name: 'Lunch',
-        groups: [
-          { items: ['Chicken — jerk, stew, or fried', 'Jerk pork', 'Fish — escovitch (fry), or steamed with okra and crackers'] },
-          { title: 'Patties', items: ['Beef, with or without cheese', 'Vegetable', 'Chicken', 'Shrimp', 'Vegan', 'Served with cocoa bread or cheese if desired'] },
-          { title: 'Soups', items: ['Chicken', "Red peas — with pig's tail, chicken, or beef", 'Beef', 'Pepperpot — spicy or not spicy'] },
-        ],
-      },
-      {
         name: 'Dinner',
         groups: [
           { items: ['Jamaican curried goat', 'Jamaican oxtail', 'Pork — brown stew, jerk, roast, or pot roast', 'Beef — brown stew, roast, or pot roast', 'Chicken — fried, stew, baked, roasted, jerk, curry, or fricassee', 'Shrimp — garlic, curry, or grilled', 'Lobster — garlic, curry, fried, or grilled', 'Fish — escovitch (fry), steamed, brown stew, or roasted'] },
@@ -196,14 +175,6 @@ export const COLLECTIONS = [
         groups: [
           { items: ['Eggs — scrambled, fried, poached, boiled, or Benedict', 'Omelettes — meat, vegetable, or plain with cheese', 'Sausages — beef, chicken, or pork', 'Bacon — pork or turkey', 'Fruit platter', 'Breakfast burrito', 'Breakfast sandwich', 'Breakfast hash', 'Smoothies', 'Baked beans', 'Grits'] },
           { title: 'Sides', items: ['Bagels with cream cheese', 'Fries', 'English muffins', 'Toast — regular, French, or French casserole', 'Pancakes', 'Waffles', 'Frittata — with meat or vegetables'] },
-        ],
-      },
-      {
-        name: 'Lunch',
-        groups: [
-          { items: ['Burger — regular or cheese', 'Grilled cheese', 'Pizza — plain, cheese, pepperoni, or pineapple', 'Pasta — chicken or shrimp', 'Chicken wings — buffalo, BBQ, or teriyaki', 'BLT club sandwiches — turkey, bacon, or Swiss', 'Tuna sandwich', 'Pulled sandwiches — chicken, beef, turkey, or pork'] },
-          { title: 'Salads', items: ['Caesar salad', 'Cobb salad', "Chef's salad"] },
-          { title: 'Soups', items: ['Pumpkin', 'Red pepper', 'Tomato', 'Minestrone', 'Broccoli cheddar', 'Chicken noodle'] },
         ],
       },
       {
@@ -240,15 +211,6 @@ export const COLLECTIONS = [
           { title: 'Pancakes', items: ['Vegan pancakes — served with fruit and maple syrup'] },
           { title: 'Toast', items: ['Avocado toast — mashed avocado, tomato, salt, and pepper'] },
           { title: 'Salad', items: ['Fruit salad — fresh fruit, drizzled with agave if desired'] },
-        ],
-      },
-      {
-        name: 'Lunch',
-        groups: [
-          { title: 'Bowls', items: ['Vegan Buddha bowl — quinoa or brown rice with roasted veg, chickpeas or lentils, and tahini dressing'] },
-          { title: 'Sandwiches & Wraps', items: ['Vegan sandwich — hummus, avocado, veggies, and sprouts', 'Veggie wrap — hummus, lettuce, tomato, cucumber, and shredded carrot', 'Vegan chickpea salad sandwich', 'Avocado and tomato sandwich'] },
-          { title: 'Salads', items: ['Vegan salad — mixed greens, veggies, nuts, and citrus vinaigrette', 'Chickpea and roasted vegetable salad'] },
-          { title: 'More', items: ['Vegan sushi rolls — nori with sushi rice, avocado, veggies, and tofu or tempeh', 'Vegan tacos — corn tortillas with black beans, guacamole, salsa, and crisp lettuce', 'Vegan pizza — vegan cheese and vegetable toppings', 'Stuffed bell peppers — quinoa, beans, vegetables, and seasonings'] },
         ],
       },
       {

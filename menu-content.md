@@ -2,6 +2,12 @@
 
 Extracted from reference PDF + attached screenshots. Organized by collection → course.
 
+> **This file is the client's original source document, kept as sent — do not
+> edit it to match the site.** Two things have since changed and the site is
+> right, not this file: meals are included in the nightly rate (the $70 figure
+> now applies only to special meals), and **lunch was removed entirely in
+> September 2026**. The Lunch sections below are no longer served or shown.
+
 ---
 
 ## Ordering Information

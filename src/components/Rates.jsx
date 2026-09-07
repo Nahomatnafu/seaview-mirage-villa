@@ -34,7 +34,7 @@ export default function Rates({ onBookNow }) {
       title: 'Your Meals',
       price: 'Included',
       unit: 'cooked by the villa chef',
-      desc: `Breakfast, dinner, dessert, water and fresh juices are covered by the rate. Want lunch, or something beyond the standard menu? Special meals are arranged with the chef as a ${RATES.mealPlan} ${RATES.mealPlanUnit} package, settled at the villa.`,
+      desc: `Breakfast, dinner, dessert, water and fresh juices are covered by the rate. Want something beyond the standard menu? Special meals are arranged with the chef as a ${RATES.mealPlan} ${RATES.mealPlanUnit} package, settled at the villa.`,
     },
     {
       id: 'transfer',

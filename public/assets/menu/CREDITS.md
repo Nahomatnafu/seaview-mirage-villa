@@ -19,7 +19,7 @@ same licence. Using them unmodified, as here, carries no such obligation.
 | `bar.jpg` | Collection 5 — The Bar | Achim Schleuning | CC BY-SA 3.0 DE | [Commons](https://commons.wikimedia.org/wiki/File:Planters_Punch_2.jpg) |
 | `snacks.jpg` | Collection 6 — Snacks | User:Melchoir | CC BY-SA 3.0 | [Commons](https://commons.wikimedia.org/wiki/File:Mixed_nuts_small_wood2.jpg) |
 | `fruit-platter.jpg` | Favorites → Breakfast | Asamboi | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Vanuatu_Tropical_Fruit_Platter.jpg) |
-| `patty.jpg` | Favorites → Lunch | Lilpisomojado | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Homemade_Jamaican_patties.jpg) |
+| `patty.jpg` | Favorites → Dinner | Lilpisomojado | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Homemade_Jamaican_patties.jpg) |
 | `cheesecake.jpg` | Favorites → Dessert | Alex Dugger | CC BY 2.0 | [Commons](https://commons.wikimedia.org/wiki/File:Mondays_at_Il_Forno_-_Cheesecake_with_strawberry_sauce.jpg) |
 | `callaloo.jpg` | Jamaican Joy → Breakfast | [Flickr user 67276179@N08](https://www.flickr.com/photos/67276179@N08/) | CC BY 2.0 | [Commons](https://commons.wikimedia.org/wiki/File:Callaloo.jpg) |
 

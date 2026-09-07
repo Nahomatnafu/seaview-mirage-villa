@@ -9,7 +9,7 @@ behaves like an app.
 
 ## Signing in
 
-Go to **[your website address]/admin** and enter the password we sent you.
+Go to **seaview-mirage.com/admin** and enter the password we sent you.
 
 You stay signed in for a week, so you will not have to type it often. Nobody
 else can reach this page — guests never see it, and it does not appear in

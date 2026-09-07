@@ -533,12 +533,12 @@ standard menu — breakfast, dinner, dessert, fresh juice and water — is
 *included in the price*, and the $70 per person figure applies only to special
 or custom meals arranged with the chef.
 
-**September 2026: lunch was dropped from the package.** The chef no longer
-offers it as part of the rate. The Lunch courses stay on the menu page — he will
-still cook them as a special meal — and `MENU_NOTICES` in `src/menu.js` carries
-the line that says so. If lunch ever goes back into the rate, that notice and
-the inclusion wording in `content.js`, `menu.js` and `Rates.jsx` all move
-together.
+**September 2026: lunch was removed entirely.** The chef no longer serves it, so
+every Lunch course was deleted from all four collections in `src/menu.js` and
+lunch is gone from the inclusion wording in `content.js`, `menu.js` and
+`Rates.jsx`. The dishes are recoverable from git history if it ever returns.
+`patty.jpg` moved to the Favorites → Dinner course rather than being dropped;
+its attribution in `public/assets/menu/CREDITS.md` was updated to match.
 
 This contradicts both his earlier written answer and the menu PDF, which framed
 $70 per person per day as the cost of *all* meals. The site follows the newer
