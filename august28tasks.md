@@ -1,118 +1,105 @@
-# 28 August — pick up here
+# Pick up here
 
-**Where things stand.** The site is live on `main` and content-complete.
-Stripe is built and tested on the `stripe-payments` branch but **not merged**.
-Booking now ends in a real payment; the calendar is blocked until 10 December.
+Last worked on 7 September.
 
-Two things are genuinely unfinished: the webhook has been proven offline but
-never against a real deploy, and instalments 2 and 3 don't exist yet.
+**Where things stand.** The live site on `main` is content-complete but has no
+payments. Everything since then sits on two unmerged branches:
 
----
+```
+main                817bebd   live site, no payments
+  └─ stripe-payments          Stripe, cancellation policy, incidental deposit
+       └─ admin-dashboard     dashboard, seasonal rates, invoicing  ← current
+```
 
-## 1. Send the client questions — do this first
+All five check suites pass on `admin-dashboard`:
 
-Read through `ask-clients.md` and send it. Everything else waits on it.
-
-The three that actually block launch:
-
-- **The booking form — client says he activated it (1 Sep).** A test submission
-  was accepted (`{"success":"true"}`), which it would not be if the address were
-  blocked. But FormSubmit returns that either way, so it is not proof of
-  delivery: someone has to open `seaviewmirage.info@gmail.com` and confirm the
-  `[TEST] Website booking form check` email actually arrived. Check spam.
-- **The cancellation policy contradicts itself** in three places (5% vs 20%,
-  festive refundable or not, reschedule credit or not). We cannot take real
-  money under terms we can't state.
-- **He has no way to record bookings.** Before 10 December he needs one, or the
-  site will sell a week he's already promised on WhatsApp.
+```
+npm run check:pricing    money maths, seasons, settings validation, rate lock
+npm run check:admin      auth boundary — 61 checks
+npm run check:webhook    signature verification, forgery, replay
+npm run check:stripe     real test-mode sessions and amounts
+npm run check:invoices   real test-mode invoices, due dates, idempotency
+```
 
 ---
 
-## 2. Test the webhook — mostly done
+## 1. Create the Vercel Blob store — blocks everything below
 
-`npm run check:webhook` now covers the handler offline (26 checks): genuine
-Stripe signatures accepted and logged with the right amount; missing, empty,
-garbage, wrong-secret, hour-stale and edited-after-signing bodies all refused.
-It signs with a throwaway secret, so it runs before the real one exists.
+Vercel → Storage → Blob. Two minutes. It injects `BLOB_READ_WRITE_TOKEN`.
 
-**Proven live on 3 September.** Stripe delivered a real signed
-`checkout.session.expired` to the preview, the signature verified and the
-handler logged it. So Vercel *does* honour `bodyParser: false` — that was the
-last unknown, and no code change was needed.
+Then `npm run admin:password`, and put `ADMIN_PASSWORD_HASH` and
+`ADMIN_SESSION_SECRET` into Vercel (Production and Preview). Redeploy — env vars
+only apply to builds made after they are set.
 
-Endpoint `we_1UBenEGwLIYEIvf9…` (test mode) points at the branch alias
-`seaview-mirage-git-stripe-payments-…`. Three environment traps are written up
-in `SETUP.md` §3 "Three ways this silently doesn't work" — read that before
-setting up the production endpoint.
-
-**Still outstanding:** a real card payment through the booking form with
-`4242 4242 4242 4242`, to confirm `checkout.session.completed` arrives with the
-booking metadata attached. Expiry events carry none.
-
-Note `npm run dev` can't test this. Use `vercel dev` locally.
+**Until this exists the dashboard can read but not save.** That is the one thing
+stopping end-to-end testing.
 
 ---
 
-## 3. Build Stripe Invoicing for instalments 2 and 3
+## 2. Test the dashboard on a preview
 
-Agreed approach, written up in `SETUP.md` §3. Two invoices per booking with due
-dates; Stripe sends the reminders itself, so there's no scheduler to maintain.
+Sign in on a phone. Add a Christmas period, confirm the booking form prices a
+stay crossing it night by night. Block a week, confirm the date picker refuses
+it. Pay a deposit with `4242 4242 4242 4242` and confirm two invoices appear in
+Stripe with the right amounts and due dates.
 
-Amounts come from `instalments()` in `shared/pricing.mjs` — never recalculated.
-
-Worth checking first whether Invoicing carries a per-invoice fee on this
-account, since it's two per booking.
-
----
-
-## 4. Merge `stripe-payments` into `main`
-
-Once the webhook is proven. Everything on the branch is tested; the merge itself
-is routine.
+Note the Vercel git integration is not building branch previews — deploys have
+been going out from the CLI (`vercel deploy`, then `vercel alias set`). Worth
+fixing, or you will keep testing stale code.
 
 ---
 
-## 5. Before real money moves — do not skip
+## 3. Merge — and mind the order
 
-- Swap test keys for live keys in Vercel.
-- Add a **production** webhook endpoint (different signing secret from test).
-- Set the statement descriptor so guests recognise the charge.
-- Confirm his Stripe account is fully activated, or payments collect but never
-  pay out.
-- **The cancellation policy must be resolved.** Taking $18,200 under terms that
-  say "see your written quote" is the biggest remaining exposure.
+`admin-dashboard` → `stripe-payments` → `main`.
+
+**Do not merge to `main` before live keys are in place.** Production env still
+holds test keys, so merging now would put a booking flow on the public site that
+takes payments collecting nothing. A guest typing a test card would get a
+receipt for a booking that does not exist.
 
 ---
 
-## Waiting on the client (no work for us until they land)
+## 4. Before real money moves
 
-- Cancellation: the three conflicts.
-- Is the $200 incidental deposit charged or held, and when?
-- Booking-tracking method — Google Calendar is our recommendation, and the
-  calendar integration is deliberately unbuilt until he answers.
-- Statement descriptor, who can issue refunds, Stripe account activated.
-- Content: the chef's own food photos, real guest reviews, wedding photos,
-  social links.
+- Live Stripe keys in Vercel Production.
+- A **production** webhook endpoint on the real domain — its signing secret is
+  different from the test one.
+- Confirm Roger's Stripe account is fully activated. If bank details or identity
+  checks are outstanding, payments collect but never pay out, and it is
+  invisible until you look.
+- Check whether Invoicing carries a per-invoice fee on his account. Two per
+  booking.
+
+---
+
+## Waiting on Roger
+
+- **Stripe business name** is lower case — "seaview mirage villa" shows on the
+  payment page. Should be "Sea View Mirage Villa". He was fixing this.
+- **Which spelling is right?** He wrote "Seaview Mirage Villa"; the site says
+  "Sea View Mirage Villa" everywhere. Pick one and make the site, the Stripe
+  name and the statement descriptor match.
+- **The 12-month reschedule limit** — the policy he approved does not mention
+  it, but the site does. Either he adds the line or we drop it from the site.
+- **Content:** the chef's own food photos, real guest reviews (the testimonials
+  section is built but hidden), wedding photos, social links.
+
+---
+
+## Send him the dashboard guide
+
+`villa-dashboard-guide.md` is written for him, not for a developer. Fill in the
+website address at the top before sending.
 
 ---
 
 ## Deliberately not built
 
-- **Availability calendar.** He has no booking system at all and isn't taking
-  bookings, so building one now would be guessing at a process that doesn't
-  exist. `BLOCKED_RANGES` in `shared/pricing.mjs` is the stopgap and needs a
-  developer to edit — fine at zero bookings, not fine later.
 - **Auto-charging saved cards.** Invoicing was chosen instead; reasoning in
-  `SETUP.md`.
-- **Testimonials.** Built but hidden until real reviews exist.
-
----
-
-## Handy
-
-```
-npm run check:pricing   # 40 checks, offline — money maths, dates, signatures
-npm run check:stripe    # 20 checks against the test sandbox
-npm run check:webhook   # 26 checks, offline — signature verification, forgery
-vercel dev              # site + /api locally (npm run dev won't serve /api)
-```
+  `SETUP.md` §3.
+- **Google Calendar.** Was the plan for several days, dropped for the dashboard.
+  Reasoning kept in `SETUP.md` §3 so nobody re-derives it.
+- **Testimonials.** Built, hidden until real reviews exist.
+- **An admin page for site content** — menu, photos, copy. Only rates and
+  availability are editable.

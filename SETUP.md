@@ -111,23 +111,27 @@ trusting anything and logs the payment.
 
 ### Availability
 
-There is still no live calendar. Two things stand in for one:
+Handled by the dashboard. Three things make a week unavailable, and they are
+checked together:
 
-- `FIRST_AVAILABLE_DATE` in `shared/pricing.mjs` — currently **2026-12-10**,
-  because the villa is booked solid until then. The date picker will not offer
-  anything earlier and the server refuses it too.
-- `BLOCKED_RANGES` in the same file — **the villa must add each confirmed
-  booking here.** Nothing else prevents two guests paying deposits for the same
-  week. Adding a range takes one line:
+- **Paid bookings** — derived live from Stripe. Every deposit carries its dates,
+  so a week sells itself out the moment someone pays for it. Nothing is written
+  down; see `api/_availability.mjs`.
+- **Manual holds** — weeks the villa took by phone or WhatsApp, added on the
+  dashboard's Calendar tab.
+- **`BLOCKED_RANGES`** in `shared/pricing.mjs` — a developer override for things
+  the dashboard cannot express, like a burst pipe. Normally empty.
 
-  ```js
-  { from: '2027-01-05', to: '2027-01-12', note: 'Smith party' },
-  ```
+`firstAvailableDate` in settings (currently **2026-12-10**) is the floor: the
+date picker will not offer an earlier arrival and the server refuses one.
 
-  `to` is the departure date, so one stay may begin on another's `to`.
+All of it is re-checked server-side in `create-checkout-session` before any
+payment is created. The browser check is a courtesy; that one is what actually
+stops two guests paying for the same week.
 
-This is the weakest part of the setup and should be replaced with a real
-calendar before the villa is busy.
+A caveat worth repeating to the villa: this makes double-booking unlikely, not
+impossible. A booking taken on WhatsApp and not entered for an hour can still be
+sold by the website in the meantime. The fix is habit, not code.
 
 ### Two rules the code follows
 
@@ -223,25 +227,38 @@ it; a **302** means protection is still on.
 Note `vercel.json` had to exclude `/api` from the SPA rewrite — without that
 every API call returned the HTML page instead.
 
-### DECIDED: instalments 2 and 3 use Stripe Invoicing
+### Instalments 2 and 3 — BUILT (Stripe Invoicing)
 
-**Agreed August 2026. Not built yet — this is the plan of record.**
+Raised automatically when a deposit lands, in `api/_invoices.mjs`, called from
+the webhook.
 
-At booking, create two Stripe invoices with due dates:
+| Instalment | Amount                    | Due                       |
+| ---------- | ------------------------- | ------------------------- |
+| Second 35% | 35% of the agreed total   | 30 days after booking     |
+| Final 40%  | 40% + the $200 deposit    | 25 days before arrival    |
 
-| Instalment | Due                          |
-| ---------- | ---------------------------- |
-| Second 35% | one month after booking      |
-| Final 40%  | 20–30 days before arrival    |
+`collection_method: 'send_invoice'` with a `due_date`. Stripe emails the invoice
+and, once reminders are switched on, **sends the reminders itself** — Dashboard →
+Settings → Billing → *Subscriptions and emails*, plus *Advanced invoicing
+features* for one-off invoices. The client's "a week or two earlier" is a
+dashboard setting, not code we maintain.
 
-Use `collection_method: 'send_invoice'` with a `due_date`. Stripe emails the
-invoice and, once reminders are switched on, **sends the reminders itself** —
-Dashboard → Settings → Billing → *Subscriptions and emails*, plus *Advanced
-invoicing features* for one-off invoices. Reminders can fire before, on, or
-after the due date, so the client's "a week or two earlier" is a dashboard
-setting, not code we maintain.
+Three things worth knowing before changing any of it:
 
-Why this rather than auto-charging a stored card:
+- **Amounts come from the agreed total, never today's rates.** `quoteInstalment`
+  is called with the `villaTotal` recorded on the deposit. `check:invoices`
+  doubles the nightly rate afterwards and confirms both invoices stay put.
+- **Due dates are floored at three days out.** A booking taken three weeks
+  before arrival would otherwise be invoiced for a date already past, and Stripe
+  would treat it as immediately overdue.
+- **Idempotency keys are per booking and instalment**, so a retried webhook
+  returns the same invoices instead of billing twice.
+
+Invoice failures never fail the webhook — the deposit is already taken and the
+booking is real, so a 500 would only make Stripe retry a handler that has
+already logged the payment. They are logged and can be raised again by hand.
+
+Why invoices rather than auto-charging a stored card:
 
 - The later charges land weeks or months after the card was captured. Cards
   expire, banks decline, and 3-D Secure can demand re-authentication the
@@ -249,47 +266,42 @@ Why this rather than auto-charging a stored card:
   so the invoice path has to exist either way.
 - A surprise $6,370 on someone's card is a chargeback risk in a way that "your
   invoice is due in 14 days" is not.
-- Nothing is lost by starting here: switching `collection_method` to
-  `charge_automatically` later keeps the same invoices and reminders and just
-  charges the card on file instead.
+- Nothing is lost: switching `collection_method` to `charge_automatically` later
+  keeps the same invoices and reminders and just charges the card on file.
 
-Amounts must come from `instalments()` in `shared/pricing.mjs`, same as
-everything else. Check whether Invoicing carries a per-invoice fee on this
-account before going live — it is two invoices per booking.
+Still worth checking before going live: whether Invoicing carries a per-invoice
+fee on this account. It is two invoices per booking.
 
-### Availability — deliberately NOT built yet
+**Note on reading invoices back:** use `invoices.list` filtered by customer, not
+`invoices.search`. Search is eventually consistent and returns nothing for up to
+a minute after creation, so the villa would open a booking they had just taken
+and be told it had no invoices.
 
-**The client has no booking system at all.** No calendar, no spreadsheet, no
-Airbnb or VRBO listing, and he is not taking bookings yet — he asked for the
-calendar to be blocked until 10 December while he sets things up. That block is
-in place (`FIRST_AVAILABLE_DATE`), and it is enough for now.
+### Google Calendar — considered, then dropped
 
-Building a calendar integration for someone with zero bookings would be
-guessing at a process that does not exist. When he is ready to take bookings,
-the recommendation is:
+Recorded because it was the plan for several days and the reasoning should not
+have to be reconstructed.
 
-- **Google Calendar on the villa's Gmail as the surface he edits**, because it
-  is the thing he is most likely to actually keep updated — he already has the
-  account and can block dates from his phone.
-- The site checks free/busy through the Calendar API before allowing a booking.
-- **The webhook writes each paid booking into that calendar automatically**, so
-  website bookings block themselves and he only has to add phone and WhatsApp
-  ones by hand.
+The client had no booking system at all — no calendar, no spreadsheet, no Airbnb
+or VRBO — so the plan was Google Calendar on the villa's Gmail: he blocks dates
+from his phone, the site reads free/busy, and the webhook writes paid bookings
+back so they self-block.
 
-Not Calendly — it is built for appointment slots, not multi-night stays.
+Dropped in favour of the admin dashboard (section 3a). A dashboard reads
+bookings out of Stripe automatically, which a calendar cannot, and one surface
+the villa signs into beats two he has to keep in step. Google Calendar also
+needed a Google Cloud project and a service-account key — real setup for both of
+us, to end up with less.
 
-If he ever lists on Airbnb or VRBO, import their iCal feeds too, or the site
-will happily sell a week those platforms already sold.
-
-Until then, `BLOCKED_RANGES` in `shared/pricing.mjs` is the stopgap and needs a
-developer to edit. That is acceptable at zero bookings and is not acceptable
-once he is busy.
+Still true if it ever comes back: not Calendly, which is built for appointment
+slots rather than multi-night stays. And if he lists on Airbnb or VRBO, import
+their iCal feeds, or the site will sell a week those platforms already sold.
 
 ### Still to decide (client)
 
-- **The $200 incidental deposit** — charged and refunded, or held on the card;
-  before arrival or on arrival. Not implemented pending that answer.
-- **The three cancellation-policy conflicts** in section 4.
+Both former blockers are now settled: the $200 incidental is charged with the
+final instalment and refunded after departure (section 2), and the cancellation
+policy is published (section 4). What is left is in section 5.
 
 ### Original notes
 
@@ -317,6 +329,76 @@ once he is busy.
   deposit for dates that turn out to be booked is worse than the current flow,
   so either add a calendar or keep a human confirmation step before payment.
 - Secrets go in Vercel environment variables, never in the repo.
+
+---
+
+## 3a. The villa dashboard
+
+At `/admin`, on the `admin-dashboard` branch. Three screens: **Bookings**,
+**Calendar**, **Rates**. Built for a phone, because that is what the villa will
+use.
+
+### What it needs
+
+| Variable | Where from |
+| --- | --- |
+| `BLOB_READ_WRITE_TOKEN` | Vercel → Storage → create a Blob store. Injected automatically. |
+| `ADMIN_PASSWORD_HASH` | `npm run admin:password` |
+| `ADMIN_SESSION_SECRET` | printed by the same command |
+
+Without the Blob token the dashboard still **reads** — settings fall back to the
+defaults — but **cannot save**. That is the failure to expect if a rate change
+appears not to stick.
+
+`npm run admin:password` prints a generated password once and never stores it.
+Send it to the villa out of band. Changing `ADMIN_SESSION_SECRET` signs everyone
+out, which is how access gets revoked.
+
+### What is stored, and what is not
+
+Three small JSON blobs, private: `settings`, `blocks` (manual holds) and
+`statuses` (confirmed/declined).
+
+**Bookings are not stored.** Every paid booking is already a Stripe Checkout
+Session carrying the guest, the dates and the amounts, so the dashboard reads
+them from Stripe and groups them by stay. Copying that into a second store would
+guarantee the two drift apart.
+
+That has a useful consequence: **the dashboard is the only writer.** The webhook
+writes nothing, so there is no read-modify-write race between a payment landing
+and the villa editing a rate.
+
+Keep guest names, emails and phone numbers **out** of blob storage. Stripe is
+the record of who booked. The manual-hold note field is free text and the UI
+says so.
+
+### Auth
+
+One password, one person — no user table, no reset flow. Stored as a salted
+scrypt hash; the session is an HMAC-signed cookie because serverless instances
+share no memory.
+
+**Login throttling is only a fixed 400 ms delay.** Serverless has no shared
+counter, so anything else would be theatre. The real protection is scrypt's cost
+and a 20-character generated password. Do not describe it as rate-limited.
+
+`RequireAuth` in the React app only redirects. The bundle is public and anyone
+can route themselves to `/admin`; the actual gate is the session check on every
+`/api/admin/*` route. `npm run check:admin` asserts each one refuses an
+anonymous caller.
+
+### Two things the UI says on purpose
+
+- **Declining a booking does not move any money.** The villa still has to refund
+  in Stripe. Implying otherwise would be how someone frees a week without
+  returning the deposit.
+- **Changing a rate does not affect existing bookings.** True because of the
+  rate lock (section 4a), and the first question anyone will ask before touching
+  a number.
+
+Paid bookings and manual holds are coloured differently on the calendar, and
+only manual holds can be removed — letting the villa "unblock" a week someone
+has paid for would be a way to double-book by accident.
 
 ---
 
@@ -374,15 +456,31 @@ Business → Public details.
 
 ---
 
-## 4a. Rates — changed by hand, for now
+## 4a. Rates — seasonal, edited in the dashboard
 
-`NIGHTLY_RATE` in `shared/pricing.mjs` is the single source for both the site and
-the payment API. The client emails a new rate, the developer edits that constant
-and deploys. Seasonal pricing was considered and **deliberately deferred**.
+The villa sets its own rates at `/admin/rates`. There is a base nightly rate and
+any number of named higher-priced periods.
 
-An admin page for the client to set rates himself is wanted **later**. Worth
-doing after availability, not before — a pricing dashboard for someone with no
-booking system solves the second problem first.
+**Every night is priced at the rate of the period it falls in, then summed.** A
+week that begins before Christmas and runs into it is priced night by night, so
+a guest cannot dodge the higher rate by arriving a day early. The departure date
+is not a night, which is why a season starting on it costs nothing.
+
+Live values come from `/api/settings`; `DEFAULT_SETTINGS` in
+`shared/settings.mjs` is what the site falls back to if the store is
+unreachable, and matches the original constants.
+
+Two rules the code depends on:
+
+- **Seasons may not overlap.** `validateSettings` rejects it, because otherwise
+  whichever season came first in the list would silently win.
+- **`instalments()` is the villa's split; `payableInstalments()` is what the
+  card is charged.** They differ only on the final instalment, which carries the
+  $200 refundable deposit. Use the first for the cancellation fee and anything
+  describing revenue, the second for anything a guest sees.
+
+`baseTotal(nights)` exists for headline copy — "from $18,200 a week" — and
+deliberately ignores seasons. Never price a real stay with it.
 
 ### The rate is locked to the booking — done
 
