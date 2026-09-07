@@ -6,6 +6,7 @@ import {
 } from '../content'
 import { earliestArrival, toISODate, validateStay, seasonSummary } from '../../shared/pricing.mjs'
 import { useSettings } from '../useSettings'
+import { useAvailability } from '../useAvailability'
 
 const SERVICE_ICONS = {
   mealplan: <ChefHat size={24} />,
@@ -57,6 +58,9 @@ export default function BookingFlow({ onClose, initialService = null }) {
   // Live rates, so a season the villa added after this bundle was built is
   // priced correctly. Falls back to the defaults if the fetch fails.
   const { settings } = useSettings()
+  // Weeks already taken — paid bookings plus the villa's own holds. Empty if
+  // the request fails; the server re-checks before charging either way.
+  const blocks = useAvailability()
 
   const minNights = settings.minNights
   const nights = diffDays(checkIn, checkOut)
@@ -89,7 +93,7 @@ export default function BookingFlow({ onClose, initialService = null }) {
   // The villa is booked out until a fixed date, so the calendar cannot offer
   // anything earlier. Re-checked on the server before any charge.
   const openFrom = toISODate(earliestArrival(settings))
-  const stayCheck = validateStay(checkIn, checkOut, { settings })
+  const stayCheck = validateStay(checkIn, checkOut, { settings, blocks })
 
   const canProceed = () => {
     if (step === 1) return stayCheck.ok

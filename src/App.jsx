@@ -16,6 +16,15 @@ import PayPage from './pages/PayPage'
 import PayThanksPage from './pages/PayThanksPage'
 import PayCancelledPage from './pages/PayCancelledPage'
 
+// The villa's own dashboard. Outside <Layout> on purpose — it has its own
+// chrome and must not carry the public navbar, footer or booking modal.
+import RequireAuth from './admin/RequireAuth'
+import AdminLoginPage from './admin/LoginPage'
+import AdminBookingsPage from './admin/BookingsPage'
+import AdminCalendarPage from './admin/CalendarPage'
+// Aliased: the public site already has a RatesPage, and they are different pages.
+import AdminRatesPage from './admin/RatesPage'
+
 export default function App() {
   return (
     <BookingProvider>
@@ -37,6 +46,13 @@ export default function App() {
           {/* Old single-page anchors and any stray URL land on Home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
+
+        {/* Villa dashboard. RequireAuth only redirects — the real gate is the
+            session check on every /api/admin/* route. */}
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route path="/admin" element={<RequireAuth><AdminBookingsPage /></RequireAuth>} />
+        <Route path="/admin/calendar" element={<RequireAuth><AdminCalendarPage /></RequireAuth>} />
+        <Route path="/admin/rates" element={<RequireAuth><AdminRatesPage /></RequireAuth>} />
       </Routes>
     </BookingProvider>
   )
