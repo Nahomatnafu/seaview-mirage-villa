@@ -9,29 +9,12 @@
  *
  * Nothing here talks to Stripe over the network. Run with: npm run check:webhook
  */
-import fs from 'node:fs'
-import path from 'node:path'
 import crypto from 'node:crypto'
 import { Readable } from 'node:stream'
+import { loadEnv } from './_env.mjs'
 
-// Same minimal .env.local loader the other checks use.
-const envPath = path.resolve('.env.local')
-if (!fs.existsSync(envPath)) {
-  console.error('No .env.local found. Copy .env.example and fill in your Stripe TEST keys.')
-  process.exit(1)
-}
-for (const line of fs.readFileSync(envPath, 'utf8').split(/\r?\n/)) {
-  const t = line.trim()
-  if (!t || t.startsWith('#')) continue
-  const i = t.indexOf('=')
-  if (i > 0) process.env[t.slice(0, i).trim()] ??= t.slice(i + 1).trim()
-}
-
-const key = process.env.STRIPE_SECRET_KEY || ''
-if (!key.startsWith('sk_test_')) {
-  console.error(`Refusing to run: STRIPE_SECRET_KEY is not a test key (starts "${key.slice(0, 8)}").`)
-  process.exit(1)
-}
+loadEnv({ required: ['STRIPE_SECRET_KEY'] })
+const key = process.env.STRIPE_SECRET_KEY
 
 // The real signing secret is issued by Stripe when the endpoint is created, so
 // it may not exist yet. Signing and verifying both happen in this process, so a

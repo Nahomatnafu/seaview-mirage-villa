@@ -6,26 +6,10 @@
  *
  * Run with: npm run check:invoices
  */
-import fs from 'node:fs'
-import path from 'node:path'
+import { loadEnv } from './_env.mjs'
 
-const envPath = path.resolve('.env.local')
-if (!fs.existsSync(envPath)) {
-  console.error('No .env.local found. Copy .env.example and fill in your Stripe TEST keys.')
-  process.exit(1)
-}
-for (const line of fs.readFileSync(envPath, 'utf8').split(/\r?\n/)) {
-  const t = line.trim()
-  if (!t || t.startsWith('#')) continue
-  const i = t.indexOf('=')
-  if (i > 0) process.env[t.slice(0, i).trim()] ??= t.slice(i + 1).trim()
-}
-
-const key = process.env.STRIPE_SECRET_KEY || ''
-if (!key.startsWith('sk_test_')) {
-  console.error(`Refusing to run: STRIPE_SECRET_KEY is not a test key (starts "${key.slice(0, 8)}").`)
-  process.exit(1)
-}
+loadEnv({ required: ['STRIPE_SECRET_KEY'] })
+const key = process.env.STRIPE_SECRET_KEY
 
 const { createInstalmentInvoices } = await import('../api/_invoices.mjs')
 const P = await import('../shared/pricing.mjs')

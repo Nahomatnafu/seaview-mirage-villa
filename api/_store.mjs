@@ -1,4 +1,4 @@
-import { put, list } from '@vercel/blob'
+import { put, get } from '@vercel/blob'
 import { normaliseSettings, defaultSettings, validateSettings } from '../shared/settings.mjs'
 
 /**
@@ -47,6 +47,13 @@ export function clearStoreCache(key) {
 
 const configured = () => Boolean(process.env.BLOB_READ_WRITE_TOKEN)
 
+// Passed explicitly on every call rather than letting the SDK find its own
+// credential. Left to itself it prefers Vercel's OIDC federation, which is not
+// enabled for the development environment — so a local run fails with an OIDC
+// error even though a perfectly good read-write token is sitting in the
+// environment. Being explicit also means the token in use is never ambiguous.
+const auth = () => ({ token: process.env.BLOB_READ_WRITE_TOKEN })
+
 /**
  * Read one JSON blob. Returns `fallback` for anything that goes wrong —
  * unconfigured store, missing file, network failure, unparseable JSON.
@@ -61,15 +68,19 @@ async function readJson(key, fallback) {
   if (!configured()) return fallback
 
   try {
-    // `list` rather than a stored URL, so the caller needs no state to find it.
-    const { blobs } = await list({ prefix: FILES[key], limit: 1 })
-    if (!blobs.length) {
+    // `get` by pathname, not `list` then `fetch` the URL: these blobs are
+    // private, so their URLs 403 without credentials. `get` carries the token.
+    //
+    // useCache:false because the villa saving a rate and immediately reloading
+    // must see the new one — a CDN-cached copy would look like the save failed.
+    const found = await get(FILES[key], { access: 'private', useCache: false, ...auth() })
+    if (!found?.stream) {
+      // Nothing written yet. Cache the fallback so a fresh store is not three
+      // round trips on every page load.
       cache.set(key, { at: Date.now(), value: fallback })
       return fallback
     }
-    const res = await fetch(blobs[0].downloadUrl ?? blobs[0].url)
-    if (!res.ok) throw new Error(`blob fetch ${res.status}`)
-    const value = await res.json()
+    const value = await new Response(found.stream).json()
     cache.set(key, { at: Date.now(), value })
     return value
   } catch (err) {
@@ -85,6 +96,7 @@ async function writeJson(key, value) {
     throw new Error('No blob store is configured. Add BLOB_READ_WRITE_TOKEN in Vercel → Storage.')
   }
   await put(FILES[key], JSON.stringify(value, null, 2), {
+    ...auth(),
     access: 'private',
     contentType: 'application/json',
     // One canonical path per file, overwritten in place — no random suffix, or
