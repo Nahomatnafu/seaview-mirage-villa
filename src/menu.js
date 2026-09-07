@@ -166,7 +166,7 @@ export const COLLECTIONS = [
     id: 'classic',
     number: 3,
     name: 'Classic Cuisine',
-    tagline: 'Pancakes and waffles · Burgers · Apple pie',
+    tagline: 'Pancakes and waffles · Steaks and ribs · Apple pie',
     image: '/assets/menu/classic.jpg',
     imageAlt: 'Burger served with a basket of fries',
     courses: [
@@ -198,7 +198,7 @@ export const COLLECTIONS = [
     id: 'vegan',
     number: 4,
     name: 'Vegan Vacation',
-    tagline: 'Veggie wraps · Hearty soups · Bowls and salads',
+    tagline: 'Smoothie bowls · Curries and chili · Hearty soups',
     image: '/assets/menu/vegan.jpg',
     imageAlt: 'Vegan bowl with edamame, cabbage, carrot, cucumber, and tomato',
     courses: [
