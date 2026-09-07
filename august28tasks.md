@@ -1,4 +1,9 @@
-# Pick up here
+# Pick up here — SUPERSEDED
+
+> **The live to-do list is now `next-steps.md`.** This file is kept for the
+> record of what was settled with the client and how the site got here. The site
+> went live on seaview-mirage.com on 7 September 2026; sections 1–4 below are
+> done or overtaken.
 
 Last worked on 7 September.
 
