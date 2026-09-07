@@ -18,7 +18,11 @@ export default async function handler(req, res) {
 
   try {
     const ranges = await blockedRanges()
-    res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60, stale-while-revalidate=300')
+    // Not cached at the edge. A CDN copy would keep offering a week the villa
+    // has just taken off sale, and this is the response the date picker greys
+    // dates out from. It is a small JSON body on a low-traffic site — the cache
+    // was never worth what it costs here.
+    res.setHeader('Cache-Control', 'no-store')
     return json(res, 200, {
       blocked: [...ranges, ...BLOCKED_RANGES].map(r => ({ from: r.from, to: r.to })),
     })

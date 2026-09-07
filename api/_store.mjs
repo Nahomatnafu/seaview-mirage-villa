@@ -30,9 +30,17 @@ const FILES = {
 }
 
 // A settings read happens on most page loads; without this a single render
-// would be three round trips to blob storage. Per-instance and short, so an
-// edit shows up within a minute without any invalidation machinery.
-const TTL_MS = 60_000
+// would be three round trips to blob storage.
+//
+// Deliberately short. The cache is PER SERVERLESS INSTANCE, and instances
+// cannot invalidate each other's — the admin function clearing its own copy
+// does nothing for the instance handling the next booking. So this window is
+// how long the site can disagree with itself after a save, and it is kept
+// small rather than clever.
+//
+// Anything deciding money or availability must pass { fresh: true } and skip
+// it entirely. See create-checkout-session.
+const TTL_MS = 10_000
 const cache = new Map()
 
 const fresh = key => {
@@ -61,8 +69,8 @@ const auth = () => ({ token: process.env.BLOB_READ_WRITE_TOKEN })
  * Deliberately never throws. A guest pricing a stay must not see an error
  * because a settings read failed; they see the villa's standard rates instead.
  */
-async function readJson(key, fallback) {
-  const hit = fresh(key)
+async function readJson(key, fallback, { fresh: bypass = false } = {}) {
+  const hit = bypass ? null : fresh(key)
   if (hit) return hit.value
 
   if (!configured()) return fallback
@@ -111,9 +119,13 @@ async function writeJson(key, value) {
 
 // --- settings ---------------------------------------------------------------
 
-/** Always returns something priceable, whatever is in the store. */
-export async function readSettings() {
-  const raw = await readJson('settings', null)
+/**
+ * Always returns something priceable, whatever is in the store.
+ *
+ * Pass `{ fresh: true }` anywhere the answer decides what someone is charged.
+ */
+export async function readSettings(opts) {
+  const raw = await readJson('settings', null, opts)
   return raw ? normaliseSettings(raw) : defaultSettings()
 }
 
@@ -131,8 +143,8 @@ export async function writeSettings(next) {
 // --- manual blocks ----------------------------------------------------------
 
 /** Dates the villa has taken off sale by hand. `to` is the departure date. */
-export async function readBlocks() {
-  const raw = await readJson('blocks', [])
+export async function readBlocks(opts) {
+  const raw = await readJson('blocks', [], opts)
   return Array.isArray(raw) ? raw : []
 }
 
@@ -144,8 +156,8 @@ export async function writeBlocks(blocks) {
 // --- booking statuses -------------------------------------------------------
 
 /** `{ [stripeSessionId]: { status, note, at } }`. No guest data. */
-export async function readStatuses() {
-  const raw = await readJson('statuses', {})
+export async function readStatuses(opts) {
+  const raw = await readJson('statuses', {}, opts)
   return raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {}
 }
 

@@ -16,10 +16,11 @@ export default async function handler(req, res) {
 
   try {
     const s = await readSettings()
-    // Short cache: rates change rarely, and a stale minute is far cheaper than
-    // a blob read on every page view. The server re-prices at payment time
-    // anyway, so a stale quote can never become a wrong charge.
-    res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60, stale-while-revalidate=300')
+    // Not cached at the edge either. The server re-prices before charging, so a
+    // stale copy could never produce a wrong CHARGE — but it would show a guest
+    // one total and then bill them another, which is the same complaint from
+    // where they are standing.
+    res.setHeader('Cache-Control', 'no-store')
     return json(res, 200, {
       baseNightly: s.baseNightly,
       minNights: s.minNights,

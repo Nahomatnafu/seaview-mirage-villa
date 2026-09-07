@@ -76,9 +76,13 @@ export default async function handler(req, res) {
     //
     // Instalments 2 and 3 skip it: those dates are already this guest's, and
     // their own booking would otherwise read as a clash.
-    const settings = await readSettings()
+    // { fresh: true } on both: caches are per serverless instance and cannot be
+    // invalidated across them, so a cached read here could sell a week the
+    // villa blocked a moment ago, or price a stay at a rate they just changed.
+    // This is the one place that must be right, so it always goes to source.
+    const settings = await readSettings({ fresh: true })
     const blocks = instalment === 'deposit'
-      ? await blockedRanges({ excludeEmail: email })
+      ? await blockedRanges({ excludeEmail: email, fresh: true })
       : []
 
     // Throws with a guest-readable reason on any invalid or unavailable dates.

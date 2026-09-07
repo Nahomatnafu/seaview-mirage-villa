@@ -21,7 +21,11 @@ const PAID_LOOKBACK = 200
 
 // Availability is read on the date picker, on every quote and before every
 // payment. Without this, one booking flow would be a dozen Stripe calls.
-const TTL_MS = 60_000
+//
+// Per instance, and instances cannot invalidate each other's — so this is the
+// window in which a just-blocked week could still look free. Kept short, and
+// skipped entirely by anything about to take money: see { fresh: true }.
+const TTL_MS = 10_000
 let cache = null
 
 export function clearAvailabilityCache() {
@@ -62,8 +66,8 @@ async function paidStays() {
  * Declined bookings are dropped too — the villa has refunded them and the week
  * is back on sale.
  */
-export async function blockedRanges({ excludeEmail = '' } = {}) {
-  if (cache && Date.now() - cache.at < TTL_MS) {
+export async function blockedRanges({ excludeEmail = '', fresh = false } = {}) {
+  if (!fresh && cache && Date.now() - cache.at < TTL_MS) {
     return filter(cache.ranges, excludeEmail)
   }
 
@@ -77,7 +81,9 @@ export async function blockedRanges({ excludeEmail = '' } = {}) {
     console.error('Could not read paid bookings from Stripe:', err.message)
   }
 
-  const [manual, statuses] = await Promise.all([readBlocks(), readStatuses()])
+  const [manual, statuses] = await Promise.all([
+    readBlocks({ fresh }), readStatuses({ fresh }),
+  ])
 
   const ranges = [
     ...stays.filter(s => statuses[s.sessionId]?.status !== 'declined'),
